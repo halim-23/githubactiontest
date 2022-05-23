@@ -1,5 +1,3 @@
-
-
 # Defaults for all prettier-supported languages.
 # Prettier will complete this with settings from .editorconfig file.
 bracketSpacing: false
