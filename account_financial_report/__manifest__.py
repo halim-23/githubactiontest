@@ -14,7 +14,7 @@
     "redCOR AG,"
     "ForgeFlow,"
     "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/account-financial-reporting",
+    "website": "https://github.com/halim-23/githubactiontest",
     "depends": ["account", "date_range", "report_xlsx"],
     "data": [
         "security/ir.model.access.csv",
