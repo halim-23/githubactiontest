@@ -20,10 +20,10 @@
         <div class="page">
             <div class="row">
                 <h4
-                    class="mt0"
-                    t-esc="title or 'Odoo Report'"
-                    style="text-align: center;"
-                />
+          class="mt0"
+          t-esc="title or 'Odoo Report'"
+          style="text-align: center;"
+        />
             </div>
             <!-- Display filters -->
             <t t-call="account_financial_report.report_vat_report_filters" />
@@ -47,42 +47,42 @@
                 <t t-foreach="vat_report" t-as="tag_or_group">
                     <div class="act_as_row lines" style="font-weight: bold;">
                         <div
-                            class="act_as_cell left oe_tooltip_string"
-                            style="width: 5%;"
-                        >
+              class="act_as_cell left oe_tooltip_string"
+              style="width: 5%;"
+            >
                             <span
-                                t-att-res-id="res_id"
-                                t-att-res-model="res_model"
-                                view-type="form"
-                            >
+                t-att-res-id="res_id"
+                t-att-res-model="res_model"
+                view-type="form"
+              >
                                 <t t-att-style="style" t-raw="tag_or_group['code']" />
                             </span>
                         </div>
                         <div
-                            class="act_as_cell left oe_tooltip_string"
-                            style="width: 65%;"
-                        >
+              class="act_as_cell left oe_tooltip_string"
+              style="width: 65%;"
+            >
                             <span
-                                t-att-res-id="res_id"
-                                t-att-res-model="res_model"
-                                view-type="form"
-                            >
+                t-att-res-id="res_id"
+                t-att-res-model="res_model"
+                view-type="form"
+              >
                                 <t t-att-style="style" t-raw="tag_or_group['name']" />
                             </span>
                         </div>
                         <div class="act_as_cell amount" style="width: 15%;">
                             <t
-                                t-att-style="style"
-                                t-raw="tag_or_group['net']"
-                                t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
-                            />
+                t-att-style="style"
+                t-raw="tag_or_group['net']"
+                t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
+              />
                         </div>
                         <div class="act_as_cell amount" style="width: 15%;">
                             <t
-                                t-att-style="style"
-                                t-raw="tag_or_group['tax']"
-                                t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
-                            />
+                t-att-style="style"
+                t-raw="tag_or_group['tax']"
+                t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
+              />
                         </div>
                     </div>
                     <t t-if="tax_detail">
@@ -90,53 +90,53 @@
                             <div class="act_as_row lines">
                                 <div class="act_as_cell" style="width: 5%;" />
                                 <div
-                                    class="act_as_cell left oe_tooltip_string"
-                                    style="padding-left: 20px; width: 65%;"
-                                >
+                  class="act_as_cell left oe_tooltip_string"
+                  style="padding-left: 20px; width: 65%;"
+                >
                                     <span
-                                        t-att-res-id="tax['id']"
-                                        t-att-res-model="res_model"
-                                        view-type="form"
-                                    >
+                    t-att-res-id="tax['id']"
+                    t-att-res-model="res_model"
+                    view-type="form"
+                  >
                                         <t t-att-style="style" t-raw="tax['name']" />
                                     </span>
                                 </div>
                                 <div class="act_as_cell amount" style="width: 15%;">
                                     <t
-                                        t-set="domain"
-                                        t-value="[('tax_ids', 'in', tax['id']),
+                    t-set="domain"
+                    t-value="[('tax_ids', 'in', tax['id']),
                                                 ('date', '&gt;=', date_from),
                                                 ('date', '&lt;=', date_to),
                                                 ('tax_exigible', '=', True)]"
-                                    />
+                  />
                                     <span
-                                        t-att-domain="domain"
-                                        res-model="account.move.line"
-                                    >
+                    t-att-domain="domain"
+                    res-model="account.move.line"
+                  >
                                         <t
-                                            t-att-style="style"
-                                            t-raw="tax['net']"
-                                            t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
-                                        />
+                      t-att-style="style"
+                      t-raw="tax['net']"
+                      t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
+                    />
                                     </span>
                                 </div>
                                 <div class="act_as_cell amount" style="width: 15%;">
                                     <t
-                                        t-set="domain"
-                                        t-value="[('tax_line_id', '=', tax['id']),
+                    t-set="domain"
+                    t-value="[('tax_line_id', '=', tax['id']),
                                                 ('date', '&gt;=', date_from),
                                                 ('date', '&lt;=', date_to),
                                                 ('tax_exigible', '=', True)]"
-                                    />
+                  />
                                     <span
-                                        t-att-domain="domain"
-                                        res-model="account.move.line"
-                                    >
+                    t-att-domain="domain"
+                    res-model="account.move.line"
+                  >
                                         <t
-                                            t-att-style="style"
-                                            t-raw="tax['tax']"
-                                            t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
-                                        />
+                      t-att-style="style"
+                      t-raw="tax['tax']"
+                      t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"
+                    />
                                     </span>
                                 </div>
                             </div>

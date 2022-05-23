@@ -84,9 +84,9 @@
     </record>
     <!-- Aged Partner Balance -->
     <record
-        id="action_print_report_aged_partner_balance_qweb"
-        model="ir.actions.report"
-    >
+    id="action_print_report_aged_partner_balance_qweb"
+    model="ir.actions.report"
+  >
         <field name="name">Aged Partner Balance</field>
         <field name="model">aged.partner.balance.report.wizard</field>
         <field name="report_type">qweb-pdf</field>
@@ -95,9 +95,9 @@
         <field name="paperformat_id" ref="report_qweb_paperformat" />
     </record>
     <record
-        id="action_print_report_aged_partner_balance_html"
-        model="ir.actions.report"
-    >
+    id="action_print_report_aged_partner_balance_html"
+    model="ir.actions.report"
+  >
         <field name="name">Aged Partner Balance</field>
         <field name="model">aged.partner.balance.report.wizard</field>
         <field name="report_type">qweb-html</field>

@@ -8,10 +8,10 @@
             <form>
                 <group name="main_info">
                     <field
-                        name="company_id"
-                        options="{'no_create': True}"
-                        groups="base.group_multi_company"
-                    />
+            name="company_id"
+            options="{'no_create': True}"
+            groups="base.group_multi_company"
+          />
                 </group>
                 <group name="filters">
                     <group name="date_range">
@@ -26,11 +26,11 @@
                 <group name="partner_filter" col="1">
                     <label for="partner_ids" />
                     <field
-                        name="partner_ids"
-                        nolabel="1"
-                        widget="many2many_tags"
-                        options="{'no_create': True}"
-                    />
+            name="partner_ids"
+            nolabel="1"
+            widget="many2many_tags"
+            options="{'no_create': True}"
+          />
                 </group>
                 <group name="account_filter" col="4">
                     <label for="account_ids" colspan="4" />
@@ -40,46 +40,46 @@
                     <div>
                         <div class="o_row">
                             <field
-                                name="account_code_from"
-                                class="oe_inline"
-                                options="{'no_create': True}"
-                            />
+                name="account_code_from"
+                class="oe_inline"
+                options="{'no_create': True}"
+              />
                             <span class="oe_inline">To</span>
                             <field
-                                name="account_code_to"
-                                class="oe_inline"
-                                options="{'no_create': True}"
-                            />
+                name="account_code_to"
+                class="oe_inline"
+                options="{'no_create': True}"
+              />
                         </div>
                     </div>
                     <field
-                        name="account_ids"
-                        nolabel="1"
-                        widget="many2many_tags"
-                        options="{'no_create': True}"
-                        colspan="4"
-                    />
+            name="account_ids"
+            nolabel="1"
+            widget="many2many_tags"
+            options="{'no_create': True}"
+            colspan="4"
+          />
                 </group>
                 <footer>
                     <button
-                        name="button_export_html"
-                        string="View"
-                        type="object"
-                        default_focus="1"
-                        class="oe_highlight"
-                    />
+            name="button_export_html"
+            string="View"
+            type="object"
+            default_focus="1"
+            class="oe_highlight"
+          />
                     or
                     <button
-                        name="button_export_pdf"
-                        string="Export PDF"
-                        type="object"
-                    />
+            name="button_export_pdf"
+            string="Export PDF"
+            type="object"
+          />
                     or
                     <button
-                        name="button_export_xlsx"
-                        string="Export XLSX"
-                        type="object"
-                    />
+            name="button_export_xlsx"
+            string="Export XLSX"
+            type="object"
+          />
                     or
                     <button string="Cancel" class="oe_link" special="cancel" />
                 </footer>
