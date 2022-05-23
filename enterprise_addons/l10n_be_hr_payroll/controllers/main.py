@@ -1,54 +1,83 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import io
 import logging
 import re
 
-from odoo import http, fields, _
-from odoo.http import request, content_disposition
+from odoo import _, fields, http
+from odoo.http import content_disposition, request
 from odoo.tools.misc import xlsxwriter
 
 _logger = logging.getLogger(__name__)
 
 
 class L10nBeHrPayrollEcoVoucherController(http.Controller):
-
-    @http.route(["/export/individual_accounts/<int:wizard_id>/<int:company_id>"], type='http', auth='user')
+    @http.route(
+        ["/export/individual_accounts/<int:wizard_id>/<int:company_id>"],
+        type="http",
+        auth="user",
+    )
     def export_individual_accounts(self, wizard_id, company_id):
-        wizard = request.env['l10n_be.individual.account.wizard'].browse(wizard_id).with_company(company_id)
-        if not wizard.exists() or not request.env.user.has_group('hr_payroll.group_hr_payroll_user'):
+        wizard = (
+            request.env["l10n_be.individual.account.wizard"]
+            .browse(wizard_id)
+            .with_company(company_id)
+        )
+        if not wizard.exists() or not request.env.user.has_group(
+            "hr_payroll.group_hr_payroll_user"
+        ):
             return request.render(
-                'http_routing.http_error', {
-                    'status_code': 'Oops',
-                    'status_message': "Please contact an administrator..."})
+                "http_routing.http_error",
+                {
+                    "status_code": "Oops",
+                    "status_message": "Please contact an administrator...",
+                },
+            )
 
-        pdf_files = wizard._generate_files(request.env['res.company'].browse(company_id))
+        pdf_files = wizard._generate_files(
+            request.env["res.company"].browse(company_id)
+        )
         if pdf_files:
-            filename, binary = wizard._process_files(pdf_files, default_filename=_('Individual Accounts PDF') + '- %s.zip' % wizard.year, post_process=False)
+            filename, binary = wizard._process_files(
+                pdf_files,
+                default_filename=_("Individual Accounts PDF")
+                + "- %s.zip" % wizard.year,
+                post_process=False,
+            )
         else:
-            return request.make_response(_("There is no individual account to post for this period."))
+            return request.make_response(
+                _("There is no individual account to post for this period.")
+            )
         return request.make_response(
             binary,
             headers=[
-                ('Content-Type', 'zip'),
-                ('Content-Length', len(binary)),
-                ('Content-Disposition', content_disposition(filename))])
+                ("Content-Type", "zip"),
+                ("Content-Length", len(binary)),
+                ("Content-Disposition", content_disposition(filename)),
+            ],
+        )
 
-    @http.route(["/export/ecovouchers/<int:wizard_id>"], type='http', auth='user')
+    @http.route(["/export/ecovouchers/<int:wizard_id>"], type="http", auth="user")
     def export_eco_vouchers(self, wizard_id):
-        wizard = request.env['l10n.be.eco.vouchers.wizard'].browse(wizard_id)
-        if not wizard.exists() or not request.env.user.has_group('hr_payroll.group_hr_payroll_user'):
+        wizard = request.env["l10n.be.eco.vouchers.wizard"].browse(wizard_id)
+        if not wizard.exists() or not request.env.user.has_group(
+            "hr_payroll.group_hr_payroll_user"
+        ):
             return request.render(
-                'http_routing.http_error', {
-                    'status_code': 'Oops',
-                    'status_message': "Please contact an administrator..."})
+                "http_routing.http_error",
+                {
+                    "status_code": "Oops",
+                    "status_message": "Please contact an administrator...",
+                },
+            )
 
         output = io.BytesIO()
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet('Worksheet')
-        style_highlight = workbook.add_format({'bold': True, 'pattern': 1, 'bg_color': '#E0E0E0', 'align': 'center'})
-        style_normal = workbook.add_format({'align': 'center'})
+        workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+        worksheet = workbook.add_worksheet("Worksheet")
+        style_highlight = workbook.add_format(
+            {"bold": True, "pattern": 1, "bg_color": "#E0E0E0", "align": "center"}
+        )
+        style_normal = workbook.add_format({"align": "center"})
         row = 0
 
         headers = [
@@ -79,26 +108,36 @@ class L10nBeHrPayrollEcoVoucherController(http.Controller):
             amount = round(line.amount, 2)
             birthdate = employee.birthday or fields.Date.today()
             lang = employee.sudo().address_home_id.lang
-            if lang == 'fr_FR':
-                lang = 'FR'
-            elif lang == 'nl_NL':
-                lang = 'NL'
+            if lang == "fr_FR":
+                lang = "FR"
+            elif lang == "nl_NL":
+                lang = "NL"
             else:
-                lang = 'EN'
+                lang = "EN"
 
-            rows.append((
-                employee.niss.replace('.', '').replace('-', '') if employee.niss else '',
-                employee_name.split(' ')[0],
-                ' '.join(employee_name.split(' ')[1:]),
-                ' ',
-                quantity,
-                amount,
-                quantity * amount,
-                '%s/%s/%s' % (birthdate.day, birthdate.month, birthdate.year),
-                'F' if employee.gender == 'female' else 'M',
-                lang,
-                ' ', ' ', ' ', ' ', ' ', ' ', ' '
-            ))
+            rows.append(
+                (
+                    employee.niss.replace(".", "").replace("-", "")
+                    if employee.niss
+                    else "",
+                    employee_name.split(" ")[0],
+                    " ".join(employee_name.split(" ")[1:]),
+                    " ",
+                    quantity,
+                    amount,
+                    quantity * amount,
+                    "%s/%s/%s" % (birthdate.day, birthdate.month, birthdate.year),
+                    "F" if employee.gender == "female" else "M",
+                    lang,
+                    " ",
+                    " ",
+                    " ",
+                    " ",
+                    " ",
+                    " ",
+                    " ",
+                )
+            )
 
         col = 0
         for header in headers:
@@ -119,7 +158,11 @@ class L10nBeHrPayrollEcoVoucherController(http.Controller):
         response = request.make_response(
             xlsx_data,
             headers=[
-                ('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-                ('Content-Disposition', 'attachment; filename=orderfile.xlsx')],
+                (
+                    "Content-Type",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ),
+                ("Content-Disposition", "attachment; filename=orderfile.xlsx"),
+            ],
         )
         return response

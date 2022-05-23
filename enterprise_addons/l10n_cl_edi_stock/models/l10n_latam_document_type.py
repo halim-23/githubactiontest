@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
-from odoo import models, fields
+from odoo import fields, models
 
 
 class L10nLatamDocumentType(models.Model):
-    _inherit = 'l10n_latam.document.type'
+    _inherit = "l10n_latam.document.type"
 
-    internal_type = fields.Selection(selection_add=[('stock_picking', 'Stock Picking')])
+    internal_type = fields.Selection(selection_add=[("stock_picking", "Stock Picking")])

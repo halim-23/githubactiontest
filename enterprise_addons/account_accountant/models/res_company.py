@@ -1,16 +1,19 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields
+from datetime import timedelta
+
+from odoo import fields, models
+from odoo.tools import date_utils
 from odoo.tools.misc import DEFAULT_SERVER_DATE_FORMAT
 
-from datetime import timedelta, datetime
-from odoo.tools import date_utils
 
 class ResCompany(models.Model):
-    _inherit = 'res.company'
+    _inherit = "res.company"
 
-    invoicing_switch_threshold = fields.Date(string="Invoicing Switch Threshold", help="Every payment and invoice before this date will receive the 'From Invoicing' status, hiding all the accounting entries related to it. Use this option after installing Accounting if you were using only Invoicing before, before importing all your actual accounting data in to Odoo.")
+    invoicing_switch_threshold = fields.Date(
+        string="Invoicing Switch Threshold",
+        help="Every payment and invoice before this date will receive the 'From Invoicing' status, hiding all the accounting entries related to it. Use this option after installing Accounting if you were using only Invoicing before, before importing all your actual accounting data in to Odoo.",
+    )
 
     def write(self, vals):
         old_threshold_vals = {}
@@ -20,13 +23,17 @@ class ResCompany(models.Model):
         rslt = super(ResCompany, self).write(vals)
 
         for record in self:
-            if 'invoicing_switch_threshold' in vals and old_threshold_vals[record] != vals['invoicing_switch_threshold']:
+            if (
+                "invoicing_switch_threshold" in vals
+                and old_threshold_vals[record] != vals["invoicing_switch_threshold"]
+            ):
                 if record.invoicing_switch_threshold:
                     # If a new date was set as threshold, we switch all the
                     # posted moves and payments before it to 'invoicing_legacy'.
                     # We also reset to posted all the moves and payments that
                     # were 'invoicing_legacy' and were posterior to the threshold
-                    self.env.cr.execute("""
+                    self.env.cr.execute(
+                        """
                         update account_move_line aml
                         set parent_state = 'posted'
                         from account_move move
@@ -58,11 +65,17 @@ class ResCompany(models.Model):
                         where state = 'posted'
                         and date < %(switch_threshold)s
                         and company_id = %(company_id)s;
-                    """, {'company_id': record.id, 'switch_threshold': record.invoicing_switch_threshold})
+                    """,
+                        {
+                            "company_id": record.id,
+                            "switch_threshold": record.invoicing_switch_threshold,
+                        },
+                    )
                 else:
                     # If the threshold date has been emptied, we re-post all the
                     # invoicing_legacy entries.
-                    self.env.cr.execute("""
+                    self.env.cr.execute(
+                        """
                         update account_move_line aml
                         set parent_state = 'posted'
                         from account_move move
@@ -76,9 +89,11 @@ class ResCompany(models.Model):
                             payment_state_before_switch = null
                         where payment_state = 'invoicing_legacy'
                         and company_id = %(company_id)s;
-                    """, {'company_id': record.id})
+                    """,
+                        {"company_id": record.id},
+                    )
 
-                self.env['account.move'].invalidate_cache(fnames=['state'])
+                self.env["account.move"].invalidate_cache(fnames=["state"])
 
         return rslt
 
@@ -96,20 +111,26 @@ class ResCompany(models.Model):
 
         # Search a fiscal year record containing the date.
         # If a record is found, then no need further computation, we get the dates range directly.
-        fiscalyear = self.env['account.fiscal.year'].search([
-            ('company_id', '=', self.id),
-            ('date_from', '<=', date_str),
-            ('date_to', '>=', date_str),
-        ], limit=1)
+        fiscalyear = self.env["account.fiscal.year"].search(
+            [
+                ("company_id", "=", self.id),
+                ("date_from", "<=", date_str),
+                ("date_to", ">=", date_str),
+            ],
+            limit=1,
+        )
         if fiscalyear:
             return {
-                'date_from': fiscalyear.date_from,
-                'date_to': fiscalyear.date_to,
-                'record': fiscalyear,
+                "date_from": fiscalyear.date_from,
+                "date_to": fiscalyear.date_to,
+                "record": fiscalyear,
             }
 
         date_from, date_to = date_utils.get_fiscal_year(
-            current_date, day=self.fiscalyear_last_day, month=int(self.fiscalyear_last_month))
+            current_date,
+            day=self.fiscalyear_last_day,
+            month=int(self.fiscalyear_last_month),
+        )
 
         date_from_str = date_from.strftime(DEFAULT_SERVER_DATE_FORMAT)
         date_to_str = date_to.strftime(DEFAULT_SERVER_DATE_FORMAT)
@@ -119,20 +140,26 @@ class ResCompany(models.Model):
         # E.g. two fiscal year records: 2017-01-01 -> 2017-02-01 and 2017-03-01 -> 2017-12-31.
         # => The period 2017-02-02 - 2017-02-30 is not covered by a fiscal year record.
 
-        fiscalyear_from = self.env['account.fiscal.year'].search([
-            ('company_id', '=', self.id),
-            ('date_from', '<=', date_from_str),
-            ('date_to', '>=', date_from_str),
-        ], limit=1)
+        fiscalyear_from = self.env["account.fiscal.year"].search(
+            [
+                ("company_id", "=", self.id),
+                ("date_from", "<=", date_from_str),
+                ("date_to", ">=", date_from_str),
+            ],
+            limit=1,
+        )
         if fiscalyear_from:
             date_from = fiscalyear_from.date_to + timedelta(days=1)
 
-        fiscalyear_to = self.env['account.fiscal.year'].search([
-            ('company_id', '=', self.id),
-            ('date_from', '<=', date_to_str),
-            ('date_to', '>=', date_to_str),
-        ], limit=1)
+        fiscalyear_to = self.env["account.fiscal.year"].search(
+            [
+                ("company_id", "=", self.id),
+                ("date_from", "<=", date_to_str),
+                ("date_to", ">=", date_to_str),
+            ],
+            limit=1,
+        )
         if fiscalyear_to:
             date_to = fiscalyear_to.date_from - timedelta(days=1)
 
-        return {'date_from': date_from, 'date_to': date_to}
+        return {"date_from": date_from, "date_to": date_to}

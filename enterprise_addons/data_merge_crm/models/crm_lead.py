@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, api, fields
+from odoo import models
 
 
 class CrmLead(models.Model):
-    _inherit = 'crm.lead'
+    _inherit = "crm.lead"
     # As this model has his own data merge, avoid to enable the generic data_merge on that model.
     _disable_data_merge = True
 
@@ -15,9 +14,9 @@ class CrmLead(models.Model):
         merge_opp = opp_ids.merge_opportunity(auto_unlink=False)
 
         return {
-            'records_merged': len(opp_ids),
-            'log_chatter': False,
-            'post_merge': True,
+            "records_merged": len(opp_ids),
+            "log_chatter": False,
+            "post_merge": True,
         }
 
     def _elect_master(self, records):

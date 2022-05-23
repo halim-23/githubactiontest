@@ -1,68 +1,76 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import re
+
 import dateutil.parser
 import requests
-
-from odoo import models, fields, api
 from werkzeug.urls import url_join
+
+from odoo import api, models
 
 
 class SocialStreamFacebook(models.Model):
-    _inherit = 'social.stream'
+    _inherit = "social.stream"
 
     def _apply_default_name(self):
-        facebook_streams = self.filtered(lambda s: s.media_id.media_type == 'facebook')
+        facebook_streams = self.filtered(lambda s: s.media_id.media_type == "facebook")
         super(SocialStreamFacebook, (self - facebook_streams))._apply_default_name()
 
         for stream in facebook_streams:
-            stream.write({'name': '%s: %s' % (stream.stream_type_id.name, stream.account_id.name)})
+            stream.write(
+                {
+                    "name": "%s: %s"
+                    % (stream.stream_type_id.name, stream.account_id.name)
+                }
+            )
 
     def _fetch_stream_data(self):
-        if self.media_id.media_type != 'facebook':
+        if self.media_id.media_type != "facebook":
             return super(SocialStreamFacebook, self)._fetch_stream_data()
 
-        if self.stream_type_id.stream_type == 'facebook_page_posts':
-            return self._fetch_page_posts('published_posts')
-        elif self.stream_type_id.stream_type == 'facebook_page_mentions':
-            return self._fetch_page_posts('tagged')
+        if self.stream_type_id.stream_type == "facebook_page_posts":
+            return self._fetch_page_posts("published_posts")
+        elif self.stream_type_id.stream_type == "facebook_page_mentions":
+            return self._fetch_page_posts("tagged")
 
     def _fetch_page_posts(self, endpoint_name):
         self.ensure_one()
 
         facebook_fields = [
-            'id',
-            'message',
-            'from',
-            'shares',
-            'likes.limit(1).summary(true)',
-            'comments.limit(10).summary(true){message,from,like_count}',
-            'attachments',
-            'created_time',
-            'message_tags'
+            "id",
+            "message",
+            "from",
+            "shares",
+            "likes.limit(1).summary(true)",
+            "comments.limit(10).summary(true){message,from,like_count}",
+            "attachments",
+            "created_time",
+            "message_tags",
         ]
-        if endpoint_name == 'published_posts':
-            facebook_fields.append('insights.metric(post_impressions)')
+        if endpoint_name == "published_posts":
+            facebook_fields.append("insights.metric(post_impressions)")
 
-        posts_endpoint_url = url_join(self.env['social.media']._FACEBOOK_ENDPOINT, "/v10.0/%s/%s" % (self.account_id.facebook_account_id, endpoint_name))
-        result = requests.get(posts_endpoint_url,
+        posts_endpoint_url = url_join(
+            self.env["social.media"]._FACEBOOK_ENDPOINT,
+            "/v10.0/%s/%s" % (self.account_id.facebook_account_id, endpoint_name),
+        )
+        result = requests.get(
+            posts_endpoint_url,
             params={
-                'access_token': self.account_id.facebook_access_token,
-                'fields': ','.join(facebook_fields)
+                "access_token": self.account_id.facebook_access_token,
+                "fields": ",".join(facebook_fields),
             },
-            timeout=5
+            timeout=5,
         )
 
-        result_posts = result.json().get('data')
+        result_posts = result.json().get("data")
         if not result_posts:
-            self.account_id.sudo().write({'is_media_disconnected': True})
+            self.account_id.sudo().write({"is_media_disconnected": True})
             return False
 
-        facebook_post_ids = [post.get('id') for post in result_posts]
-        existing_posts = self.env['social.stream.post'].search([
-            ('stream_id', '=', self.id),
-            ('facebook_post_id', 'in', facebook_post_ids)
-        ])
+        facebook_post_ids = [post.get("id") for post in result_posts]
+        existing_posts = self.env["social.stream.post"].search(
+            [("stream_id", "=", self.id), ("facebook_post_id", "in", facebook_post_ids)]
+        )
         existing_posts_by_facebook_post_id = {
             post.facebook_post_id: post for post in existing_posts
         }
@@ -70,81 +78,114 @@ class SocialStreamFacebook(models.Model):
         posts_to_create = []
         for post in result_posts:
             values = {
-                'stream_id': self.id,
-                'message': self._format_facebook_message(post.get('message'), post.get('message_tags')),
-                'author_name': post.get('from', {}).get('name', ''),
-                'facebook_author_id': post.get('from', {}).get('id'),
-                'published_date': dateutil.parser.parse(post.get('created_time'), ignoretz=True),
-                'facebook_shares_count': post.get('shares', {}).get('count'),
-                'facebook_likes_count': post.get('likes', {}).get('summary', {}).get('total_count'),
-                'facebook_user_likes': post.get('likes', {}).get('summary', {}).get('has_liked'),
-                'facebook_comments_count': post.get('comments', {}).get('summary', {}).get('total_count'),
-                'facebook_reach': post.get('insights', {}).get('data', [{}])[0].get('values', [{}])[0].get('value'),
-                'facebook_post_id': post.get('id'),
-                'facebook_is_event_post': post.get('attachments', {}).get('data', [{}])[0].get('type') == 'event',
+                "stream_id": self.id,
+                "message": self._format_facebook_message(
+                    post.get("message"), post.get("message_tags")
+                ),
+                "author_name": post.get("from", {}).get("name", ""),
+                "facebook_author_id": post.get("from", {}).get("id"),
+                "published_date": dateutil.parser.parse(
+                    post.get("created_time"), ignoretz=True
+                ),
+                "facebook_shares_count": post.get("shares", {}).get("count"),
+                "facebook_likes_count": post.get("likes", {})
+                .get("summary", {})
+                .get("total_count"),
+                "facebook_user_likes": post.get("likes", {})
+                .get("summary", {})
+                .get("has_liked"),
+                "facebook_comments_count": post.get("comments", {})
+                .get("summary", {})
+                .get("total_count"),
+                "facebook_reach": post.get("insights", {})
+                .get("data", [{}])[0]
+                .get("values", [{}])[0]
+                .get("value"),
+                "facebook_post_id": post.get("id"),
+                "facebook_is_event_post": post.get("attachments", {})
+                .get("data", [{}])[0]
+                .get("type")
+                == "event",
             }
 
-            existing_post = existing_posts_by_facebook_post_id.get(post.get('id'))
+            existing_post = existing_posts_by_facebook_post_id.get(post.get("id"))
             if existing_post:
                 existing_post.sudo().write(values)
             else:
                 # attachments are only extracted for new posts
                 attachments = self._extract_facebook_attachments(post)
-                if attachments or values['message']:
+                if attachments or values["message"]:
                     # do not create post without content
                     values.update(attachments)
                     posts_to_create.append(values)
 
-        stream_posts = self.env['social.stream.post'].sudo().create(posts_to_create)
-        return any(stream_post.stream_id.create_uid.id == self.env.uid for stream_post in stream_posts)
+        stream_posts = self.env["social.stream.post"].sudo().create(posts_to_create)
+        return any(
+            stream_post.stream_id.create_uid.id == self.env.uid
+            for stream_post in stream_posts
+        )
 
     @api.model
     def _extract_facebook_attachments(self, post):
         result = {}
 
-        for attachment in post.get('attachments', {}).get('data', []):
-            if attachment.get('type') == 'share':
-                result.update({
-                    'link_title': attachment.get('title'),
-                    'link_description': attachment.get('description'),
-                    'link_url': attachment.get('url'),
-                })
+        for attachment in post.get("attachments", {}).get("data", []):
+            if attachment.get("type") == "share":
+                result.update(
+                    {
+                        "link_title": attachment.get("title"),
+                        "link_description": attachment.get("description"),
+                        "link_url": attachment.get("url"),
+                    }
+                )
 
-                if attachment.get('media'):
-                    result.update({
-                        'link_image_url': attachment.get('media').get('image').get('src')
-                    })
-            elif attachment.get('type') == 'album':
+                if attachment.get("media"):
+                    result.update(
+                        {
+                            "link_image_url": attachment.get("media")
+                            .get("image")
+                            .get("src")
+                        }
+                    )
+            elif attachment.get("type") == "album":
                 images = []
                 images_urls = []
-                for sub_image in attachment.get('subattachments', {}).get('data', []):
-                    image_url = sub_image.get('media').get('image').get('src')
-                    images.append({
-                        'image_url': image_url
-                    })
+                for sub_image in attachment.get("subattachments", {}).get("data", []):
+                    image_url = sub_image.get("media").get("image").get("src")
+                    images.append({"image_url": image_url})
                     images_urls.append(image_url)
 
                 if images:
-                    result.update({
-                        'stream_post_image_ids': [(0, 0, attachment) for attachment in images],
-                    })
-            elif attachment.get('type') in ['photo', 'animated_image_video']:
+                    result.update(
+                        {
+                            "stream_post_image_ids": [
+                                (0, 0, attachment) for attachment in images
+                            ],
+                        }
+                    )
+            elif attachment.get("type") in ["photo", "animated_image_video"]:
                 # TODO improvement later: handle videos in Feed view to correctly display FB GIFs?
-                image_src = attachment.get('media', {}).get('image', {}).get('src')
+                image_src = attachment.get("media", {}).get("image", {}).get("src")
                 if image_src:
-                    result.update({'stream_post_image_ids': [(0, 0, {'image_url': image_src})]})
+                    result.update(
+                        {"stream_post_image_ids": [(0, 0, {"image_url": image_src})]}
+                    )
 
-            elif attachment.get('type') == 'event':
+            elif attachment.get("type") == "event":
                 # events creation post are handle like link and image in the frontend
-                result.update({
-                    'link_title': attachment.get('title'),
-                    'link_description': attachment.get('description'),
-                    'link_url': attachment.get('target', {}).get('url', ''),
-                })
+                result.update(
+                    {
+                        "link_title": attachment.get("title"),
+                        "link_description": attachment.get("description"),
+                        "link_url": attachment.get("target", {}).get("url", ""),
+                    }
+                )
 
-                image_src = attachment.get('media', {}).get('image', {}).get('src')
+                image_src = attachment.get("media", {}).get("image", {}).get("src")
                 if image_src:
-                    result.update({'stream_post_image_ids': [(0, 0, {'image_url': image_src})]})
+                    result.update(
+                        {"stream_post_image_ids": [(0, 0, {"image_url": image_src})]}
+                    )
 
         return result
 
@@ -182,18 +223,20 @@ class SocialStreamFacebook(models.Model):
             Remove False positive in the message
                 (e.g: if someone write "@[42] test" without tagging someone)
             """
-            return re.sub(r'\B@\[', '@ [', message)
+            return re.sub(r"\B@\[", "@ [", message)
 
         # Remove Facebook hashtags that have are considered as tags with ID but are not managed by this method
-        tags = [tag for tag in tags or [] if not tag.get('name', '').startswith('#')]
+        tags = [tag for tag in tags or [] if not tag.get("name", "").startswith("#")]
 
         message_index = 0
-        message_with_tags = ''
+        message_with_tags = ""
         for tag in tags or []:
-            no_space_name = re.sub(r'\s+', '-', re.sub(r'\s*-\s*', '-', tag['name']))
-            forged_tag = '@[%s] %s' % (tag['id'], no_space_name)
-            message_with_tags += remove_forged_tags(message[message_index:tag['offset']]) + forged_tag
-            message_index = tag['offset'] + tag['length']
+            no_space_name = re.sub(r"\s+", "-", re.sub(r"\s*-\s*", "-", tag["name"]))
+            forged_tag = "@[%s] %s" % (tag["id"], no_space_name)
+            message_with_tags += (
+                remove_forged_tags(message[message_index : tag["offset"]]) + forged_tag
+            )
+            message_index = tag["offset"] + tag["length"]
 
         message_with_tags += remove_forged_tags(message[message_index:])
 

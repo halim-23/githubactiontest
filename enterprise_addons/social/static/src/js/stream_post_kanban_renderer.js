@@ -1,24 +1,24 @@
-odoo.define('social.social_stream_post_kanban_renderer', function (require) {
-"use strict";
+odoo.define("social.social_stream_post_kanban_renderer", function (require) {
+  "use strict";
 
-var core = require('web.core');
-var KanbanColumn = require('web.KanbanColumn');
-var KanbanRenderer = require('web.KanbanRenderer');
-var QWeb = core.qweb;
-const _t = core._t;
-var utils = require('web.utils');
+  var core = require("web.core");
+  var KanbanColumn = require("web.KanbanColumn");
+  var KanbanRenderer = require("web.KanbanRenderer");
+  var QWeb = core.qweb;
+  const _t = core._t;
+  var utils = require("web.utils");
 
-/**
- * Simple override in order to provide a slightly modified template that shows the
- * social.media icon before the social.stream name (if grouped by stream_id).
- */
-var StreamPostKanbanColumn = KanbanColumn.extend({
-    template: 'social.KanbanView.Group'
-});
+  /**
+   * Simple override in order to provide a slightly modified template that shows the
+   * social.media icon before the social.stream name (if grouped by stream_id).
+   */
+  var StreamPostKanbanColumn = KanbanColumn.extend({
+    template: "social.KanbanView.Group",
+  });
 
-var StreamPostKanbanRenderer = KanbanRenderer.extend({
+  var StreamPostKanbanRenderer = KanbanRenderer.extend({
     config: _.extend({}, KanbanRenderer.prototype.config, {
-        KanbanColumn: StreamPostKanbanColumn
+      KanbanColumn: StreamPostKanbanColumn,
     }),
 
     /**
@@ -65,18 +65,20 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * for the dashboard when the user scrolls right.
      */
     start: function () {
-        var self = this;
-        this.$before = this._createBeforeSectionElement();
-        return this._super.apply(this, arguments).then(function () {
-            self.$el.before(self.$before);
-            self.$el.closest('.o_content').addClass('o_social_stream_post_kanban_view_wrapper bg-100');
-            self._prependNewContentElement();
-        });
+      var self = this;
+      this.$before = this._createBeforeSectionElement();
+      return this._super.apply(this, arguments).then(function () {
+        self.$el.before(self.$before);
+        self.$el
+          .closest(".o_content")
+          .addClass("o_social_stream_post_kanban_view_wrapper bg-100");
+        self._prependNewContentElement();
+      });
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * This method will prepend to the Kanban a "New Content" link that is shown whenever we detect
@@ -84,21 +86,32 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * When clicked, it triggers a 'new_content_clicked' event caught by the controller.
      */
     _prependNewContentElement: function () {
-        var self = this;
-        this.$el.closest('.o_content').prepend($('<a>', {
-            class: 'o_social_stream_post_kanban_new_content alert alert-info mb-0 text-center border-bottom' + (this.refreshRequired ? '' : ' d-none'),
-            href: '#',
-            text: _t('New content available.')
-        }).append($('<i>', {
-            class: 'fa fa-refresh ml-2 mr-1'
-        })).append($('<b>', {
-            text: _t('Click to refresh.')
-        })).on('click', function (ev) {
+      var self = this;
+      this.$el.closest(".o_content").prepend(
+        $("<a>", {
+          class:
+            "o_social_stream_post_kanban_new_content alert alert-info mb-0 text-center border-bottom" +
+            (this.refreshRequired ? "" : " d-none"),
+          href: "#",
+          text: _t("New content available."),
+        })
+          .append(
+            $("<i>", {
+              class: "fa fa-refresh ml-2 mr-1",
+            })
+          )
+          .append(
+            $("<b>", {
+              text: _t("Click to refresh."),
+            })
+          )
+          .on("click", function (ev) {
             ev.preventDefault();
-            $(ev.currentTarget).addClass('d-none');
+            $(ev.currentTarget).addClass("d-none");
             self.refreshRequired = false;
-            self.trigger_up('new_content_clicked');
-        }));
+            self.trigger_up("new_content_clicked");
+          })
+      );
     },
 
     /**
@@ -107,9 +120,9 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @override
      */
     _setState: function () {
-        var socialAccountsStats = this.state.socialAccountsStats;
-        this._super.apply(this, arguments);
-        this.state.socialAccountsStats = socialAccountsStats;
+      var socialAccountsStats = this.state.socialAccountsStats;
+      this._super.apply(this, arguments);
+      this.state.socialAccountsStats = socialAccountsStats;
     },
 
     /**
@@ -120,17 +133,17 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @returns {Promise}
      */
     _render: function () {
-        var self = this;
-        return this._super.apply(this, arguments).then(function () {
-            if (!self.refreshRequired) {
-                self.$el
-                    .closest('.o_content')
-                    .find('.o_social_stream_post_kanban_new_content')
-                    .addClass('d-none');
-            }
-            self._renderAccountStats();
-            self._insertThousandSeparators(self.$el, '.o_social_kanban_likes_count');
-        });
+      var self = this;
+      return this._super.apply(this, arguments).then(function () {
+        if (!self.refreshRequired) {
+          self.$el
+            .closest(".o_content")
+            .find(".o_social_stream_post_kanban_new_content")
+            .addClass("d-none");
+        }
+        self._renderAccountStats();
+        self._insertThousandSeparators(self.$el, ".o_social_kanban_likes_count");
+      });
     },
 
     /**
@@ -139,47 +152,48 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @private
      */
     _renderAccountStats: function () {
-        this.$before.empty();
-        if (this.state.socialAccountsStats && this.state.socialAccountsStats.length !== 0) {
-            var $socialAccountsStats = QWeb.render(
-                'social.AccountsStats', {
-                    widget: this,
-                    socialAccounts: this.state.socialAccountsStats,
-                }
-            );
+      this.$before.empty();
+      if (
+        this.state.socialAccountsStats &&
+        this.state.socialAccountsStats.length !== 0
+      ) {
+        var $socialAccountsStats = QWeb.render("social.AccountsStats", {
+          widget: this,
+          socialAccounts: this.state.socialAccountsStats,
+        });
 
-            if (this.$before.find('.o_social_stream_stat_box').length > 0) {
-                var $newElement = this._createBeforeSectionElement();
-                $newElement.append($socialAccountsStats);
-                // We use replaceWith to avoid as much flickering as possible.
-                this.$before.replaceWith($newElement);
-            } else {
-                this.$before.append($socialAccountsStats);
-            }
-
-            this._insertThousandSeparators(this.$before, '.social_account_stat_value');
-
-            // This DOM element is periodically refreshed (removed/re-rendered) by the kanban view (when refreshing statistics).
-            // If the element is removed while its popover is open, the popover will not be closed automatically anymore.
-            // That's why we need to listen to the "remove" event and dispose the popover accordingly.
-            var $popoverElement = this.$before.find('[data-toggle="popover"]');
-            $popoverElement.popover({
-                trigger: 'hover',
-                delay: { "show": 500, "hide": 0 },
-            });
-            $popoverElement.on("remove", () => {
-                $popoverElement.popover('dispose');
-            });
+        if (this.$before.find(".o_social_stream_stat_box").length > 0) {
+          var $newElement = this._createBeforeSectionElement();
+          $newElement.append($socialAccountsStats);
+          // We use replaceWith to avoid as much flickering as possible.
+          this.$before.replaceWith($newElement);
+        } else {
+          this.$before.append($socialAccountsStats);
         }
+
+        this._insertThousandSeparators(this.$before, ".social_account_stat_value");
+
+        // This DOM element is periodically refreshed (removed/re-rendered) by the kanban view (when refreshing statistics).
+        // If the element is removed while its popover is open, the popover will not be closed automatically anymore.
+        // That's why we need to listen to the "remove" event and dispose the popover accordingly.
+        var $popoverElement = this.$before.find('[data-toggle="popover"]');
+        $popoverElement.popover({
+          trigger: "hover",
+          delay: {show: 500, hide: 0},
+        });
+        $popoverElement.on("remove", () => {
+          $popoverElement.popover("dispose");
+        });
+      }
     },
 
     /**
      * @private
      */
     _createBeforeSectionElement: function () {
-        return $('<section/>', {
-            class: 'o_social_stream_post_kanban_before d-flex flex-nowrap border-bottom'
-        });
+      return $("<section/>", {
+        class: "o_social_stream_post_kanban_before d-flex flex-nowrap border-bottom",
+      });
     },
 
     /**
@@ -190,22 +204,22 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @private
      */
     _hasStories: function (socialAccount) {
-        return true;
+      return true;
     },
 
     /**
      * Format the content of integer fields to improve readability, by adding thousand separators,
-     * which depend on current language. e.g. 1232342 displays 1,232,342 for en_us language. 
-     * 
+     * which depend on current language. e.g. 1232342 displays 1,232,342 for en_us language.
+     *
      * @param {jQuery} $elementExplored  - Element where toFormatSelector is searched for.
      * @param {String} toFormatSelector - Selector of elements containing integer values to be formatted.
      * @private
      */
     _insertThousandSeparators: function ($elementExplored, toFormatSelector) {
-        $elementExplored.find(toFormatSelector).each(function(){
-            var integerText = $(this).text();
-            $(this).text(utils.insert_thousand_seps(integerText));
-        });
+      $elementExplored.find(toFormatSelector).each(function () {
+        var integerText = $(this).text();
+        $(this).text(utils.insert_thousand_seps(integerText));
+      });
     },
 
     /**
@@ -217,20 +231,20 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @override
      */
     _toggleNoContentHelper: function (remove) {
-        var displayNoContentHelper =
-            !remove &&
-            !this._hasContent() &&
-            !!this.noContentHelp &&
-            !(this.quickCreate && !this.quickCreate.folded);
+      var displayNoContentHelper =
+        !remove &&
+        !this._hasContent() &&
+        Boolean(this.noContentHelp) &&
+        !(this.quickCreate && !this.quickCreate.folded);
 
-        var $noContentHelper = this.$('.o_view_nocontent');
+      var $noContentHelper = this.$(".o_view_nocontent");
 
-        if (displayNoContentHelper && !$noContentHelper.length) {
-            this._renderNoContentHelper();
-        }
-        if (!displayNoContentHelper && $noContentHelper.length) {
-            $noContentHelper.remove();
-        }
+      if (displayNoContentHelper && !$noContentHelper.length) {
+        this._renderNoContentHelper();
+      }
+      if (!displayNoContentHelper && $noContentHelper.length) {
+        $noContentHelper.remove();
+      }
     },
 
     /**
@@ -246,13 +260,13 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @private
      */
     _refreshStreamsRequired: function () {
-        this.refreshRequired = true;
-        if (this.$el) {
-            this.$el
-                .closest('.o_content')
-                .find('.o_social_stream_post_kanban_new_content')
-                .removeClass('d-none');
-        }
+      this.refreshRequired = true;
+      if (this.$el) {
+        this.$el
+          .closest(".o_content")
+          .find(".o_social_stream_post_kanban_new_content")
+          .removeClass("d-none");
+      }
     },
 
     /**
@@ -266,13 +280,12 @@ var StreamPostKanbanRenderer = KanbanRenderer.extend({
      * @private
      */
     _refreshStats: function (socialAccountsStats) {
-        this.state.socialAccountsStats = socialAccountsStats;
-        if (this.$el) {
-            this._renderAccountStats();
-        }
-    }
-});
+      this.state.socialAccountsStats = socialAccountsStats;
+      if (this.$el) {
+        this._renderAccountStats();
+      }
+    },
+  });
 
-return StreamPostKanbanRenderer;
-
+  return StreamPostKanbanRenderer;
 });

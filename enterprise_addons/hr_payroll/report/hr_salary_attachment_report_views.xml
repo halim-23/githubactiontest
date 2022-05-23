@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="hr_salary_attachment_report_action" model="ir.actions.act_window">
         <field name="name">Salary Attachment Report</field>
@@ -12,12 +12,12 @@
         <field name="model">hr.salary.attachment.report</field>
         <field name="arch" type="xml">
             <pivot string="Salary Attachment Report" disable_linking="1" sample="1">
-                <field name="payslip_end_date" invisible="1"/>
-                <field name="employee_id" type="row"/>
-                <field name="payslip_id"  type="col"/>
-                <field name="attachment_amount" type="measure"/>
-                <field name="assignment_amount" type="measure"/>
-                <field name="child_support_amount" type="measure"/>
+                <field name="payslip_end_date" invisible="1" />
+                <field name="employee_id" type="row" />
+                <field name="payslip_id" type="col" />
+                <field name="attachment_amount" type="measure" />
+                <field name="assignment_amount" type="measure" />
+                <field name="child_support_amount" type="measure" />
             </pivot>
         </field>
     </record>
@@ -27,9 +27,13 @@
         <field name="model">hr.salary.attachment.report</field>
         <field name="arch" type="xml">
             <search>
-                <field name="employee_id"/>
-                <field name="payslip_id"/>
-                <filter name="filter_payslip_end_date" date="payslip_end_date" default_period="this_year"/>
+                <field name="employee_id" />
+                <field name="payslip_id" />
+                <filter
+          name="filter_payslip_end_date"
+          date="payslip_end_date"
+          default_period="this_year"
+        />
             </search>
         </field>
     </record>

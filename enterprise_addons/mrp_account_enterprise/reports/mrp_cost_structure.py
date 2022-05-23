@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -8,15 +7,17 @@ from odoo.tools import float_round
 
 
 class MrpCostStructure(models.AbstractModel):
-    _name = 'report.mrp_account_enterprise.mrp_cost_structure'
-    _description = 'MRP Cost Structure Report'
+    _name = "report.mrp_account_enterprise.mrp_cost_structure"
+    _description = "MRP Cost Structure Report"
 
     def get_lines(self, productions):
-        ProductProduct = self.env['product.product']
-        StockMove = self.env['stock.move']
+        ProductProduct = self.env["product.product"]
+        StockMove = self.env["stock.move"]
         res = []
-        currency_table = self.env['res.currency']._get_query_currency_table({'multi_company': True, 'date': {'date_to': fields.Date.today()}})
-        for product in productions.mapped('product_id'):
+        currency_table = self.env["res.currency"]._get_query_currency_table(
+            {"multi_company": True, "date": {"date_to": fields.Date.today()}}
+        )
+        for product in productions.mapped("product_id"):
             mos = productions.filtered(lambda m: m.product_id == product)
             total_cost = 0.0
             # variables to calc cost share (i.e. between products/byproducts) since MOs can have varying distributions
@@ -26,7 +27,9 @@ class MrpCostStructure(models.AbstractModel):
 
             # Get operations details + cost
             operations = []
-            Workorders = self.env['mrp.workorder'].search([('production_id', 'in', mos.ids)])
+            Workorders = self.env["mrp.workorder"].search(
+                [("production_id", "in", mos.ids)]
+            )
             if Workorders:
                 query_str = """SELECT
                                     wo.production_id,
@@ -47,13 +50,32 @@ class MrpCostStructure(models.AbstractModel):
                                 WHERE t.workorder_id IS NOT NULL AND t.workorder_id IN %s
                                 GROUP BY wo.production_id, wo.id, op.id, wo.name, wc.costs_hour, partner.name, t.user_id, currency_table.rate
                                 ORDER BY wo.name, partner.name
-                            """.format(currency_table=currency_table,)
-                self.env.cr.execute(query_str, (tuple(Workorders.ids), ))
-                for mo_id, dummy_wo_id, op_id, wo_name, user, duration, cost_hour, currency_rate in self.env.cr.fetchall():
+                            """.format(
+                    currency_table=currency_table,
+                )
+                self.env.cr.execute(query_str, (tuple(Workorders.ids),))
+                for (
+                    mo_id,
+                    dummy_wo_id,
+                    op_id,
+                    wo_name,
+                    user,
+                    duration,
+                    cost_hour,
+                    currency_rate,
+                ) in self.env.cr.fetchall():
                     cost = duration / 60.0 * cost_hour * currency_rate
                     total_cost_by_mo[mo_id] += cost
                     operation_cost_by_mo[mo_id] += cost
-                    operations.append([user, op_id, wo_name, duration / 60.0, cost_hour * currency_rate])
+                    operations.append(
+                        [
+                            user,
+                            op_id,
+                            wo_name,
+                            duration / 60.0,
+                            cost_hour * currency_rate,
+                        ]
+                    )
 
             # Get the cost of raw material effectively used
             raw_material_moves = []
@@ -68,21 +90,31 @@ class MrpCostStructure(models.AbstractModel):
                        LEFT JOIN mrp_production AS mo on sm.raw_material_production_id = mo.id
                        LEFT JOIN {currency_table} ON currency_table.company_id = mo.company_id
                             WHERE sm.raw_material_production_id in %s AND sm.state != 'cancel' AND sm.product_qty != 0 AND scrapped != 't'
-                         GROUP BY sm.product_id, mo.id, currency_table.rate""".format(currency_table=currency_table,)
-            self.env.cr.execute(query_str, (tuple(mos.ids), ))
+                         GROUP BY sm.product_id, mo.id, currency_table.rate""".format(
+                currency_table=currency_table,
+            )
+            self.env.cr.execute(query_str, (tuple(mos.ids),))
             for product_id, mo_id, qty, cost, currency_rate in self.env.cr.fetchall():
                 cost *= currency_rate
-                raw_material_moves.append({
-                    'qty': qty,
-                    'cost': cost,
-                    'product_id': ProductProduct.browse(product_id),
-                })
+                raw_material_moves.append(
+                    {
+                        "qty": qty,
+                        "cost": cost,
+                        "product_id": ProductProduct.browse(product_id),
+                    }
+                )
                 total_cost_by_mo[mo_id] += cost
                 component_cost_by_mo[mo_id] += cost
                 total_cost += cost
 
             # Get the cost of scrapped materials
-            scraps = StockMove.search([('production_id', 'in', mos.ids), ('scrapped', '=', True), ('state', '=', 'done')])
+            scraps = StockMove.search(
+                [
+                    ("production_id", "in", mos.ids),
+                    ("scrapped", "=", True),
+                    ("state", "=", "done"),
+                ]
+            )
 
             # Get the byproducts and their total + avg per uom cost share amounts
             total_cost_by_product = defaultdict(float)
@@ -92,66 +124,93 @@ class MrpCostStructure(models.AbstractModel):
             operation_cost_by_product = defaultdict(float)
             # tracking consistent uom usage across each byproduct when not using byproduct's product uom is too much of a pain
             # => calculate byproduct qtys/cost in same uom + cost shares (they are MO dependent)
-            byproduct_moves = mos.move_byproduct_ids.filtered(lambda m: m.state != 'cancel')
+            byproduct_moves = mos.move_byproduct_ids.filtered(
+                lambda m: m.state != "cancel"
+            )
             for move in byproduct_moves:
                 qty_by_byproduct[move.product_id] += move.product_qty
                 # byproducts w/o cost share shouldn't be included in cost breakdown
                 if move.cost_share != 0:
                     qty_by_byproduct_w_costshare[move.product_id] += move.product_qty
                     cost_share = move.cost_share / 100
-                    total_cost_by_product[move.product_id] += total_cost_by_mo[move.production_id.id] * cost_share
-                    component_cost_by_product[move.product_id] += component_cost_by_mo[move.production_id.id] * cost_share
-                    operation_cost_by_product[move.product_id] += operation_cost_by_mo[move.production_id.id] * cost_share
+                    total_cost_by_product[move.product_id] += (
+                        total_cost_by_mo[move.production_id.id] * cost_share
+                    )
+                    component_cost_by_product[move.product_id] += (
+                        component_cost_by_mo[move.production_id.id] * cost_share
+                    )
+                    operation_cost_by_product[move.product_id] += (
+                        operation_cost_by_mo[move.production_id.id] * cost_share
+                    )
 
             # Get product qty and its relative total + avg per uom cost share amount
             uom = product.uom_id
             mo_qty = 0
             for m in mos:
-                cost_share = float_round(1 - sum(m.move_finished_ids.mapped('cost_share')) / 100, precision_rounding=0.0001)
+                cost_share = float_round(
+                    1 - sum(m.move_finished_ids.mapped("cost_share")) / 100,
+                    precision_rounding=0.0001,
+                )
                 total_cost_by_product[product] += total_cost_by_mo[m.id] * cost_share
-                component_cost_by_product[product] += component_cost_by_mo[m.id] * cost_share
-                operation_cost_by_product[product] += operation_cost_by_mo[m.id] * cost_share
-                qty = sum(m.move_finished_ids.filtered(lambda mo: mo.state == 'done' and mo.product_id == product).mapped('product_uom_qty'))
+                component_cost_by_product[product] += (
+                    component_cost_by_mo[m.id] * cost_share
+                )
+                operation_cost_by_product[product] += (
+                    operation_cost_by_mo[m.id] * cost_share
+                )
+                qty = sum(
+                    m.move_finished_ids.filtered(
+                        lambda mo: mo.state == "done" and mo.product_id == product
+                    ).mapped("product_uom_qty")
+                )
                 if m.product_uom_id.id == uom.id:
                     mo_qty += qty
                 else:
                     mo_qty += m.product_uom_id._compute_quantity(qty, uom)
-            res.append({
-                'product': product,
-                'mo_qty': mo_qty,
-                'mo_uom': uom,
-                'operations': operations,
-                'currency': self.env.company.currency_id,
-                'raw_material_moves': raw_material_moves,
-                'total_cost': total_cost,
-                'scraps': scraps,
-                'mocount': len(mos),
-                'byproduct_moves': byproduct_moves,
-                'component_cost_by_product': component_cost_by_product,
-                'operation_cost_by_product': operation_cost_by_product,
-                'qty_by_byproduct': qty_by_byproduct,
-                'qty_by_byproduct_w_costshare': qty_by_byproduct_w_costshare,
-                'total_cost_by_product': total_cost_by_product
-            })
+            res.append(
+                {
+                    "product": product,
+                    "mo_qty": mo_qty,
+                    "mo_uom": uom,
+                    "operations": operations,
+                    "currency": self.env.company.currency_id,
+                    "raw_material_moves": raw_material_moves,
+                    "total_cost": total_cost,
+                    "scraps": scraps,
+                    "mocount": len(mos),
+                    "byproduct_moves": byproduct_moves,
+                    "component_cost_by_product": component_cost_by_product,
+                    "operation_cost_by_product": operation_cost_by_product,
+                    "qty_by_byproduct": qty_by_byproduct,
+                    "qty_by_byproduct_w_costshare": qty_by_byproduct_w_costshare,
+                    "total_cost_by_product": total_cost_by_product,
+                }
+            )
         return res
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        productions = self.env['mrp.production']\
-            .browse(docids)\
-            .filtered(lambda p: p.state != 'cancel')
+        productions = (
+            self.env["mrp.production"]
+            .browse(docids)
+            .filtered(lambda p: p.state != "cancel")
+        )
         res = None
-        if all(production.state == 'done' for production in productions):
+        if all(production.state == "done" for production in productions):
             res = self.get_lines(productions)
-        return {'lines': res}
+        return {"lines": res}
 
 
 class ProductTemplateCostStructure(models.AbstractModel):
-    _name = 'report.mrp_account_enterprise.product_template_cost_structure'
-    _description = 'Product Template Cost Structure Report'
+    _name = "report.mrp_account_enterprise.product_template_cost_structure"
+    _description = "Product Template Cost Structure Report"
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        productions = self.env['mrp.production'].search([('product_id', 'in', docids), ('state', '=', 'done')])
-        res = self.env['report.mrp_account_enterprise.mrp_cost_structure'].get_lines(productions)
-        return {'lines': res}
+        productions = self.env["mrp.production"].search(
+            [("product_id", "in", docids), ("state", "=", "done")]
+        )
+        res = self.env["report.mrp_account_enterprise.mrp_cost_structure"].get_lines(
+            productions
+        )
+        return {"lines": res}

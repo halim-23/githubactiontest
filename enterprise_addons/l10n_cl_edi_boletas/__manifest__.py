@@ -1,30 +1,29 @@
-# -*- coding: utf-8 -*-
 {
     "name": """Chile - Electronic Receipt""",
-    'version': '1.0',
-    'category': 'Accounting/Localizations/EDI',
-    'sequence': 12,
-    'author': 'Blanco Martín & Asociados',
-    'website': 'http://blancomartin.cl',
-    'depends': ['l10n_cl_edi'],
-    'data': [
-        'data/cron.xml',
-        'template/daily_sales_book_template.xml',
-        'template/dte_template.xml',
-        'security/ir.model.access.csv',
-        'security/l10n_cl_edi_boletas_security.xml',
-        'views/l10n_cl_daily_sales_book_views.xml',
+    "version": "1.0",
+    "category": "Accounting/Localizations/EDI",
+    "sequence": 12,
+    "author": "Blanco Martín & Asociados",
+    "website": "http://blancomartin.cl",
+    "depends": ["l10n_cl_edi"],
+    "data": [
+        "data/cron.xml",
+        "template/daily_sales_book_template.xml",
+        "template/dte_template.xml",
+        "security/ir.model.access.csv",
+        "security/l10n_cl_edi_boletas_security.xml",
+        "views/l10n_cl_daily_sales_book_views.xml",
     ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
-    'description': """
+    "installable": True,
+    "auto_install": False,
+    "application": False,
+    "description": """
 Purpose of the Module:
 ======================
 
-As part of the SII requirements (Legal requirement in Chile), 
-beginning on March 2021 boletas transactions must be sent to the SII under the 
-electronic workflow using a different web service than the one used for electronic Invoices. 
+As part of the SII requirements (Legal requirement in Chile),
+beginning on March 2021 boletas transactions must be sent to the SII under the
+electronic workflow using a different web service than the one used for electronic Invoices.
 Previously, there was no need to send the boletas to the SII, just a daily report.
 
 Additionally of sending the Boleta individually (with the EDI workflow),
@@ -49,5 +48,5 @@ Here are the differences:
 Highlights from this SII Guide:
     https://www.sii.cl/factura_electronica/factura_mercado/Instructivo_Emision_Boleta_Elect.pdf
     """,
-    'license': 'OEEL-1',
+    "license": "OEEL-1",
 }

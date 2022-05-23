@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -6,10 +6,12 @@
             <field name="name">res.partner.view.form.inherit.sms</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="sms.res_partner_view_form" />
-            <field name="priority" eval="1"/>
+            <field name="priority" eval="1" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='phone']" position="attributes">
-                    <attribute name="required">'phone' in context.get('required_fields', [])</attribute>
+                    <attribute
+            name="required"
+          >'phone' in context.get('required_fields', [])</attribute>
                 </xpath>
             </field>
         </record>

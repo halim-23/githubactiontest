@@ -1,6 +1,10 @@
 <?xml version="1.0" ?>
-<RespuestaDTE xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              version="1.0" xmlns="http://www.sii.cl/SiiDte">
+<RespuestaDTE
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="1.0"
+  xmlns="http://www.sii.cl/SiiDte"
+>
     <Resultado ID="RespEnvDTE-301">
         <Caratula version="1.0">
             <RutResponde>76086428-5</RutResponde>
@@ -21,5 +25,5 @@
             <EstadoDTEGlosa>ACEPTADO OK</EstadoDTEGlosa>
         </ResultadoDTE>
     </Resultado>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"></Signature>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" />
 </RespuestaDTE>

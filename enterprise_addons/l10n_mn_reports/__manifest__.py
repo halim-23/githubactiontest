@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    "name" : "Mongolia - Accounting Reports",
-    'icon': '/l10n_mn/static/description/icon.png',
-    "version" : "1.0",
-    'category': 'Accounting/Localizations/Reporting',
-    "author" : "BumanIT LLC, Odoo S.A",
+    "name": "Mongolia - Accounting Reports",
+    "icon": "/l10n_mn/static/description/icon.png",
+    "version": "1.0",
+    "category": "Accounting/Localizations/Reporting",
+    "author": "BumanIT LLC, Odoo S.A",
     "description": """
 Mongolian accounting reports.
 ====================================================
@@ -18,15 +17,15 @@ Mongolian accounting reports.
 
 Financial requirement contributor: Baskhuu Lodoikhuu. BumanIT LLC
 """,
-    "depends": ['l10n_mn', 'account_reports'],
-    'data': [
-        'data/balancesheet_report.xml',
-        'data/cashflow_report.xml',
-        'data/profit_and_loss_reports.xml',
-        'data/vat_report.xml',
-        'data/tax_report.xml'
+    "depends": ["l10n_mn", "account_reports"],
+    "data": [
+        "data/balancesheet_report.xml",
+        "data/cashflow_report.xml",
+        "data/profit_and_loss_reports.xml",
+        "data/vat_report.xml",
+        "data/tax_report.xml",
     ],
-    'auto_install': True,
-    'installable': True,
-    'license': 'OEEL-1',
+    "auto_install": True,
+    "installable": True,
+    "license": "OEEL-1",
 }

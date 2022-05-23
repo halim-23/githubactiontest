@@ -9,7 +9,6 @@ on:
       - "*"
 
 env:
-  ADDONS_PATH: ./enterprise_addons
   ADDONS_DIR: custom_addons
 
 jobs:

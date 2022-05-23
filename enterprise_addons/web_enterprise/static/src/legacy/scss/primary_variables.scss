@@ -8,16 +8,16 @@ $o-font-size-base-touch: 15px;
 
 // Colors
 $o-gray-100: #f6f7fa;
-$o-gray-200: #E0E2E6;
-$o-gray-300: #C9CCD2;
-$o-gray-400: #9DA1AA;
-$o-gray-500: #80848F;
+$o-gray-200: #e0e2e6;
+$o-gray-300: #c9ccd2;
+$o-gray-400: #9da1aa;
+$o-gray-500: #80848f;
 $o-gray-600: #626774;
-$o-gray-700: #444B5A;
-$o-gray-800: #272E3F;
+$o-gray-700: #444b5a;
+$o-gray-800: #272e3f;
 $o-gray-900: #091124;
 
-$o-enterprise-color: #714B67;
+$o-enterprise-color: #714b67;
 $o-enterprise-primary-color: #017e84;
 
 $o-brand-odoo: $o-enterprise-color;
@@ -36,9 +36,9 @@ $o-btn-secondary-hover-border: $o-gray-200;
 
 $o-dropdown-box-shadow: 0 12px 14px -10px rgba(black, 0.25);
 
-$o-border-radius: .25rem;
-$o-border-radius-lg: .3rem;
-$o-border-radius-sm: .2rem;
+$o-border-radius: 0.25rem;
+$o-border-radius-lg: 0.3rem;
+$o-border-radius-sm: 0.2rem;
 
 // o-inputs
 $o-input-padding-y: 1px;
@@ -54,7 +54,7 @@ $o-home-menu-app-icon-max-width: 70px;
 $o-kanban-header-title-height: 50px;
 
 // snackbar
-$o-snackbar-background-color: #FFF;
+$o-snackbar-background-color: #fff;
 $o-snackbar-color: $o-gray-700;
 $o-snackbar-height: $o-kanban-header-title-height;
 $o-snackbar-left: 15px;

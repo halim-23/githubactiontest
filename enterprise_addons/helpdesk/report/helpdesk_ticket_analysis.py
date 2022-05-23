@@ -1,38 +1,49 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, tools
+
 from odoo.addons.helpdesk.models.helpdesk_ticket import TICKET_PRIORITY
 
 
 class HelpdeskTicketReport(models.Model):
-    _name = 'helpdesk.ticket.report.analysis'
+    _name = "helpdesk.ticket.report.analysis"
     _description = "Ticket Analysis"
     _auto = False
-    _order = 'create_date DESC'
+    _order = "create_date DESC"
 
-    ticket_id = fields.Many2one('helpdesk.ticket', string='Ticket', readonly=True)
+    ticket_id = fields.Many2one("helpdesk.ticket", string="Ticket", readonly=True)
     sla_fail = fields.Boolean(related="ticket_id.sla_fail", readonly=True)
     create_date = fields.Date("Created On", readonly=True)
-    priority = fields.Selection(TICKET_PRIORITY, string='Minimum Priority', readonly=True)
-    user_id = fields.Many2one('res.users', string="Assigned To", readonly=True)
-    partner_id = fields.Many2one('res.partner', string="Customer", readonly=True)
-    ticket_type_id = fields.Many2one('helpdesk.ticket.type', string="Ticket Type", readonly=True)
-    ticket_stage_id = fields.Many2one('helpdesk.stage', string="Ticket Stage", readonly=True)
+    priority = fields.Selection(
+        TICKET_PRIORITY, string="Minimum Priority", readonly=True
+    )
+    user_id = fields.Many2one("res.users", string="Assigned To", readonly=True)
+    partner_id = fields.Many2one("res.partner", string="Customer", readonly=True)
+    ticket_type_id = fields.Many2one(
+        "helpdesk.ticket.type", string="Ticket Type", readonly=True
+    )
+    ticket_stage_id = fields.Many2one(
+        "helpdesk.stage", string="Ticket Stage", readonly=True
+    )
     ticket_deadline = fields.Datetime("Ticket Deadline", readonly=True)
-    ticket_close_hours = fields.Float("Hours to Close", group_operator="avg", readonly=True)
+    ticket_close_hours = fields.Float(
+        "Hours to Close", group_operator="avg", readonly=True
+    )
     ticket_open_hours = fields.Float("Hours Open", group_operator="avg", readonly=True)
-    ticket_assignation_hours = fields.Float("Hours to Assign", group_operator="avg", readonly=True)
+    ticket_assignation_hours = fields.Float(
+        "Hours to Assign", group_operator="avg", readonly=True
+    )
     close_date = fields.Datetime("Close date", readonly=True)
     assign_date = fields.Datetime("First assignment date", readonly=True)
     rating_last_value = fields.Float("Rating (/5)", group_operator="avg", readonly=True)
     active = fields.Boolean("Active", readonly=True)
-    team_id = fields.Many2one('helpdesk.team', string='Team', readonly=True)
-    company_id = fields.Many2one('res.company', string='Company', readonly=True)
-    kanban_state = fields.Selection([
-        ('normal', 'Grey'),
-        ('done', 'Green'),
-        ('blocked', 'Red')], string='Kanban State', readonly=True)
+    team_id = fields.Many2one("helpdesk.team", string="Team", readonly=True)
+    company_id = fields.Many2one("res.company", string="Company", readonly=True)
+    kanban_state = fields.Selection(
+        [("normal", "Grey"), ("done", "Green"), ("blocked", "Red")],
+        string="Kanban State",
+        readonly=True,
+    )
 
     def _select(self):
         select_str = """
@@ -66,7 +77,10 @@ class HelpdeskTicketReport(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
             %s
             FROM %s
-            )""" % (self._table, self._select(), self._from()))
+            )"""
+            % (self._table, self._select(), self._from())
+        )

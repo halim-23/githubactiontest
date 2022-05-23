@@ -1,17 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="l10n_be_work_entry_daily_benefit_report_search" model="ir.ui.view">
         <field name="name">l10n_be.work.entry.daily.benefit.report.search</field>
         <field name="model">l10n_be.work.entry.daily.benefit.report</field>
         <field name="arch" type="xml">
             <search string="Search Meal Voucher Report">
-                <field name="employee_id"/>
-                <filter name="date_filter" string="Date" date="day" default_period="this_year"/>
+                <field name="employee_id" />
+                <filter
+          name="date_filter"
+          string="Date"
+          date="day"
+          default_period="this_year"
+        />
             </search>
         </field>
     </record>
 
-    <record id="l10n_be_work_entry_daily_benefit_report_action" model="ir.actions.act_window">
+    <record
+    id="l10n_be_work_entry_daily_benefit_report_action"
+    model="ir.actions.act_window"
+  >
         <field name="name">Meal Vouchers</field>
         <field name="res_model">l10n_be.work.entry.daily.benefit.report</field>
         <field name="view_mode">pivot</field>
@@ -26,16 +34,16 @@
         <field name="model">l10n_be.work.entry.daily.benefit.report</field>
         <field name="arch" type="xml">
             <pivot string="Meal Vouchers" disable_linking="1" sample="1">
-                <field name="employee_id" type="row"/>
-                <field name="day"  type="col"/>
+                <field name="employee_id" type="row" />
+                <field name="day" type="col" />
             </pivot>
         </field>
     </record>
 
     <menuitem
-        id="menu_hr_payroll_meal_voucher"
-        action="l10n_be_work_entry_daily_benefit_report_action"
-        parent="l10n_be_hr_payroll.menu_reporting_l10n_be"
-        sequence="21"
-    />
+    id="menu_hr_payroll_meal_voucher"
+    action="l10n_be_work_entry_daily_benefit_report_action"
+    parent="l10n_be_hr_payroll.menu_reporting_l10n_be"
+    sequence="21"
+  />
 </odoo>

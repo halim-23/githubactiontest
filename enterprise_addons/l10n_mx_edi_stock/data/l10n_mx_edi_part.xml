@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="l10n_mx_edi_part_01" model="l10n_mx_edi.part">
         <field name="code">PT01</field>

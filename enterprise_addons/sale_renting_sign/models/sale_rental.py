@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class RentalOrder(models.Model):
@@ -20,9 +19,9 @@ class RentalOrder(models.Model):
             groupby=["sale_order_id"],
         )
 
-        mapped_data = dict(
-            [(m["sale_order_id"][0], m["sale_order_id_count"]) for m in sign_data]
-        )
+        mapped_data = {
+            m["sale_order_id"][0]: m["sale_order_id_count"] for m in sign_data
+        }
         for order in self:
             order.sign_request_count = mapped_data.get(order.id, 0)
 

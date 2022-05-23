@@ -1,15 +1,17 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
 
+
 class AccountAnalyticAccount(models.Model):
     _inherit = "account.analytic.account"
 
-    crossovered_budget_line = fields.One2many('crossovered.budget.lines', 'analytic_account_id', 'Budget Lines')
+    crossovered_budget_line = fields.One2many(
+        "crossovered.budget.lines", "analytic_account_id", "Budget Lines"
+    )
     total_planned_amount = fields.Monetary(compute="_compute_total_planned_amount")
 
-    @api.depends('crossovered_budget_line.planned_amount')
+    @api.depends("crossovered_budget_line.planned_amount")
     def _compute_total_planned_amount(self):
         rates = {}
         for account in self:

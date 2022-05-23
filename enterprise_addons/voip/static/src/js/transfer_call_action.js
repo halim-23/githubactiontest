@@ -1,23 +1,22 @@
-odoo.define('voip.dialingPanel', function (require) {
-"use strict";
+odoo.define("voip.dialingPanel", function (require) {
+  "use strict";
 
-const core = require('web.core');
-const config = require('web.config');
+  const core = require("web.core");
+  const config = require("web.config");
 
-/**
- * @param {*} parent
- * @param {Object} action
- * @param {Object} [action.params={}]
- * @param {string} [action.params.number]
- */
-function transferCall(parent, action) {
+  /**
+   * @param {*} parent
+   * @param {Object} action
+   * @param {Object} [action.params={}]
+   * @param {String} [action.params.number]
+   */
+  function transferCall(parent, action) {
     const params = action.params || {};
-    core.bus.trigger('transfer_call', params.number);
+    core.bus.trigger("transfer_call", params.number);
     return {
-        type: 'ir.actions.act_window_close',
+      type: "ir.actions.act_window_close",
     };
-}
+  }
 
-core.action_registry.add("transfer_call", transferCall);
-
+  core.action_registry.add("transfer_call", transferCall);
 });

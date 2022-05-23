@@ -320,7 +320,7 @@
 						<xsd:documentation>Party that makes (or on whose behalf an agent or broker makes) the import declaration, and who is liable for the payment of duties (if any) on the imported goods. Normally, this party is named either as the consignee in the shipping documents and/or as the buyer in the exporter's invoice.</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element name="Exporter" type="dhl:Exporter" minOccurs="0">			
+				<xsd:element name="Exporter" type="dhl:Exporter" minOccurs="0">
 					<xsd:annotation>
 						<xsd:documentation>The party who is responsible for the legality of the shipment under applicable export control laws, which includes determining the proper export classification and authorization needed to ship the Items.The Exporter is usually the party who controls the transaction, acts as declarant in its own name and provides the corresponding instructions for the export, regardless of who files the export declaration. The Exporter may or may not be the Shipper.</xsd:documentation>
 					</xsd:annotation>

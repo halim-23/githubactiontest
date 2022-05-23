@@ -1,21 +1,23 @@
-#-*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class HrWorkEntryType(models.Model):
-    _inherit = 'hr.work.entry.type'
+    _inherit = "hr.work.entry.type"
 
     meal_voucher = fields.Boolean(
-        string="Meal Voucher", default=False,
-        help="Work entries counts for meal vouchers")
+        string="Meal Voucher",
+        default=False,
+        help="Work entries counts for meal vouchers",
+    )
     private_car = fields.Boolean(
         string="Private Car Reimbursement",
-        help="Work entries counts for private car reimbursement")
+        help="Work entries counts for private car reimbursement",
+    )
     representation_fees = fields.Boolean(
-        string="Representation Fees",
-        help="Work entries counts for representation fees")
+        string="Representation Fees", help="Work entries counts for representation fees"
+    )
     # YTI TODO: Make a new model for dmfa prestation type
     # CODE - LABEL
     # 1   toutes les données relatives au temps de travail couvertes par une rémunération avec cotisations ONSS, à l'exception des vacances légales et complémentaires des ouvriers
@@ -77,25 +79,34 @@ class HrWorkEntryType(models.Model):
     # 110 Prestations d’un membre d'un parlement ou d'un gouvernement fédéral ou régional ou d’un mandataire local protégé ; jours couverts par une indemnité de sortie d'un membre d'un parlement, d'un gouvernement, d'une Députation permanente ou d'un collège provincial
     # 301 toutes les données relatives au temps de travail couvertes par une indemnité exonérée de cotisations de sécurité sociale, à l'exception de celles reprises sous un autre code
 
-    dmfa_code = fields.Char(string="DMFA code", help="The DMFA Code will identify the work entry in DMFA report.")
+    dmfa_code = fields.Char(
+        string="DMFA code",
+        help="The DMFA Code will identify the work entry in DMFA report.",
+    )
     leave_right = fields.Boolean(
-        string="Keep Time Off Right", default=False,
-        help="Work entries counts for time off right for next year.")
+        string="Keep Time Off Right",
+        default=False,
+        help="Work entries counts for time off right for next year.",
+    )
 
     @api.model
     def get_work_entry_type_benefits(self):
-        return ['meal_voucher', 'private_car', 'representation_fees']
+        return ["meal_voucher", "private_car", "representation_fees"]
 
 
 class HrWorkEntry(models.Model):
-    _inherit = 'hr.work.entry'
+    _inherit = "hr.work.entry"
 
     is_credit_time = fields.Boolean(
-        string='Credit time', readonly=True,
-        help="This is a credit time work entry.")
+        string="Credit time", readonly=True, help="This is a credit time work entry."
+    )
 
     def _get_leaves_entries_outside_schedule(self):
-        return super()._get_leaves_entries_outside_schedule().filtered(lambda w: not w.is_credit_time)
+        return (
+            super()
+            ._get_leaves_entries_outside_schedule()
+            .filtered(lambda w: not w.is_credit_time)
+        )
 
     def _get_duration_is_valid(self):
         return super()._get_duration_is_valid() and not self.is_credit_time
@@ -103,15 +114,23 @@ class HrWorkEntry(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
-        partial_sick_work_entry_type = self.env.ref('l10n_be_hr_payroll.work_entry_type_part_sick')
-        leaves = self.env['hr.leave']
+        partial_sick_work_entry_type = self.env.ref(
+            "l10n_be_hr_payroll.work_entry_type_part_sick"
+        )
+        leaves = self.env["hr.leave"]
         for work_entry in res:
-            if work_entry.work_entry_type_id == partial_sick_work_entry_type and work_entry.leave_id:
+            if (
+                work_entry.work_entry_type_id == partial_sick_work_entry_type
+                and work_entry.leave_id
+            ):
                 leaves |= work_entry.leave_id
         for leave in leaves.sudo():
             leave.activity_schedule(
-                'mail.mail_activity_data_todo',
-                note=_("Sick time off to report to DRS for %s.", leave.date_from.strftime('%B %Y')),
+                "mail.mail_activity_data_todo",
+                note=_(
+                    "Sick time off to report to DRS for %s.",
+                    leave.date_from.strftime("%B %Y"),
+                ),
                 user_id=leave.holiday_status_id.responsible_id.id or self.env.user.id,
             )
         return res

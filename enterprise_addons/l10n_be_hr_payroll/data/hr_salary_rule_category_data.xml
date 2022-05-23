@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="hr_payroll_head_salary" model="hr.salary.rule.category">
         <field name="name">Gross</field>
@@ -13,49 +13,52 @@
     <record id="hr_payroll_head_onss" model="hr.salary.rule.category">
         <field name="name">Worker Social Contribution</field>
         <field name="code">ONSS</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
     <record id="hr_payroll_head_employment_bonus" model="hr.salary.rule.category">
         <field name="name">Employment Bonus</field>
         <field name="code">EmpBonus</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
     <record id="hr_payroll_head_div_impos" model="hr.salary.rule.category">
         <field name="name">Misc. Taxable</field>
         <field name="code">DIV. IMPOS</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
     <record id="hr_payroll_head_pp" model="hr.salary.rule.category">
         <field name="name">Withholding Taxes</field>
         <field name="code">PP</field>
-        <field name="parent_id" ref="hr_payroll.DED"/>
+        <field name="parent_id" ref="hr_payroll.DED" />
     </record>
 
     <record id="hr_payroll_head_div_net" model="hr.salary.rule.category">
         <field name="name">Misc. Net</field>
         <field name="code">DIV. NET</field>
-        <field name="parent_id" ref="hr_payroll.DED"/>
+        <field name="parent_id" ref="hr_payroll.DED" />
     </record>
 
     <record id="hr_payroll_head_child_alw" model="hr.salary.rule.category">
         <field name="name">Child Allowance Belgium</field>
         <field name="code">ChA</field>
-        <field name="parent_id" ref="hr_payroll.DED"/>
+        <field name="parent_id" ref="hr_payroll.DED" />
     </record>
 
-    <record id="hr_salary_rule_category_spec_soc_contribution" model="hr.salary.rule.category">
+    <record
+    id="hr_salary_rule_category_spec_soc_contribution"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Special social contribution</field>
         <field name="code">SSC</field>
-        <field name="parent_id" ref="hr_payroll.DED"/>
+        <field name="parent_id" ref="hr_payroll.DED" />
     </record>
 
     <record id="hr_salary_rule_category_ip_part" model="hr.salary.rule.category">
         <field name="name">IP. Part.</field>
         <field name="code">IP. PART</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
     <record id="hr_salary_rule_category_gross_with_ip" model="hr.salary.rule.category">
@@ -93,12 +96,18 @@
         <field name="code">TERMINAISON_DOUBLE</field>
     </record>
 
-    <record id="hr_payroll_termination_holidays_double_basic" model="hr.salary.rule.category">
+    <record
+    id="hr_payroll_termination_holidays_double_basic"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Terminaison Holidays Double Pay Basic</field>
         <field name="code">DOUBLE_BASIC</field>
     </record>
 
-    <record id="hr_payroll_termination_holidays_additional_leave" model="hr.salary.rule.category">
+    <record
+    id="hr_payroll_termination_holidays_additional_leave"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Terminaison Holidays Additional Leave</field>
         <field name="code">EUROPEAN</field>
     </record>
@@ -113,7 +122,10 @@
         <field name="code">REMUNERATION</field>
     </record>
 
-    <record id="hr_salary_rule_category_owed_remuneration" model="hr.salary.rule.category">
+    <record
+    id="hr_salary_rule_category_owed_remuneration"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Accounting: Owed Remuneration</field>
         <field name="code">OWEDREMUNERATION</field>
     </record>
@@ -123,7 +135,10 @@
         <field name="code">ONSSEMPLOYER</field>
     </record>
 
-    <record id="hr_salary_rule_category_withholding_taxes_total" model="hr.salary.rule.category">
+    <record
+    id="hr_salary_rule_category_withholding_taxes_total"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Withholding Taxes (Total)</field>
         <field name="code">PPTOTAL</field>
     </record>
@@ -141,19 +156,22 @@
     <record id="hr_payroll_onss_restructuring" model="hr.salary.rule.category">
         <field name="name">ONSS Restructuring Reduction</field>
         <field name="code">ONSSRESTRUCTURING</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
     <!-- Commissions on Target -->
     <record id="salary_rule_category_commissions" model="hr.salary.rule.category">
         <field name="name">Commissions</field>
         <field name="code">COMMISSIONS</field>
-        <field name="parent_id" ref="hr_payroll.ALW"/>
+        <field name="parent_id" ref="hr_payroll.ALW" />
     </record>
 
-    <record id="salary_rule_category_commissions_adjustment" model="hr.salary.rule.category">
+    <record
+    id="salary_rule_category_commissions_adjustment"
+    model="hr.salary.rule.category"
+  >
         <field name="name">Commissions Adjustment</field>
         <field name="code">COM.ADJs</field>
-        <field name="parent_id" ref="hr_payroll.DED"/>
+        <field name="parent_id" ref="hr_payroll.DED" />
     </record>
 </odoo>

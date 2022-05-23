@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 <data>
     <record id="social_post_template_action" model="ir.actions.act_window">
@@ -13,7 +13,7 @@
         <field name="model">social.post.template</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="message"/>
+                <field name="message" />
             </tree>
         </field>
     </record>
@@ -25,22 +25,51 @@
             <form string="Social Post Template" class="o_social_post_view_form">
                 <sheet>
                     <group>
-                        <group string="Your Post" name="social_post_global" class="o_social_post_form_content">
+                        <group
+                string="Your Post"
+                name="social_post_global"
+                class="o_social_post_form_content"
+              >
                             <field name="has_active_accounts" invisible="1" />
-                            <field name="account_ids" options="{'no_create': True}" string="Post on" widget="many2many_checkboxes"
-                                 attrs="{'invisible': [('has_active_accounts', '=', False)]}" />
-                            <div colspan="2" class="alert alert-info o_social_post_no_accounts_available" role="alert"
-                                attrs="{'invisible': [('has_active_accounts', '=', True)]}">
-                                <p><a href="/web#action=social.action_social_media">Link social accounts</a> before posting.</p>
+                            <field
+                  name="account_ids"
+                  options="{'no_create': True}"
+                  string="Post on"
+                  widget="many2many_checkboxes"
+                  attrs="{'invisible': [('has_active_accounts', '=', False)]}"
+                />
+                            <div
+                  colspan="2"
+                  class="alert alert-info o_social_post_no_accounts_available"
+                  role="alert"
+                  attrs="{'invisible': [('has_active_accounts', '=', True)]}"
+                >
+                                <p><a
+                      href="/web#action=social.action_social_media"
+                    >Link social accounts</a> before posting.</p>
                             </div>
-                            <field name="message" widget="text_emojis" class="o_social_post_message_wrapper"
-                                options="{'onchange_on_keydown': true}" force_save="1"
-                                attrs="{'required': [(1, '=', 1)], 'readonly': [('has_active_accounts', '=', False)]}" />
-                            <field name="image_ids" widget="many2many_binary" class="o_social_post_form_attachments"/>
+                            <field
+                  name="message"
+                  widget="text_emojis"
+                  class="o_social_post_message_wrapper"
+                  options="{'onchange_on_keydown': true}"
+                  force_save="1"
+                  attrs="{'required': [(1, '=', 1)], 'readonly': [('has_active_accounts', '=', False)]}"
+                />
+                            <field
+                  name="image_ids"
+                  widget="many2many_binary"
+                  class="o_social_post_form_attachments"
+                />
                         </group>
-                        <group name="previews_placeholder" class="o_social_post_preview_group m-0">
-                            <div class="o_social_post_empty_preview overflow-hidden o_view_nocontent bg-100"
-                                attrs="{'invisible': [('account_ids', '!=', []), ('message', '!=', False), ('message', '!=', '')]}">
+                        <group
+                name="previews_placeholder"
+                class="o_social_post_preview_group m-0"
+              >
+                            <div
+                  class="o_social_post_empty_preview overflow-hidden o_view_nocontent bg-100"
+                  attrs="{'invisible': [('account_ids', '!=', []), ('message', '!=', False), ('message', '!=', '')]}"
+                >
                                 <div class="o_nocontent_help">
                                     <p class="o_view_nocontent_smiling_face">
                                         Preview your post

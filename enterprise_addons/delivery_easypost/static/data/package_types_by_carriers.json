@@ -15,31 +15,11 @@
     "Parcel",
     "YourPackaging"
   ],
-  "DHL eCommerce": [
-    "Letter",
-    "Flat",
-    "BPM",
-    "Parcel"
-  ],
-  "Direct Link": [
-    "Parcel",
-    "Document"
-  ],
-  "DPD UK": [
-    "Parcel",
-    "Pallet",
-    "ExpressPak",
-    "FreightParcel",
-    "Freight"
-  ],
-  "Estafeta": [
-    "ENVELOPE",
-    "PARCEL"
-  ],
-  "Fastway": [
-    "Parcel",
-    "Satchel"
-  ],
+  "DHL eCommerce": ["Letter", "Flat", "BPM", "Parcel"],
+  "Direct Link": ["Parcel", "Document"],
+  "DPD UK": ["Parcel", "Pallet", "ExpressPak", "FreightParcel", "Freight"],
+  "Estafeta": ["ENVELOPE", "PARCEL"],
+  "Fastway": ["Parcel", "Satchel"],
   "FedEx": [
     "FedExEnvelope",
     "FedExBox",
@@ -66,45 +46,13 @@
     "Carton",
     "Other"
   ],
-  "Interlink Express": [
-    "Parcel",
-    "Pallet",
-    "ExpressPak",
-    "FreightParcel",
-    "Freight"
-  ],
-  "LaserShip": [
-    "Box",
-    "Tube",
-    "Pak",
-    "Envelope",
-    "Custom"
-  ],
-  "Liefery": [
-    "SmallParcel",
-    "MediumParcel",
-    "LargeParcel",
-    "ExtraLargeParcel"
-  ],
-  "OnTrac": [
-    "Letter"
-  ],
-  "PostNL": [
-    "Parcel",
-    "Letter"
-  ],
-  "Purolator": [
-    "CustomerPackaging",
-    "ExpressPack",
-    "ExpressBox",
-    "ExpressEnvelope"
-  ],
-  "Royal Mail": [
-    "Letter",
-    "LargeLetter",
-    "SmallParcel",
-    "MediumParcel"
-  ],
+  "Interlink Express": ["Parcel", "Pallet", "ExpressPak", "FreightParcel", "Freight"],
+  "LaserShip": ["Box", "Tube", "Pak", "Envelope", "Custom"],
+  "Liefery": ["SmallParcel", "MediumParcel", "LargeParcel", "ExtraLargeParcel"],
+  "OnTrac": ["Letter"],
+  "PostNL": ["Parcel", "Letter"],
+  "Purolator": ["CustomerPackaging", "ExpressPack", "ExpressBox", "ExpressEnvelope"],
+  "Royal Mail": ["Letter", "LargeLetter", "SmallParcel", "MediumParcel"],
   "SprintShip": [
     "ENVELOPE",
     "LARGE_BOX_OR_TOTE",
@@ -112,10 +60,7 @@
     "SMALL_OR_MEDIUM_BOX_OR_TOTE",
     "PACKAGE"
   ],
-  "TForce": [
-    "Parcel",
-    "Letter"
-  ],
+  "TForce": ["Parcel", "Letter"],
   "UPS": [
     "UPSLetter",
     "UPSExpressBox",

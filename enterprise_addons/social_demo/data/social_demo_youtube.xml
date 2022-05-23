@@ -1,10 +1,13 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8' ?>
 <odoo>
 <data noupdate="1">
     <record id="social_stream_youtube_account" model="social.stream">
         <field name="name">YouTube Account: My Company</field>
-        <field name="create_uid" ref="base.user_admin"/>
-        <field name="stream_type_id" ref="social_youtube.stream_type_youtube_channel_videos" />
+        <field name="create_uid" ref="base.user_admin" />
+        <field
+        name="stream_type_id"
+        ref="social_youtube.stream_type_youtube_channel_videos"
+      />
         <field name="media_id" ref="social_youtube.social_media_youtube" />
         <field name="account_id" ref="social_account_youtube" />
     </record>
@@ -26,10 +29,17 @@
         <field name="youtube_comments_count">57</field>
         <field name="youtube_views_count">57945</field>
         <field name="youtube_video_duration">67.9</field>
-        <field name="link_image_url">http://i3.ytimg.com/vi/m5FAPOdqWUc/hqdefault.jpg</field>
-        <field name="twitter_profile_image_url" eval="'/web/image/res.users/%s/image_128' % ref('base.user_admin')" />
-        <field name="message">We are glad to announce a new product for this year! 🍾</field>
-        <field name="published_date" eval="time.strftime('%Y-01-10 08:00:00')"/>
+        <field
+        name="link_image_url"
+      >http://i3.ytimg.com/vi/m5FAPOdqWUc/hqdefault.jpg</field>
+        <field
+        name="twitter_profile_image_url"
+        eval="'/web/image/res.users/%s/image_128' % ref('base.user_admin')"
+      />
+        <field
+        name="message"
+      >We are glad to announce a new product for this year! 🍾</field>
+        <field name="published_date" eval="time.strftime('%Y-01-10 08:00:00')" />
     </record>
 </data>
 </odoo>

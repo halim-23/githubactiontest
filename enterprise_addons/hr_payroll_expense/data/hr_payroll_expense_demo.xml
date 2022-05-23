@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
     <record id="hr_salary_rule_expense_refund" model="hr.salary.rule">
@@ -11,10 +11,10 @@ result = inputs.EXPENSES.amount > 0.0 if inputs.EXPENSES else False
 result = inputs.EXPENSES.amount if inputs.EXPENSES else 0
         </field>
         <field name="code">EXPENSES</field>
-        <field name="category_id" ref="hr_payroll.ALW"/>
+        <field name="category_id" ref="hr_payroll.ALW" />
         <field name="name">Expenses Reimbursement</field>
-        <field name="sequence" eval="190"/>
-        <field name="struct_id" ref="hr_payroll.structure_002"/>
+        <field name="sequence" eval="190" />
+        <field name="struct_id" ref="hr_payroll.structure_002" />
     </record>
 
 </odoo>

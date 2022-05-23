@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo.http import request
-from odoo.addons.bus.controllers.main import BusController
-
 from typing import List
+
+from odoo.http import request
+
+from odoo.addons.bus.controllers.main import BusController
 
 BUS_CHANNEL_NAME = "spreadsheet_collaborative_session_"
 
@@ -16,7 +16,9 @@ class SpreadsheetCollaborationController(BusController):
     # ---------------------------
     def _poll(self, dbname, channels, last, options):
         if request.session.uid:
-            channels = self._add_spreadsheet_collaborative_bus_channels(request.env, channels)
+            channels = self._add_spreadsheet_collaborative_bus_channels(
+                request.env, channels
+            )
         return super()._poll(dbname, channels, last, options)
 
     @staticmethod
@@ -32,12 +34,15 @@ class SpreadsheetCollaborationController(BusController):
         :param channels: bus channels
         :return: channels
         """
-        active_spreadsheet_ids = SpreadsheetCollaborationController._get_active_spreadsheet_ids(channels)
+        active_spreadsheet_ids = (
+            SpreadsheetCollaborationController._get_active_spreadsheet_ids(channels)
+        )
         if active_spreadsheet_ids:
             channels = list(channels)
             # The following search ensures that the user has the correct access rights
             spreadsheets = (
-                env["documents.document"].with_context(active_test=False)
+                env["documents.document"]
+                .with_context(active_test=False)
                 .search([("id", "in", active_spreadsheet_ids)])
             )
             channels.extend(spreadsheet for spreadsheet in spreadsheets)

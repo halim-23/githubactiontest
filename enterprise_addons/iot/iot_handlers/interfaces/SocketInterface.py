@@ -1,7 +1,6 @@
 import logging
 import socket
 
-from odoo import _
 from odoo.addons.hw_drivers.interface import Interface
 from odoo.addons.hw_drivers.main import iot_devices
 
@@ -19,7 +18,7 @@ socket_devices = {}
 
 
 class SocketInterface(Interface):
-    connection_type = 'socket'
+    connection_type = "socket"
 
     def __init__(self):
         super().__init__()
@@ -28,7 +27,7 @@ class SocketInterface(Interface):
     def open_socket(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind(('', port))
+        self.sock.bind(("", port))
         self.sock.listen()
 
     @staticmethod
@@ -38,7 +37,7 @@ class SocketInterface(Interface):
         Driver in iot_devices based on the results of the `supported` call.
         """
         _logger.debug("Creating new socket_device")
-        socket_devices[addr] = type('', (), {'dev': dev})
+        socket_devices[addr] = type("", (), {"dev": dev})
 
     def replace_socket_device(self, dev, addr):
         """Replaces an existing socket_devices entry.
@@ -89,7 +88,9 @@ class SocketInterface(Interface):
             del new_detected_devices[addr]
             _logger.debug("Updated _detected_devices")
         else:
-            _logger.warning("socket_device entry %s was not found in _detected_devices", addr)
+            _logger.warning(
+                "socket_device entry %s was not found in _detected_devices", addr
+            )
         self._detected_devices = new_detected_devices
 
         SocketInterface.create_socket_device(dev, addr)

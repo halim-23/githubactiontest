@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import itertools
+
 from . import common
 
 
@@ -23,36 +23,38 @@ def record_powerset(records):
 
 
 class TestSaleCouponPriceTaxCloud(common.TestSaleCouponTaxCloudCommon):
-
     def test_total(self):
         """Test that the sum of TaxCloud is equal to the order total
-           (with applied discounts), for all possible sets of discounts.
-           This is the most important coherency issue.
-           So we don't test how coupon are applied, just that the result of our
-           computations match what is obtained from the lines.
+        (with applied discounts), for all possible sets of discounts.
+        This is the most important coherency issue.
+        So we don't test how coupon are applied, just that the result of our
+        computations match what is obtained from the lines.
         """
         TaxCloud = self.order._get_TaxCloudRequest("id", "api_key")
 
         for applied_discounts in record_powerset(self.all_programs):
-            self.order.applied_coupon_ids = applied_discounts.mapped('coupon_ids')
+            self.order.applied_coupon_ids = applied_discounts.mapped("coupon_ids")
             self.order.recompute_coupon_lines()
             lines = self.order.order_line
             TaxCloud._apply_discount_on_lines(lines)
-            sum_taxcloud = sum(lines.filtered(lambda l: l.price_taxcloud > 0)
-                               .mapped(lambda l: l.price_taxcloud * l.product_uom_qty))
+            sum_taxcloud = sum(
+                lines.filtered(lambda l: l.price_taxcloud > 0).mapped(
+                    lambda l: l.price_taxcloud * l.product_uom_qty
+                )
+            )
 
             self.assertEqual(sum_taxcloud, self.order.amount_total)
 
     def test_free_product(self):
         """Test that taxcloud is working correctly with the addition of
-           the free product reward.
+        the free product reward.
         """
         TaxCloud = self.order._get_TaxCloudRequest("id", "api_key")
 
-        Apply = self.env['sale.coupon.apply.code']
+        Apply = self.env["sale.coupon.apply.code"]
         Apply.apply_coupon(self.order, self.program_free_product_C.coupon_ids.code)
 
-        discount_line = self.order.order_line.filtered('coupon_program_id')
+        discount_line = self.order.order_line.filtered("coupon_program_id")
         self.assertEqual(discount_line.price_unit, -10)
         self.assertEqual(discount_line.product_uom_qty, 1)
 

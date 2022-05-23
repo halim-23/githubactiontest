@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- Approval Category Approver -->
     <record id="approval_category_approver_view_tree" model="ir.ui.view">
@@ -6,10 +6,10 @@
         <field name="model">approval.category.approver</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
-                <field name="existing_user_ids" invisible="1"/>
-                <field name="company_id" invisible="1"/>
-                <field name="user_id" options="{'no_create': True}"/>
-                <field name="required"/>
+                <field name="existing_user_ids" invisible="1" />
+                <field name="company_id" invisible="1" />
+                <field name="user_id" options="{'no_create': True}" />
+                <field name="required" />
             </tree>
         </field>
     </record>

@@ -1,21 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="attachment_rental_sign" model="ir.attachment">
         <field name="name">Rental Agreement</field>
-        <field name="datas" type="base64" file="sale_renting_sign/static/demo/rental.pdf"/>
+        <field
+      name="datas"
+      type="base64"
+      file="sale_renting_sign/static/demo/rental.pdf"
+    />
         <field name="mimetype">application/pdf</field>
     </record>
 
     <record id="template_rental_sign" model="sign.template">
-        <field name="attachment_id" ref="attachment_rental_sign"/>
+        <field name="attachment_id" ref="attachment_rental_sign" />
         <field name="active">True</field>
         <field name="privacy">employee</field>
     </record>
 
     <record model="sign.item" id="sign_item_1">
-        <field name="template_id" ref="template_rental_sign"/>
-        <field name="type_id" ref="sign.sign_item_type_name"/>
-        <field name="responsible_id" ref="sign.sign_item_role_customer"/>
+        <field name="template_id" ref="template_rental_sign" />
+        <field name="type_id" ref="sign.sign_item_type_name" />
+        <field name="responsible_id" ref="sign.sign_item_role_customer" />
         <field name="page" type="int">1</field>
         <field name="posX" type="float">0.050</field>
         <field name="posY" type="float">0.580</field>
@@ -24,9 +28,9 @@
     </record>
 
     <record model="sign.item" id="sign_item_2">
-        <field name="template_id" ref="template_rental_sign"/>
-        <field name="type_id" ref="sign.sign_item_type_signature"/>
-        <field name="responsible_id" ref="sign.sign_item_role_customer"/>
+        <field name="template_id" ref="template_rental_sign" />
+        <field name="type_id" ref="sign.sign_item_type_signature" />
+        <field name="responsible_id" ref="sign.sign_item_role_customer" />
         <field name="page" type="int">1</field>
         <field name="posX" type="float">0.050</field>
         <field name="posY" type="float">0.600</field>

@@ -1,5 +1,10 @@
 <?xml version="1.0" ?>
-<EnvioDTE xmlns="http://www.sii.cl/SiiDte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://www.sii.cl/SiiDte EnvioDTE_v10.xsd">
+<EnvioDTE
+  xmlns="http://www.sii.cl/SiiDte"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="1.0"
+  xsi:schemaLocation="http://www.sii.cl/SiiDte EnvioDTE_v10.xsd"
+>
     <SetDTE ID="SDTE1048269159">
         <Caratula version="1.0">
             <RutEmisor>76086428-5</RutEmisor>
@@ -90,21 +95,21 @@
                                     <H>1050</H>
                                 </RNG>
                                 <FA>2020-06-09</FA>
-                                <RSAPK><M></M><E></E>
+                                <RSAPK><M /><E />
                                 </RSAPK>
                                 <IDK>300</IDK>
                             </DA>
-                            <FRMA algoritmo="SHA1withRSA"></FRMA>
+                            <FRMA algoritmo="SHA1withRSA" />
                         </CAF>
                         <TSTED>2020-06-09T13:00:36</TSTED>
                     </DD>
-                    <FRMT algoritmo="SHA1withRSA"></FRMT>
+                    <FRMT algoritmo="SHA1withRSA" />
                 </TED>
                 <TmstFirma>2020-06-09T13:00:36</TmstFirma>
 
             </Documento>
-            <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"></Signature>
+            <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" />
         </DTE>
     </SetDTE>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"></Signature>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" />
 </EnvioDTE>

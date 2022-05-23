@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -8,16 +8,33 @@
             <field name="arch" type="xml">
                 <form string="Export">
                     <group>
-                        <field name="export_format_ids" widget="many2many_tags" options="{'no_create': True}" domain="[('export_wizard_id', '=', id)]" required="1"/>
+                        <field
+              name="export_format_ids"
+              widget="many2many_tags"
+              options="{'no_create': True}"
+              domain="[('export_wizard_id', '=', id)]"
+              required="1"
+            />
                     </group>
                     <group>
                         <group>
-                            <field name="doc_name" required="1"/>
+                            <field name="doc_name" required="1" />
                         </group>
                     </group>
                     <footer>
-                        <button string="Export" class="btn-primary" type="object" name="export_report" data-hotkey="q"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                        <button
+              string="Export"
+              class="btn-primary"
+              type="object"
+              name="export_report"
+              data-hotkey="q"
+            />
+                        <button
+              string="Cancel"
+              class="btn-secondary"
+              special="cancel"
+              data-hotkey="z"
+            />
                     </footer>
                 </form>
             </field>

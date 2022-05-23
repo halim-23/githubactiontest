@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="save_spreadsheet_template_action" model="ir.actions.act_window">
         <field name="name">Save as Template</field>
@@ -13,9 +13,9 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <field name="template_name"/>
-                    <field name="data" invisible="1"/>
-                    <field name="thumbnail" invisible="1"/>
+                    <field name="template_name" />
+                    <field name="data" invisible="1" />
+                    <field name="thumbnail" invisible="1" />
                 </group>
                 <group>
                     <div class="alert alert-info" role="alert">
@@ -23,8 +23,20 @@
                     </div>
                 </group>
                 <footer>
-                    <button string="Confirm" close="1" name="save_template" type="object" class="btn-primary" data-hotkey="q"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    <button
+            string="Confirm"
+            close="1"
+            name="save_template"
+            type="object"
+            class="btn-primary"
+            data-hotkey="q"
+          />
+                    <button
+            string="Cancel"
+            class="btn-secondary"
+            special="cancel"
+            data-hotkey="z"
+          />
                 </footer>
             </form>
         </field>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- CONTRIBUTION REGISTERS -->
     <record id="res_partner_onss" model="res.partner">

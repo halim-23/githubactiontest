@@ -1,8 +1,7 @@
-# coding: utf-8
-from odoo import fields, models, _
-from odoo.exceptions import ValidationError
-
 import base64
+
+from odoo import _, fields, models
+from odoo.exceptions import ValidationError
 
 
 class AccountBatchPayment(models.Model):
@@ -10,31 +9,53 @@ class AccountBatchPayment(models.Model):
 
     def _validate_payment_for_nacha(self, payment):
         if not payment.ref:
-            raise ValidationError(_("Please add a memo to payment %s") % payment.display_name)
+            raise ValidationError(
+                _("Please add a memo to payment %s") % payment.display_name
+            )
 
     def _validate_bank_for_nacha(self, payment):
         bank = payment.partner_bank_id
         if not bank.aba_routing:
-            raise ValidationError(_("Please set an ABA routing number on the %s bank account for %s.") % (bank.display_name, payment.partner_id.display_name))
+            raise ValidationError(
+                _("Please set an ABA routing number on the %s bank account for %s.")
+                % (bank.display_name, payment.partner_id.display_name)
+            )
 
     def _validate_journal_for_nacha(self):
         journal = self.journal_id
         error_msgs = []
 
         if not journal.nacha_immediate_destination:
-            error_msgs.append(_("Please set a NACHA immediate destination on the %(journal)s journal."))
+            error_msgs.append(
+                _(
+                    "Please set a NACHA immediate destination on the %(journal)s journal."
+                )
+            )
         if not journal.nacha_immediate_origin:
-            error_msgs.append(_("Please set a NACHA immediate origin on the %(journal)s journal."))
+            error_msgs.append(
+                _("Please set a NACHA immediate origin on the %(journal)s journal.")
+            )
         if not journal.nacha_destination:
-            error_msgs.append(_("Please set a NACHA destination on the %(journal)s journal."))
+            error_msgs.append(
+                _("Please set a NACHA destination on the %(journal)s journal.")
+            )
         if not journal.nacha_company_identification:
-            error_msgs.append(_("Please set a NACHA company identification on the %(journal)s journal."))
+            error_msgs.append(
+                _(
+                    "Please set a NACHA company identification on the %(journal)s journal."
+                )
+            )
         if not journal.nacha_origination_dfi_identification:
-            error_msgs.append(_("Please set a NACHA originating DFI identification on the %(journal)s journal."))
+            error_msgs.append(
+                _(
+                    "Please set a NACHA originating DFI identification on the %(journal)s journal."
+                )
+            )
 
         if error_msgs:
             raise ValidationError(
-                '\n'.join(error_msgs) % {
+                "\n".join(error_msgs)
+                % {
                     "journal": journal.display_name,
                 }
             )
@@ -43,12 +64,22 @@ class AccountBatchPayment(models.Model):
         header = []
         header.append("1")  # Record Type Code
         header.append("01")  # Priority Code
-        header.append("{:10.10}".format(self.journal_id.nacha_immediate_destination))  # Immediate Destination
-        header.append("{:10.10}".format(self.journal_id.nacha_immediate_origin))  # Immediate Origin
-        header.append("{:6.6}".format(fields.Date.today().strftime("%y%m%d")))  # File Creation Date
+        header.append(
+            "{:10.10}".format(self.journal_id.nacha_immediate_destination)
+        )  # Immediate Destination
+        header.append(
+            "{:10.10}".format(self.journal_id.nacha_immediate_origin)
+        )  # Immediate Origin
+        header.append(
+            "{:6.6}".format(fields.Date.today().strftime("%y%m%d"))
+        )  # File Creation Date
 
-        now_in_client_tz = fields.Datetime.context_timestamp(self, fields.Datetime.now())
-        header.append("{:4.4}".format(now_in_client_tz.strftime("%H%M")))  # File Creation Time
+        now_in_client_tz = fields.Datetime.context_timestamp(
+            self, fields.Datetime.now()
+        )
+        header.append(
+            "{:4.4}".format(now_in_client_tz.strftime("%H%M"))
+        )  # File Creation Time
 
         nr = self.search_count([("id", "!=", self.id), ("date", "=", self.date)])
         header.append("{:1.1}".format(chr(min(90, ord("A") + nr))))  # File ID Modifier
@@ -56,8 +87,12 @@ class AccountBatchPayment(models.Model):
         header.append("094")  # Record Size
         header.append("10")  # Blocking Factor
         header.append("1")  # Format Code
-        header.append("{:23.23}".format(self.journal_id.nacha_destination))  # Destination
-        header.append("{:23.23}".format(self.journal_id.company_id.name))  # Origin or Company Name
+        header.append(
+            "{:23.23}".format(self.journal_id.nacha_destination)
+        )  # Destination
+        header.append(
+            "{:23.23}".format(self.journal_id.company_id.name)
+        )  # Origin or Company Name
 
         # ideally this would be the display_name but it will be too long
         header.append("{:8d}".format(self.id))  # Reference Code
@@ -70,14 +105,22 @@ class AccountBatchPayment(models.Model):
         batch.append("225")  # Service Class Code (debits only)
         batch.append("{:16.16}".format(self.journal_id.company_id.name))  # Company Name
         batch.append("{:20.20}".format(""))  # Company Discretionary Data (optional)
-        batch.append("{:0>10.10}".format(self.journal_id.nacha_company_identification))  # Company Identification
+        batch.append(
+            "{:0>10.10}".format(self.journal_id.nacha_company_identification)
+        )  # Company Identification
         batch.append("PPD")  # Standard Entry Class Code
         batch.append("{:10.10}".format(payment.ref))  # Company Entry Description
-        batch.append("{:6.6}".format(payment.date.strftime("%y%m%d")))  # Company Descriptive Date
-        batch.append("{:6.6}".format(payment.date.strftime("%y%m%d")))  # Effective Entry Date
+        batch.append(
+            "{:6.6}".format(payment.date.strftime("%y%m%d"))
+        )  # Company Descriptive Date
+        batch.append(
+            "{:6.6}".format(payment.date.strftime("%y%m%d"))
+        )  # Effective Entry Date
         batch.append("{:3.3}".format(""))  # Settlement Date (Julian)
         batch.append("1")  # Originator Status Code
-        batch.append("{:8.8}".format(self.journal_id.nacha_origination_dfi_identification))  # Originating DFI Identification
+        batch.append(
+            "{:8.8}".format(self.journal_id.nacha_origination_dfi_identification)
+        )  # Originating DFI Identification
         batch.append("{:07d}".format(batch_nr))  # Batch Number
 
         return "".join(batch)
@@ -87,17 +130,23 @@ class AccountBatchPayment(models.Model):
         entry = []
         entry.append("6")  # Record Type Code (PPD)
         entry.append("22")  # Transaction Code
-        entry.append("{:8.8}".format(bank.aba_routing[:-1]))  # RDFI Routing Transit Number
+        entry.append(
+            "{:8.8}".format(bank.aba_routing[:-1])
+        )  # RDFI Routing Transit Number
         entry.append("{:1.1}".format(bank.aba_routing[-1]))  # Check Digit
         entry.append("{:17.17}".format(bank.acc_number))  # DFI Account Number
         entry.append("{:010d}".format(round(payment.amount * 100)))  # Amount
-        entry.append("{:15.15}".format(payment.partner_id.vat or ""))  # Individual Identification Number (optional)
+        entry.append(
+            "{:15.15}".format(payment.partner_id.vat or "")
+        )  # Individual Identification Number (optional)
         entry.append("{:22.22}".format(payment.partner_id.name))  # Individual Name
         entry.append("  ")  # Discretionary Data Field
         entry.append("0")  # Addenda Record Indicator
 
         # trace number
-        entry.append("{:8.8}".format(self.journal_id.nacha_origination_dfi_identification))  # Trace Number (80-87)
+        entry.append(
+            "{:8.8}".format(self.journal_id.nacha_origination_dfi_identification)
+        )  # Trace Number (80-87)
         entry.append("{:07d}".format(0))  # Trace Number (88-94)
 
         return "".join(entry)
@@ -111,13 +160,23 @@ class AccountBatchPayment(models.Model):
         control.append("8")  # Record Type Code
         control.append("225")  # Service Class Code
         control.append("{:06d}".format(1))  # Entry/Addenda Count
-        control.append("{:010d}".format(self._calculate_aba_hash(bank.aba_routing)))  # Entry Hash
-        control.append("{:012d}".format(round(payment.amount * 100)))  # Total Debit Entry Dollar Amount in Batch
+        control.append(
+            "{:010d}".format(self._calculate_aba_hash(bank.aba_routing))
+        )  # Entry Hash
+        control.append(
+            "{:012d}".format(round(payment.amount * 100))
+        )  # Total Debit Entry Dollar Amount in Batch
         control.append("{:012d}".format(0))  # Total Credit Entry Dollar Amount in Batch
-        control.append("{:0>10.10}".format(self.journal_id.nacha_company_identification))  # Company Identification
-        control.append("{:19.19}".format(""))  # Message Authentication Code (leave blank)
+        control.append(
+            "{:0>10.10}".format(self.journal_id.nacha_company_identification)
+        )  # Company Identification
+        control.append(
+            "{:19.19}".format("")
+        )  # Message Authentication Code (leave blank)
         control.append("{:6.6}".format(""))  # Reserved (leave blank)
-        control.append("{:8.8}".format(self.journal_id.nacha_origination_dfi_identification))  # Originating DFI Identification
+        control.append(
+            "{:8.8}".format(self.journal_id.nacha_origination_dfi_identification)
+        )  # Originating DFI Identification
         control.append("{:07d}".format(batch_nr))  # Batch Number
 
         return "".join(control)
@@ -126,13 +185,20 @@ class AccountBatchPayment(models.Model):
         control = []
         control.append("9")  # Record Type Code
         control.append("{:06d}".format(len(payments)))  # Batch Count
-        control.append("{:06d}".format(len(payments) + 1 + 1))  # Block Count (Batches + File Header + File Control)
+        control.append(
+            "{:06d}".format(len(payments) + 1 + 1)
+        )  # Block Count (Batches + File Header + File Control)
         control.append("{:08d}".format(len(payments)))  # Entry/ Addenda Count
 
-        hashes = (self._calculate_aba_hash(payment.partner_bank_id.aba_routing) for payment in payments)
+        hashes = (
+            self._calculate_aba_hash(payment.partner_bank_id.aba_routing)
+            for payment in payments
+        )
         control.append("{:010d}".format(sum(hashes)))  # Entry Hash
 
-        control.append("{:012d}".format(sum(round(payment.amount) for payment in payments)))  # Total Debit Entry Dollar Amount in File
+        control.append(
+            "{:012d}".format(sum(round(payment.amount) for payment in payments))
+        )  # Total Debit Entry Dollar Amount in File
         control.append("{:012d}".format(0))  # Total Credit Entry Dollar Amount in File
         control.append("{:39.39}".format(""))  # Blank
 

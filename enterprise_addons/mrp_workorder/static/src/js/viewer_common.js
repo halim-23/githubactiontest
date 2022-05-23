@@ -1,17 +1,17 @@
-odoo.define('mrp.viewer_common', function (require) {
-"use strict";
+odoo.define("mrp.viewer_common", function (require) {
+  "use strict";
 
-var mrpViewerCommon = {
+  var mrpViewerCommon = {
     supportedFieldTypes: [],
 
     /**
      * @override
      */
     init: function (parent, name, record, options) {
-        this._super.apply(this, arguments);
-        this.iFrameId = (record.id + '.' + name).replace(/\./g, "_");
-        this.invisible = this._isInvisible(parent);
-        this.page = this.recordData['worksheet_page'] || this.page || 1;
+      this._super.apply(this, arguments);
+      this.iFrameId = (record.id + "." + name).replace(/\./g, "_");
+      this.invisible = this._isInvisible(parent);
+      this.page = this.recordData.worksheet_page || this.page || 1;
     },
     /**
      * Gets called when parent is attached to DOM
@@ -19,8 +19,8 @@ var mrpViewerCommon = {
      * @override
      */
     on_attach_callback: function () {
-        this._fixFormHeight();
-        this._moveAndInitIFrame();
+      this._fixFormHeight();
+      this._moveAndInitIFrame();
     },
 
     /**
@@ -28,11 +28,11 @@ var mrpViewerCommon = {
      *
      * @override
      */
-    destroy: function () { },
+    destroy: function () {},
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Set Form top part to be fixed height to avoid flickers
@@ -41,14 +41,14 @@ var mrpViewerCommon = {
      * @private
      */
     _fixFormHeight: function () {
-        var $form = $('.o_form_view.o_workorder_tablet');
-        if ($form.length) {
-            if (this._needFormHeightFix()) {
-                $form.css('min-height', 'auto');
-            } else {
-                $form.css('min-height', '100%');
-            }
+      var $form = $(".o_form_view.o_workorder_tablet");
+      if ($form.length) {
+        if (this._needFormHeightFix()) {
+          $form.css("min-height", "auto");
+        } else {
+          $form.css("min-height", "100%");
         }
+      }
     },
     /**
      * We have to re_compute the value of the modifier because
@@ -60,33 +60,33 @@ var mrpViewerCommon = {
      * @private
      */
     _isInvisible: function (parent) {
-        var self = this;
-        var invisible = false;
-        _.forEach(parent.allModifiersData, function (item) {
-            if (item.node.attrs.name === self.name) {
-                invisible = item.evaluatedModifiers[self.record.id].invisible;
-                return;
-            }
-        });
-        return invisible;
+      var self = this;
+      var invisible = false;
+      _.forEach(parent.allModifiersData, function (item) {
+        if (item.node.attrs.name === self.name) {
+          invisible = item.evaluatedModifiers[self.record.id].invisible;
+          return;
+        }
+      });
+      return invisible;
     },
 
     /**
      * Returns whether form height need to be fixed or not
      *
      * @private
-     * @returns { boolean }
+     * @returns { Boolean }
      */
     _needFormHeightFix: function () {
-        var parent = this.getParent();
-        var self = this;
-        var invisible = _.all(parent.allModifiersData, function (item) {
-            if (_.contains(['worksheet', 'worksheet_google_slide'], item.node.attrs.name)) {
-                return item.evaluatedModifiers[self.record.id].invisible;
-            }
-            return true;
-        });
-        return !invisible;
+      var parent = this.getParent();
+      var self = this;
+      var invisible = _.all(parent.allModifiersData, function (item) {
+        if (_.contains(["worksheet", "worksheet_google_slide"], item.node.attrs.name)) {
+          return item.evaluatedModifiers[self.record.id].invisible;
+        }
+        return true;
+      });
+      return !invisible;
     },
 
     /**
@@ -97,32 +97,35 @@ var mrpViewerCommon = {
      * @private
      */
     _moveAndInitIFrame: function () {
-        var $el = this.$el;
-        var $iFrame = $el.find('iframe');
-        var $container = $el.closest('.o_content');
+      var $el = this.$el;
+      var $iFrame = $el.find("iframe");
+      var $container = $el.closest(".o_content");
 
-        // Save the PDFViewerApp on the DOM element since this widget will be destroyed on any action
-        $iFrame.on('load', function () {
-            if (this.contentWindow.window.PDFViewerApplication) {
-                // TODO: This used to directly store the PDFViewerApplication.pdfViewer, but pdfjs 2.2.228 upgrade made
-                // it so the pdfViewer is sometimes created/set after this save. Future versions of pdfjs may allow us to
-                // switch back to storing just the pdfViewer.
-                $el.data('PDFViewerApplication', this.contentWindow.window.PDFViewerApplication);
-            }
-        });
+      // Save the PDFViewerApp on the DOM element since this widget will be destroyed on any action
+      $iFrame.on("load", function () {
+        if (this.contentWindow.window.PDFViewerApplication) {
+          // TODO: This used to directly store the PDFViewerApplication.pdfViewer, but pdfjs 2.2.228 upgrade made
+          // it so the pdfViewer is sometimes created/set after this save. Future versions of pdfjs may allow us to
+          // switch back to storing just the pdfViewer.
+          $el.data(
+            "PDFViewerApplication",
+            this.contentWindow.window.PDFViewerApplication
+          );
+        }
+      });
 
-        // Appended to the container and adjust CSS rules
-        $el.closest('.workorder_pdf').appendTo($container);
-        $container.css('display', 'flex');
-        $container.css('flex-direction', 'column');
+      // Appended to the container and adjust CSS rules
+      $el.closest(".workorder_pdf").appendTo($container);
+      $container.css("display", "flex");
+      $container.css("flex-direction", "column");
 
-        // Add unique ID to get it back after the next destroy/start cycle
-        $el.attr('id', this.iFrameId);
+      // Add unique ID to get it back after the next destroy/start cycle
+      $el.attr("id", this.iFrameId);
 
-        // Initialize the Widget only when it has been moved in the DOM
-        this._superStart.apply(this, arguments);
+      // Initialize the Widget only when it has been moved in the DOM
+      this._superStart.apply(this, arguments);
     },
-};
+  };
 
-return mrpViewerCommon;
+  return mrpViewerCommon;
 });

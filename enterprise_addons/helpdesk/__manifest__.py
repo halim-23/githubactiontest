@@ -1,25 +1,24 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'Helpdesk',
-    'version': '1.4',
-    'category': 'Services/Helpdesk',
-    'sequence': 110,
-    'summary': 'Track, prioritize, and solve customer tickets',
-    'website': 'https://www.odoo.com/app/helpdesk',
-    'depends': [
-        'base_setup',
-        'mail',
-        'utm',
-        'rating',
-        'web_tour',
-        'web_cohort',
-        'resource',
-        'portal',
-        'digest',
+    "name": "Helpdesk",
+    "version": "1.4",
+    "category": "Services/Helpdesk",
+    "sequence": 110,
+    "summary": "Track, prioritize, and solve customer tickets",
+    "website": "https://www.odoo.com/app/helpdesk",
+    "depends": [
+        "base_setup",
+        "mail",
+        "utm",
+        "rating",
+        "web_tour",
+        "web_cohort",
+        "resource",
+        "portal",
+        "digest",
     ],
-    'description': """
+    "description": """
 Helpdesk - Ticket Management App
 ================================
 
@@ -37,40 +36,40 @@ Features:
     - Install additional features easily using your team form view.
 
     """,
-    'data': [
-        'security/helpdesk_security.xml',
-        'security/ir.model.access.csv',
-        'data/digest_data.xml',
-        'data/mail_data.xml',
-        'data/mail_template_data.xml',
-        'data/helpdesk_data.xml',
-        'data/ir_cron_data.xml',
-        'report/helpdesk_ticket_analysis_views.xml',
-        'views/helpdesk_views.xml',
-        'views/helpdesk_team_views.xml',
-        'views/digest_views.xml',
-        'views/helpdesk_portal_templates.xml',
-        'views/rating_views.xml',
-        'views/res_partner_views.xml',
-        'views/mail_activity_views.xml',
-        'views/helpdesk_templates.xml',
-        'report/helpdesk_sla_report_analysis_views.xml',
+    "data": [
+        "security/helpdesk_security.xml",
+        "security/ir.model.access.csv",
+        "data/digest_data.xml",
+        "data/mail_data.xml",
+        "data/mail_template_data.xml",
+        "data/helpdesk_data.xml",
+        "data/ir_cron_data.xml",
+        "report/helpdesk_ticket_analysis_views.xml",
+        "views/helpdesk_views.xml",
+        "views/helpdesk_team_views.xml",
+        "views/digest_views.xml",
+        "views/helpdesk_portal_templates.xml",
+        "views/rating_views.xml",
+        "views/res_partner_views.xml",
+        "views/mail_activity_views.xml",
+        "views/helpdesk_templates.xml",
+        "report/helpdesk_sla_report_analysis_views.xml",
     ],
-    'demo': ['data/helpdesk_demo.xml'],
-    'application': True,
-    'license': 'OEEL-1',
-    'assets': {
-        'web.assets_backend': [
-            'helpdesk/static/src/scss/helpdesk.scss',
-            'helpdesk/static/src/css/portal_helpdesk.css',
-            'helpdesk/static/src/js/helpdesk_dashboard.js',
-            'helpdesk/static/src/js/tours/helpdesk.js',
+    "demo": ["data/helpdesk_demo.xml"],
+    "application": True,
+    "license": "OEEL-1",
+    "assets": {
+        "web.assets_backend": [
+            "helpdesk/static/src/scss/helpdesk.scss",
+            "helpdesk/static/src/css/portal_helpdesk.css",
+            "helpdesk/static/src/js/helpdesk_dashboard.js",
+            "helpdesk/static/src/js/tours/helpdesk.js",
         ],
-        'web.qunit_suite_tests': [
-            'helpdesk/static/tests/**/*',
+        "web.qunit_suite_tests": [
+            "helpdesk/static/tests/**/*",
         ],
-        'web.assets_qweb': [
-            'helpdesk/static/src/xml/**/*',
+        "web.assets_qweb": [
+            "helpdesk/static/src/xml/**/*",
         ],
-    }
+    },
 }

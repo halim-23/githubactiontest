@@ -4,8 +4,10 @@ from odoo import fields, models
 
 
 class StockLocation(models.Model):
-    _inherit = 'stock.location'
+    _inherit = "stock.location"
 
     amazon_location = fields.Boolean(
         help="True if this location represents the stock of a seller managed by Amazon under the "
-             "Amazon Fulfillment program", default=False)
+        "Amazon Fulfillment program",
+        default=False,
+    )

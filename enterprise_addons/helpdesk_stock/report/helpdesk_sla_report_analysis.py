@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
 
 
 class HelpdeskSLAReport(models.Model):
-    _inherit = 'helpdesk.sla.report.analysis'
+    _inherit = "helpdesk.sla.report.analysis"
 
-    product_id = fields.Many2one('product.product', string='Product', readonly=True)
+    product_id = fields.Many2one("product.product", string="Product", readonly=True)
 
     def _select(self):
         select_str = super()._select()

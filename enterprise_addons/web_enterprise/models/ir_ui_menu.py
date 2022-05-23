@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import re
@@ -14,9 +13,9 @@ class IrUiMenu(models.Model):
 
         for menu in menus.values():
             # web icons for app root menus
-            if menu['id'] == menu['appID']:
-                webIcon = menu.get('webIcon', '')
-                webIconlist = webIcon and webIcon.split(',')
+            if menu["id"] == menu["appID"]:
+                webIcon = menu.get("webIcon", "")
+                webIconlist = webIcon and webIcon.split(",")
                 iconClass = color = backgroundColor = None
                 if webIconlist:
                     if len(webIconlist) >= 2:
@@ -24,11 +23,22 @@ class IrUiMenu(models.Model):
                     if len(webIconlist) == 3:
                         backgroundColor = webIconlist[2]
 
-                if menu.get('webIconData'):
-                    menu['webIconData'] = re.sub(r'\s/g', "", ('data:image/png;base64,%s' % menu['webIconData'].decode('utf-8')))
+                if menu.get("webIconData"):
+                    menu["webIconData"] = re.sub(
+                        r"\s/g",
+                        "",
+                        (
+                            "data:image/png;base64,%s"
+                            % menu["webIconData"].decode("utf-8")
+                        ),
+                    )
                 elif backgroundColor is not None:  # Could split in three parts?
-                    menu['webIcon'] = ",".join([iconClass or "", color or "", backgroundColor])
+                    menu["webIcon"] = ",".join(
+                        [iconClass or "", color or "", backgroundColor]
+                    )
                 else:
-                    menu['webIconData'] = '/web_enterprise/static/img/default_icon_app.png'
+                    menu[
+                        "webIconData"
+                    ] = "/web_enterprise/static/img/default_icon_app.png"
 
         return menus

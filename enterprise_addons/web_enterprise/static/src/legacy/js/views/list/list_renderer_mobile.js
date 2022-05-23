@@ -1,31 +1,30 @@
-odoo.define('web_enterprise.MobileListRenderer', function (require) {
-"use strict";
+odoo.define("web_enterprise.MobileListRenderer", function (require) {
+  "use strict";
 
-const config = require('web.config');
+  const config = require("web.config");
 
-if (!config.device.isMobile) {
+  if (!config.device.isMobile) {
     return;
-}
+  }
 
-const ListRenderer = require('web.ListRenderer');
+  const ListRenderer = require("web.ListRenderer");
 
-ListRenderer.include({
-
+  ListRenderer.include({
     events: Object.assign({}, ListRenderer.prototype.events, {
-        'touchstart .o_data_row': '_onTouchStartSelectionMode',
-        'touchmove .o_data_row': '_onTouchMoveSelectionMode',
-        'touchend .o_data_row': '_onTouchEndSelectionMode',
+      "touchstart .o_data_row": "_onTouchStartSelectionMode",
+      "touchmove .o_data_row": "_onTouchMoveSelectionMode",
+      "touchend .o_data_row": "_onTouchEndSelectionMode",
     }),
 
     init() {
-        this._super(...arguments);
-        this.longTouchTimer = null;
-        this.LONG_TOUCH_THRESHOLD = 400;
+      this._super(...arguments);
+      this.longTouchTimer = null;
+      this.LONG_TOUCH_THRESHOLD = 400;
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Public
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * In mobile, disable the read-only editable list.
@@ -33,12 +32,12 @@ ListRenderer.include({
      * @override
      */
     isEditable() {
-        return this.editable;
+      return this.editable;
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Returns the jQuery node used to update the selection ; visiblity insensitive.
@@ -46,7 +45,7 @@ ListRenderer.include({
      * @override
      */
     _getSelectableRecordCheckboxes() {
-        return this.$('tbody .o_list_record_selector input:not(:disabled)');
+      return this.$("tbody .o_list_record_selector input:not(:disabled)");
     },
 
     /**
@@ -55,7 +54,7 @@ ListRenderer.include({
      * @override
      */
     _isRecordEditable() {
-        return this.editable;
+      return this.editable;
     },
 
     /**
@@ -64,26 +63,27 @@ ListRenderer.include({
      * @private
      */
     _resetLongTouchTimer() {
-        if (this.longTouchTimer) {
-            clearTimeout(this.longTouchTimer);
-            this.longTouchTimer = null;
-        }
+      if (this.longTouchTimer) {
+        clearTimeout(this.longTouchTimer);
+        this.longTouchTimer = null;
+      }
     },
 
     /**
      * @override
      */
     _updateSelection() {
-        this._super(...arguments);
-        this._getSelectableRecordCheckboxes()
-            .each((index, input) => {
-                $(input).closest('.o_data_row').toggleClass('o_data_row_selected', input.checked);
-            });
+      this._super(...arguments);
+      this._getSelectableRecordCheckboxes().each((index, input) => {
+        $(input)
+          .closest(".o_data_row")
+          .toggleClass("o_data_row_selected", input.checked);
+      });
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Prevent from opening the record on click when in selection mode.
@@ -91,11 +91,11 @@ ListRenderer.include({
      * @override
      */
     _onRowClicked(ev) {
-        if (this.selection.length) {
-            ev.preventDefault();
-            return;
-        }
-        this._super(...arguments);
+      if (this.selection.length) {
+        ev.preventDefault();
+        return;
+      }
+      this._super(...arguments);
     },
 
     /**
@@ -105,10 +105,10 @@ ListRenderer.include({
      * @private
      */
     _onTouchEndSelectionMode() {
-        const elapsedTime = Date.now() - this.touchStartMs;
-        if (elapsedTime < this.LONG_TOUCH_THRESHOLD) {
-            this._resetLongTouchTimer();
-        }
+      const elapsedTime = Date.now() - this.touchStartMs;
+      if (elapsedTime < this.LONG_TOUCH_THRESHOLD) {
+        this._resetLongTouchTimer();
+      }
     },
 
     /**
@@ -117,7 +117,7 @@ ListRenderer.include({
      * @private
      */
     _onTouchMoveSelectionMode() {
-        this._resetLongTouchTimer();
+      this._resetLongTouchTimer();
     },
 
     /**
@@ -129,20 +129,19 @@ ListRenderer.include({
      * @param ev
      */
     _onTouchStartSelectionMode(ev) {
-        if (this.selection.length) {
-            // in selection mode, only selection is allowed.
-            ev.preventDefault();
-            $(ev.currentTarget).find('.o_list_record_selector').click();
-            return;
-        }
-        this.touchStartMs = Date.now();
-        if (this.longTouchTimer === null) {
-            this.longTouchTimer = setTimeout(() => {
-                $(ev.currentTarget).find('.o_list_record_selector').click();
-                this._resetLongTouchTimer();
-            }, this.LONG_TOUCH_THRESHOLD);
-        }
+      if (this.selection.length) {
+        // In selection mode, only selection is allowed.
+        ev.preventDefault();
+        $(ev.currentTarget).find(".o_list_record_selector").click();
+        return;
+      }
+      this.touchStartMs = Date.now();
+      if (this.longTouchTimer === null) {
+        this.longTouchTimer = setTimeout(() => {
+          $(ev.currentTarget).find(".o_list_record_selector").click();
+          this._resetLongTouchTimer();
+        }, this.LONG_TOUCH_THRESHOLD);
+      }
     },
-
-});
+  });
 });

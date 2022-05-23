@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -9,31 +9,37 @@
                 <form string="Real Estate">
                     <sheet>
                         <div class="oe_title">
-                            <h1><field name="name" placeholder="Name"/></h1>
+                            <h1><field name="name" placeholder="Name" /></h1>
                         </div>
 
                         <group>
                             <group>
-                                <field name="street_type"/>
-                                <field name="street_name"/>
-                                <field name="street_number_type"/>
-                                <field name="street_number" attrs="{'required': [('street_number_type', '!=', 'S/N')], 'invisible': [('street_number_type', '=', 'S/N')]}"/>
-                                <field name="street_number_km_qualifier" attrs="{'required': [('street_number_type', '=', 'KM')], 'invisible': [('street_number_type', '!=', 'KM')]}"/>
-                                <field name="street_block"/>
-                                <field name="portal"/>
-                                <field name="stairs"/>
-                                <field name="floor"/>
-                                <field name="door"/>
+                                <field name="street_type" />
+                                <field name="street_name" />
+                                <field name="street_number_type" />
+                                <field
+                  name="street_number"
+                  attrs="{'required': [('street_number_type', '!=', 'S/N')], 'invisible': [('street_number_type', '=', 'S/N')]}"
+                />
+                                <field
+                  name="street_number_km_qualifier"
+                  attrs="{'required': [('street_number_type', '=', 'KM')], 'invisible': [('street_number_type', '!=', 'KM')]}"
+                />
+                                <field name="street_block" />
+                                <field name="portal" />
+                                <field name="stairs" />
+                                <field name="floor" />
+                                <field name="door" />
                             </group>
 
                             <group>
-                                <field name="address_complement"/>
-                                <field name="city"/>
-                                <field name="municipality"/>
-                                <field name="municipality_code"/>
-                                <field name="province_code"/>
-                                <field name="postal_code"/>
-                                <field name="cadastral_reference"/>
+                                <field name="address_complement" />
+                                <field name="city" />
+                                <field name="municipality" />
+                                <field name="municipality_code" />
+                                <field name="province_code" />
+                                <field name="postal_code" />
+                                <field name="cadastral_reference" />
                             </group>
                         </group>
                     </sheet>

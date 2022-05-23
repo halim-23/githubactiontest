@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'French Payroll',
-    'icon': '/l10n_fr/static/description/icon.png',
-    'category': 'Human Resources/Payroll',
-    'author': 'Yannick Buron (SYNERPGY)',
-    'depends': ['hr_payroll', 'l10n_fr'],
-    'description': """
+    "name": "French Payroll",
+    "icon": "/l10n_fr/static/description/icon.png",
+    "category": "Human Resources/Payroll",
+    "author": "Yannick Buron (SYNERPGY)",
+    "depends": ["hr_payroll", "l10n_fr"],
+    "description": """
 French Payroll Rules.
 =====================
 
@@ -26,14 +25,14 @@ TODO:
     - The payslip.line with appears_in_payslip = False should appears in the
       payslip interface, but not in the payslip report
     """,
-    'data': [
-        'data/l10n_fr_hr_payroll_data.xml',
-        'data/l10n_fr_hr_payroll_employe_cadre_data.xml',
-        'data/l10n_fr_hr_payroll_employe_non_cadre_data.xml',
-        'views/l10n_fr_hr_payroll_view.xml',
-        'views/res_config_settings_views.xml',
-        'report/report_l10n_fr_fiche_paye.xml',
-        'report/l10n_fr_hr_payroll_report.xml',
+    "data": [
+        "data/l10n_fr_hr_payroll_data.xml",
+        "data/l10n_fr_hr_payroll_employe_cadre_data.xml",
+        "data/l10n_fr_hr_payroll_employe_non_cadre_data.xml",
+        "views/l10n_fr_hr_payroll_view.xml",
+        "views/res_config_settings_views.xml",
+        "report/report_l10n_fr_fiche_paye.xml",
+        "report/l10n_fr_hr_payroll_report.xml",
     ],
-    'license': 'OEEL-1',
+    "license": "OEEL-1",
 }

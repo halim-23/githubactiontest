@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.tests.common import Form, tagged
+
 from odoo.addons.partner_commission.tests.setup import TestCommissionsSetup
 
 
-@tagged('commission_subscription')
+@tagged("commission_subscription")
 class TestSaleSubscription(TestCommissionsSetup):
     def test_referrer_commission_plan_changed(self):
         """When the referrer's commission plan changes, its new commission plan should be set on the subscription,
         unless commission_plan_frozen is checked."""
         self.referrer.commission_plan_id = self.gold_plan
 
-        form = Form(self.env['sale.subscription'])
+        form = Form(self.env["sale.subscription"])
         form.partner_id = self.customer
         form.referrer_id = self.referrer
         form.template_id = self.template_yearly
@@ -33,7 +33,7 @@ class TestSaleSubscription(TestCommissionsSetup):
         self.referrer.grade_id = self.gold
         self.referrer._onchange_grade_id()
 
-        form = Form(self.env['sale.subscription'])
+        form = Form(self.env["sale.subscription"])
         form.partner_id = self.customer
         form.referrer_id = self.referrer
         form.template_id = self.template_yearly
@@ -54,7 +54,11 @@ class TestSaleSubscription(TestCommissionsSetup):
         """Some data should be forwarded from the subscription to the renewal's sale order."""
         self.referrer.commission_plan_id = self.gold_plan
 
-        form = Form(self.env['sale.order'].with_user(self.salesman).with_context(tracking_disable=True))
+        form = Form(
+            self.env["sale.order"]
+            .with_user(self.salesman)
+            .with_context(tracking_disable=True)
+        )
         form.partner_id = self.customer
         form.referrer_id = self.referrer
 
@@ -65,11 +69,11 @@ class TestSaleSubscription(TestCommissionsSetup):
 
         so = form.save()
         so.action_confirm()
-        sub = so.order_line.mapped('subscription_id')
+        sub = so.order_line.mapped("subscription_id")
 
         res = sub.prepare_renewal_order()
-        res_id = res['res_id']
-        renewal_so = self.env['sale.order'].browse(res_id)
+        res_id = res["res_id"]
+        renewal_so = self.env["sale.order"].browse(res_id)
 
         self.assertEqual(renewal_so.referrer_id, sub.referrer_id)
         self.assertEqual(renewal_so.commission_plan_id, sub.commission_plan_id)
@@ -77,7 +81,11 @@ class TestSaleSubscription(TestCommissionsSetup):
     def test_compute_commission(self):
         self.referrer.commission_plan_id = self.gold_plan
 
-        form = Form(self.env['sale.order'].with_user(self.salesman).with_context(tracking_disable=True))
+        form = Form(
+            self.env["sale.order"]
+            .with_user(self.salesman)
+            .with_context(tracking_disable=True)
+        )
         form.partner_id = self.customer
         form.referrer_id = self.referrer
 
@@ -89,7 +97,7 @@ class TestSaleSubscription(TestCommissionsSetup):
         so = form.save()
         so.pricelist_id = self.usd_8
         so.action_confirm()
-        sub = so.order_line.mapped('subscription_id')
+        sub = so.order_line.mapped("subscription_id")
 
         self.assertEqual(sub.commission, 180)
 
@@ -100,12 +108,12 @@ class TestSaleSubscription(TestCommissionsSetup):
         self.referrer.commission_plan_id = self.gold_plan
 
         # Test that it works even when the commission plan is Falsy.
-        form = Form(self.env['sale.subscription'].with_context(tracking_disable=True))
+        form = Form(self.env["sale.subscription"].with_context(tracking_disable=True))
         form.partner_id = self.customer
         form.referrer_id = self.referrer
         form.template_id = self.template_yearly
-        form.commission_plan_assignation = 'fixed'
-        form.commission_plan_id = self.env['commission.plan']
+        form.commission_plan_assignation = "fixed"
+        form.commission_plan_id = self.env["commission.plan"]
         form.pricelist_id = self.usd_8
 
         with form.recurring_invoice_line_ids.new() as line:
@@ -117,8 +125,8 @@ class TestSaleSubscription(TestCommissionsSetup):
 
         # renew
         res = sub.prepare_renewal_order()
-        res_id = res['res_id']
-        renewal_so = self.env['sale.order'].browse(res_id)
+        res_id = res["res_id"]
+        renewal_so = self.env["sale.order"].browse(res_id)
         renewal_so.action_confirm()
 
         # pay
@@ -133,8 +141,8 @@ class TestSaleSubscription(TestCommissionsSetup):
 
         # renew
         res = sub.prepare_renewal_order()
-        res_id = res['res_id']
-        renewal_so = self.env['sale.order'].browse(res_id)
+        res_id = res["res_id"]
+        renewal_so = self.env["sale.order"].browse(res_id)
         renewal_so.action_confirm()
 
         # pay
@@ -142,16 +150,18 @@ class TestSaleSubscription(TestCommissionsSetup):
         inv.action_post()
         self._pay_invoice(inv)
 
-        self.assertEqual(inv.commission_po_line_id.price_subtotal, 18, 'Commission is wrong')
+        self.assertEqual(
+            inv.commission_po_line_id.price_subtotal, 18, "Commission is wrong"
+        )
 
         # Switch to 'auto' and check that the gold plan is used.
-        sub.commission_plan_assignation = 'auto'
+        sub.commission_plan_assignation = "auto"
         self.assertEqual(sub.commission_plan_id, self.gold_plan)
 
         # renew
         res = sub.prepare_renewal_order()
-        res_id = res['res_id']
-        renewal_so = self.env['sale.order'].browse(res_id)
+        res_id = res["res_id"]
+        renewal_so = self.env["sale.order"].browse(res_id)
         renewal_so.action_confirm()
 
         # pay
@@ -159,4 +169,6 @@ class TestSaleSubscription(TestCommissionsSetup):
         inv.action_post()
         self._pay_invoice(inv)
 
-        self.assertEqual(inv.commission_po_line_id.price_subtotal, 180, 'Commission is wrong')
+        self.assertEqual(
+            inv.commission_po_line_id.price_subtotal, 180, "Commission is wrong"
+        )

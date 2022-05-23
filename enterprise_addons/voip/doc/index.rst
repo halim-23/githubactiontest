@@ -60,7 +60,7 @@ In order to install Asterisk 13.2.0, you can download the source directly `here 
 * Enter the Asterisk directory: cd /usr/local/src/asterisk*.
 * Run the Asterisk configure script: ./configure --libdir=/usr/lib64.
 * Run the Asterisk menuselect tool: make menuselect.
-* In the menuselect, go to the resources option and ensure that res_srtp is enabled. If there are 3 x’s next to res_srtp, there is a problem with the srtp library and you must reinstall it. Save the configuration (press x). You should also see stars in front of the res_pjsip lines. 
+* In the menuselect, go to the resources option and ensure that res_srtp is enabled. If there are 3 x’s next to res_srtp, there is a problem with the srtp library and you must reinstall it. Save the configuration (press x). You should also see stars in front of the res_pjsip lines.
 * Compile and install Asterisk: make && make install.
 * If you need the sample configs you can run make samples to install the sample configs. If you need to install the Asterisk startup script you can run make config.
 

@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import json
 import re
-
-from PIL import Image
 from io import BytesIO
 from uuid import uuid4
+
+from PIL import Image
 
 from odoo.tests.common import HttpCase, tagged
 from odoo.tools import config, mute_logger
@@ -50,10 +49,12 @@ class MobileRoutesTest(HttpCase):
         NB: this route has a different behavior depending on the ability to list databases or not.
         """
         payload = self._build_payload()
-        response = self.url_open("/web/database/list", data=json.dumps(payload), headers=self.headers)
+        response = self.url_open(
+            "/web/database/list", data=json.dumps(payload), headers=self.headers
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        if config['list_db']:
+        if config["list_db"]:
             self._is_success_json_response(data)
             result = data["result"]
             self.assertIsInstance(result, list)
@@ -71,18 +72,24 @@ class MobileRoutesTest(HttpCase):
         This request is used to authenticate a user using its username/password
         and retrieve its details & session's id
         """
-        payload = self._build_payload({
-            "db": self.env.cr.dbname,
-            "login": "demo",
-            "password": "demo",
-            "context": {},
-        })
-        response = self.url_open("/web/session/authenticate", data=json.dumps(payload), headers=self.headers)
+        payload = self._build_payload(
+            {
+                "db": self.env.cr.dbname,
+                "login": "demo",
+                "password": "demo",
+                "context": {},
+            }
+        )
+        response = self.url_open(
+            "/web/session/authenticate", data=json.dumps(payload), headers=self.headers
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._is_success_json_response(data)
         result = data["result"]
-        self.assertIsInstance(response.cookies.get("session_id"), str, "should have a session cookie")
+        self.assertIsInstance(
+            response.cookies.get("session_id"), str, "should have a session cookie"
+        )
         self.assertEqual(result["username"], "demo")
         self.assertEqual(result["db"], self.env.cr.dbname)
         user = self.env["res.users"].search_read([("login", "=", "demo")], limit=1)[0]
@@ -95,13 +102,17 @@ class MobileRoutesTest(HttpCase):
         This request is used to attempt to authenticate a user using the wrong credentials
         (username/password) and check the returned error
         """
-        payload = self._build_payload({
-            "db": self.env.cr.dbname,
-            "login": "demo",
-            "password": "admin",
-            "context": {},
-        })
-        response = self.url_open("/web/session/authenticate", data=json.dumps(payload), headers=self.headers)
+        payload = self._build_payload(
+            {
+                "db": self.env.cr.dbname,
+                "login": "demo",
+                "password": "admin",
+                "context": {},
+            }
+        )
+        response = self.url_open(
+            "/web/session/authenticate", data=json.dumps(payload), headers=self.headers
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._is_error_json_response(data)
@@ -117,13 +128,17 @@ class MobileRoutesTest(HttpCase):
         check the returned error
         """
         db_name = "dummydb-%s" % str(uuid4())
-        payload = self._build_payload({
-            "db": db_name,
-            "login": "demo",
-            "password": "admin",
-            "context": {},
-        })
-        response = self.url_open("/web/session/authenticate", data=json.dumps(payload), headers=self.headers)
+        payload = self._build_payload(
+            {
+                "db": db_name,
+                "login": "demo",
+                "password": "admin",
+                "context": {},
+            }
+        )
+        response = self.url_open(
+            "/web/session/authenticate", data=json.dumps(payload), headers=self.headers
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._is_error_json_response(data)
@@ -132,15 +147,20 @@ class MobileRoutesTest(HttpCase):
         self.assertEqual(error["message"], "Odoo Server Error")
         self.assertEqual(error["data"]["name"], "psycopg2.OperationalError")
         regex = re.compile("database .* does not exist")
-        self.assertTrue(regex.search(error["data"]["message"]), 
-            "Error message %r doesn't contain regex %r" % (error["data"]["message"], regex.pattern))
+        self.assertTrue(
+            regex.search(error["data"]["message"]),
+            "Error message %r doesn't contain regex %r"
+            % (error["data"]["message"], regex.pattern),
+        )
 
     def test_avatar(self):
         """
         This request is used to retrieve the user's picture
         """
         self.authenticate("demo", "demo")
-        response = self.url_open("/web/image?model=res.users&field=image_medium&id=%s" % self.session.uid)
+        response = self.url_open(
+            "/web/image?model=res.users&field=image_medium&id=%s" % self.session.uid
+        )
         self.assertEqual(response.status_code, 200)
         avatar = Image.open(BytesIO(response.content))
         self.assertIsInstance(avatar, Image.Image)
@@ -151,7 +171,11 @@ class MobileRoutesTest(HttpCase):
         """
         payload = self._build_payload()
         self.authenticate("demo", "demo")
-        response = self.url_open("/web/session/get_session_info", data=json.dumps(payload), headers=self.headers)
+        response = self.url_open(
+            "/web/session/get_session_info",
+            data=json.dumps(payload),
+            headers=self.headers,
+        )
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self._is_success_json_response(data)
@@ -172,10 +196,14 @@ class MobileRoutesTest(HttpCase):
         }
 
     def _is_success_json_response(self, data):
-        """"
+        """ "
         Helper to validate a standard JSONRPC response's structure
         """
-        self.assertEqual(list(data.keys()), ["jsonrpc", "id", "result"], "should be a valid jsonrpc response")
+        self.assertEqual(
+            list(data.keys()),
+            ["jsonrpc", "id", "result"],
+            "should be a valid jsonrpc response",
+        )
         self.assertTrue(isinstance(data["jsonrpc"], str))
         self.assertTrue(isinstance(data["id"], str))
 
@@ -183,11 +211,19 @@ class MobileRoutesTest(HttpCase):
         """
         Helper to validate an error JSONRPC response's structure
         """
-        self.assertEqual(list(data.keys()), ["jsonrpc", "id", "error"], "should be a valid error jsonrpc response")
+        self.assertEqual(
+            list(data.keys()),
+            ["jsonrpc", "id", "error"],
+            "should be a valid error jsonrpc response",
+        )
         self.assertTrue(isinstance(data["jsonrpc"], str))
         self.assertTrue(isinstance(data["id"], str))
         self.assertTrue(isinstance(data["error"], dict))
-        self.assertEqual(list(data["error"].keys()), ["code", "message", "data"], "should be a valid error structure")
+        self.assertEqual(
+            list(data["error"].keys()),
+            ["code", "message", "data"],
+            "should be a valid error structure",
+        )
         error = data["error"]
         self.assertTrue(isinstance(error["data"], dict))
         self.assertIn("name", error["data"])

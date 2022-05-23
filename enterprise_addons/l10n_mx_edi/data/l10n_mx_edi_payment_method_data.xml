@@ -13,15 +13,24 @@
             <field name="code">03</field>
             <field name="name">Transferencia electrónica de fondos</field>
         </record>
-        <record id="payment_method_tarjeta_de_credito" model="l10n_mx_edi.payment.method">
+        <record
+      id="payment_method_tarjeta_de_credito"
+      model="l10n_mx_edi.payment.method"
+    >
             <field name="code">04</field>
             <field name="name">Tarjeta de Crédito</field>
         </record>
-        <record id="payment_method_monedero_electronico" model="l10n_mx_edi.payment.method">
+        <record
+      id="payment_method_monedero_electronico"
+      model="l10n_mx_edi.payment.method"
+    >
             <field name="code">05</field>
             <field name="name">Monedero Electrónico</field>
         </record>
-        <record id="payment_method_dinero_electronico" model="l10n_mx_edi.payment.method">
+        <record
+      id="payment_method_dinero_electronico"
+      model="l10n_mx_edi.payment.method"
+    >
             <field name="code">06</field>
             <field name="name">Dinero Electrónico</field>
         </record>
@@ -81,7 +90,10 @@
             <field name="code">30</field>
             <field name="name">Aplicación de anticipos</field>
         </record>
-        <record id="payment_method_intermediario_pagos" model="l10n_mx_edi.payment.method">
+        <record
+      id="payment_method_intermediario_pagos"
+      model="l10n_mx_edi.payment.method"
+    >
             <field name="code">31</field>
             <field name="name">Intermediario pagos</field>
         </record>

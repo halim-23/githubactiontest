@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
 
     <record model="ir.ui.view" id="view_hr_referral_onboarding_form">
@@ -9,12 +9,22 @@
                 <sheet>
                     <group>
                         <group name="main_details">
-                            <field name="text"/>
-                            <field name="sequence"/>
-                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                            <field name="text" />
+                            <field name="sequence" />
+                            <field
+                name="company_id"
+                groups="base.group_multi_company"
+                options="{'no_create': True}"
+              />
                         </group>
                         <group name="image">
-                            <field name="image" widget='image' class="oe_avatar" style="background: black;" nolabel="1"/>
+                            <field
+                name="image"
+                widget='image'
+                class="oe_avatar"
+                style="background: black;"
+                nolabel="1"
+              />
                         </group>
                     </group>
                 </sheet>
@@ -27,19 +37,31 @@
         <field name="model">hr.referral.onboarding</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="sequence" widget="handle"/>
-                <field name="text"/>
+                <field name="sequence" widget="handle" />
+                <field name="text" />
             </tree>
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="action_hr_referral_onboarding_configuration">
+    <record
+    model="ir.actions.act_window"
+    id="action_hr_referral_onboarding_configuration"
+  >
         <field name="name">Onboarding</field>
         <field name="res_model">hr.referral.onboarding</field>
         <field name="view_mode">tree,form</field>
-        <field name="groups_id" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
+        <field
+      name="groups_id"
+      eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"
+    />
     </record>
 
-    <menuitem parent="menu_hr_referral_configuration" id="menu_hr_referral_onboarding_configuration" action="action_hr_referral_onboarding_configuration" sequence="5" groups="hr_recruitment.group_hr_recruitment_manager"/>
+    <menuitem
+    parent="menu_hr_referral_configuration"
+    id="menu_hr_referral_onboarding_configuration"
+    action="action_hr_referral_onboarding_configuration"
+    sequence="5"
+    groups="hr_recruitment.group_hr_recruitment_manager"
+  />
 
 </odoo>

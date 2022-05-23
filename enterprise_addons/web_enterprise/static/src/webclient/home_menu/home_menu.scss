@@ -12,7 +12,8 @@
       border-color: $dropdown-bg;
     }
 
-    .o_dropdown_active, > ul > li.show > a {
+    .o_dropdown_active,
+    > ul > li.show > a {
       outline: none;
     }
   }
@@ -52,7 +53,8 @@
         &_has_pictogram::before {
           background: linear-gradient(to right top, transparent, rgba(white, 0.15));
           border-radius: 4%;
-          box-shadow: inset 0 1px 0 0 rgba(white, 0.4), inset 0 -1px 0 0 rgba(black, 0.4);
+          box-shadow: inset 0 1px 0 0 rgba(white, 0.4),
+            inset 0 -1px 0 0 rgba(black, 0.4);
         }
 
         .fa {
@@ -96,7 +98,7 @@
     .o_menuitem {
       color: $gray-100;
       outline: none;
-      text-shadow: 0 1px 0 rgba(#000, .3);
+      text-shadow: 0 1px 0 rgba(#000, 0.3);
       @include o-text-overflow;
       @include media-breakpoint-up(md) {
         font-size: 20px;

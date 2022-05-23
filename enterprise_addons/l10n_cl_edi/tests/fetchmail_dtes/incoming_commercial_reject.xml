@@ -1,6 +1,10 @@
 <?xml version="1.0" ?>
-<RespuestaDTE xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              version="1.0" xmlns="http://www.sii.cl/SiiDte">
+<RespuestaDTE
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="1.0"
+  xmlns="http://www.sii.cl/SiiDte"
+>
     <Resultado ID="RespEnvDTE-126373">
         <Caratula version="1.0">
             <RutResponde>76086428-5</RutResponde>
@@ -18,10 +22,11 @@
             <MntTotal>2853684</MntTotal>
             <CodEnvio>1911131210</CodEnvio>
             <EstadoDTE>2</EstadoDTE>
-            <EstadoDTEGlosa>Según Ley N° 19.983, se procede con el rechazo y reclamo del DTE: FALTA NUMERO DE ORDEN DE
+            <EstadoDTEGlosa
+      >Según Ley N° 19.983, se procede con el rechazo y reclamo del DTE: FALTA NUMERO DE ORDEN DE
                 COMPRA Y NUMERO DE HES
             </EstadoDTEGlosa>
         </ResultadoDTE>
     </Resultado>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"></Signature>
+    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" />
 </RespuestaDTE>

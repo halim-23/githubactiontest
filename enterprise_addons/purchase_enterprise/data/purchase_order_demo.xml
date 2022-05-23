@@ -1,14 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data noupdate="1">
     <record id="purchase_order_1" model="purchase.order">
-        <field name="partner_id" ref="base.res_partner_1"/>
-        <field name="user_id" ref="base.user_admin"/>
+        <field name="partner_id" ref="base.res_partner_1" />
+        <field name="user_id" ref="base.user_admin" />
         <field name="state">purchase</field>
-        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)"/>
-        <field name="date_order" eval="DateTime.today() - relativedelta(days=5)"/>
-        <field name="date_approve" eval="DateTime.today() - relativedelta(days=9)"/>
-        <field name="order_line" model="purchase.order.line" eval="[(5, 0, 0),
+        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)" />
+        <field name="date_order" eval="DateTime.today() - relativedelta(days=5)" />
+        <field name="date_approve" eval="DateTime.today() - relativedelta(days=9)" />
+        <field
+        name="order_line"
+        model="purchase.order.line"
+        eval="[(5, 0, 0),
             (0, 0, {
                 'product_id': ref('product.product_product_16'),
                 'name': 'Drawer Black',
@@ -23,17 +26,21 @@
                 'product_qty': 5.0,
                 'product_uom': ref('uom.product_uom_dozen'),
                 'date_planned': time.strftime('%Y-%m-%d')})
-        ]"/>
+        ]"
+      />
     </record>
 
     <record id="purchase_order_2" model="purchase.order">
-        <field name="partner_id" ref="base.res_partner_3"/>
-        <field name="user_id" ref="base.user_admin"/>
+        <field name="partner_id" ref="base.res_partner_3" />
+        <field name="user_id" ref="base.user_admin" />
         <field name="state">purchase</field>
-        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)"/>
-        <field name="date_order" eval="DateTime.today() - relativedelta(days=15)"/>
-        <field name="date_approve" eval="DateTime.today() - relativedelta(days=5)"/>
-        <field name="order_line" model="purchase.order.line" eval="[(5, 0, 0),
+        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)" />
+        <field name="date_order" eval="DateTime.today() - relativedelta(days=15)" />
+        <field name="date_approve" eval="DateTime.today() - relativedelta(days=5)" />
+        <field
+        name="order_line"
+        model="purchase.order.line"
+        eval="[(5, 0, 0),
             (0, 0, {
                 'product_id': ref('product.product_product_8'),
                 'name': 'Large Desk',
@@ -48,17 +55,21 @@
                 'product_qty': 5.0,
                 'product_uom': ref('uom.product_uom_dozen'),
                 'date_planned': time.strftime('%Y-%m-%d')}),
-        ]"/>
+        ]"
+      />
     </record>
 
     <record id="purchase_order_3" model="purchase.order">
-        <field name="partner_id" ref="base.res_partner_12"/>
-        <field name="user_id" ref="base.user_admin"/>
+        <field name="partner_id" ref="base.res_partner_12" />
+        <field name="user_id" ref="base.user_admin" />
         <field name="state">purchase</field>
-        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)"/>
-        <field name="date_order" eval="DateTime.today() - relativedelta(days=15)"/>
-        <field name="date_approve" eval="DateTime.today() - relativedelta(days=18)"/>
-        <field name="order_line" model="purchase.order.line" eval="[(5, 0, 0),
+        <field name="create_date" eval="DateTime.today() - relativedelta(days=20)" />
+        <field name="date_order" eval="DateTime.today() - relativedelta(days=15)" />
+        <field name="date_approve" eval="DateTime.today() - relativedelta(days=18)" />
+        <field
+        name="order_line"
+        model="purchase.order.line"
+        eval="[(5, 0, 0),
             (0, 0, {
                 'product_id': ref('product.product_product_12'),
                 'name': 'Office Chair Black',
@@ -66,9 +77,9 @@
                 'product_qty': 10.0,
                 'product_uom': ref('uom.product_uom_dozen'),
                 'date_planned': time.strftime('%Y-%m-%d')}),
-        ]"/>
+        ]"
+      />
     </record>
     </data>
 
 </odoo>
-

@@ -1,14 +1,14 @@
-odoo.define('web_studio.EditorMixinOwl', function (require) {
-    "use strict";
+odoo.define("web_studio.EditorMixinOwl", function (require) {
+  "use strict";
 
-    return Editor => class extends Editor {
-        handleDrop() { }
+  return (Editor) =>
+    class extends Editor {
+      handleDrop() {}
 
-        highlightNearestHook() { }
+      highlightNearestHook() {}
 
-        setSelectable() { }
+      setSelectable() {}
 
-        unselectedElements() { }
+      unselectedElements() {}
     };
-
 });

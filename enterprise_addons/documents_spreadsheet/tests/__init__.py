@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import common
 from . import test_spreadsheet_bus
 from . import test_spreadsheet_collaborative

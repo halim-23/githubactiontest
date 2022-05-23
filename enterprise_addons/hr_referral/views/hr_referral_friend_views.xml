@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
 
     <record model="ir.ui.view" id="view_hr_referral_friend_form">
@@ -9,14 +9,19 @@
                 <sheet>
                     <group>
                         <group name="name_details">
-                            <field name="name"/>
-                            <field name="position" widget="radio"/>
+                            <field name="name" />
+                            <field name="position" widget="radio" />
                         </group>
                         <group name="image_header">
-                            <field name="image_head" widget='image' class="oe_avatar referral-rounded-circle" nolabel="1"/>
+                            <field
+                name="image_head"
+                widget='image'
+                class="oe_avatar referral-rounded-circle"
+                nolabel="1"
+              />
                         </group>
                         <group name="image">
-                            <field name="image" widget='image' nolabel="0"/>
+                            <field name="image" widget='image' nolabel="0" />
                         </group>
                     </group>
                 </sheet>
@@ -29,8 +34,8 @@
         <field name="model">hr.referral.friend</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="image" widget='image' class="oe_avatar o_referral_img"/>
-                <field name="name"/>
+                <field name="image" widget='image' class="oe_avatar o_referral_img" />
+                <field name="name" />
             </tree>
         </field>
     </record>
@@ -39,9 +44,18 @@
         <field name="name">Friends</field>
         <field name="res_model">hr.referral.friend</field>
         <field name="view_mode">tree,form</field>
-        <field name="groups_id" eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"/>
+        <field
+      name="groups_id"
+      eval="[(4, ref('hr_recruitment.group_hr_recruitment_manager'))]"
+    />
     </record>
 
-    <menuitem parent="menu_hr_referral_configuration" id="menu_hr_referral_friend_configuration" action="action_hr_referral_friend_configuration" sequence="3" groups="hr_recruitment.group_hr_recruitment_manager"/>
+    <menuitem
+    parent="menu_hr_referral_configuration"
+    id="menu_hr_referral_friend_configuration"
+    action="action_hr_referral_friend_configuration"
+    sequence="3"
+    groups="hr_recruitment.group_hr_recruitment_manager"
+  />
 
 </odoo>

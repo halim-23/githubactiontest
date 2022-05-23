@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import sale_subscription
 from . import payment
 from . import product

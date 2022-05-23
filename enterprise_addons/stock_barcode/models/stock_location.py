@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, api
+from odoo import api, models
 
 
 class Location(models.Model):
-    _inherit = 'stock.location'
-    _barcode_field = 'barcode'
+    _inherit = "stock.location"
+    _barcode_field = "barcode"
 
     @api.model
     def _get_fields_stock_barcode(self):
-        return ['display_name', 'barcode', 'parent_path']
+        return ["display_name", "barcode", "parent_path"]

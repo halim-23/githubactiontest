@@ -1,44 +1,66 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
-from odoo import api, fields, models, _
-from odoo.tools.misc import format_date
-from odoo.osv import expression
 from datetime import date, datetime, timedelta
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+
+from odoo import _, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
+from odoo.tools.misc import format_date
 
 _logger = logging.getLogger(__name__)
 
-class ResPartner(models.Model):
-    _name = 'res.partner'
-    _inherit = 'res.partner'
 
-    payment_next_action_date = fields.Date('Next Action Date', copy=False, company_dependent=True,
-                                           help="The date before which no action should be taken.")
-    unreconciled_aml_ids = fields.One2many('account.move.line', 'partner_id',
-                                           domain=[('reconciled', '=', False),
-                                                   ('account_id.deprecated', '=', False),
-                                                   ('account_id.internal_type', '=', 'receivable'),
-                                                   ('move_id.state', '=', 'posted')])
-    unpaid_invoices = fields.One2many('account.move', compute='_compute_unpaid_invoices')
-    total_due = fields.Monetary(compute='_compute_for_followup')
-    total_overdue = fields.Monetary(compute='_compute_for_followup')
+class ResPartner(models.Model):
+    _name = "res.partner"
+    _inherit = "res.partner"
+
+    payment_next_action_date = fields.Date(
+        "Next Action Date",
+        copy=False,
+        company_dependent=True,
+        help="The date before which no action should be taken.",
+    )
+    unreconciled_aml_ids = fields.One2many(
+        "account.move.line",
+        "partner_id",
+        domain=[
+            ("reconciled", "=", False),
+            ("account_id.deprecated", "=", False),
+            ("account_id.internal_type", "=", "receivable"),
+            ("move_id.state", "=", "posted"),
+        ],
+    )
+    unpaid_invoices = fields.One2many(
+        "account.move", compute="_compute_unpaid_invoices"
+    )
+    total_due = fields.Monetary(compute="_compute_for_followup")
+    total_overdue = fields.Monetary(compute="_compute_for_followup")
     followup_status = fields.Selection(
-        [('in_need_of_action', 'In need of action'), ('with_overdue_invoices', 'With overdue invoices'), ('no_action_needed', 'No action needed')],
-        compute='_compute_for_followup',
-        string='Follow-up Status',
-        search='_search_status')
+        [
+            ("in_need_of_action", "In need of action"),
+            ("with_overdue_invoices", "With overdue invoices"),
+            ("no_action_needed", "No action needed"),
+        ],
+        compute="_compute_for_followup",
+        string="Follow-up Status",
+        search="_search_status",
+    )
     followup_level = fields.Many2one(
-        comodel_name='account_followup.followup.line',
+        comodel_name="account_followup.followup.line",
         compute="_compute_for_followup",
         string="Follow-up Level",
-        search='_search_followup_level',
+        search="_search_followup_level",
     )
-    payment_responsible_id = fields.Many2one('res.users', ondelete='set null', string='Follow-up Responsible',
-                                             help="Optionally you can assign a user to this field, which will make him responsible for the action.",
-                                             tracking=True, copy=False, company_dependent=True)
+    payment_responsible_id = fields.Many2one(
+        "res.users",
+        ondelete="set null",
+        string="Follow-up Responsible",
+        help="Optionally you can assign a user to this field, which will make him responsible for the action.",
+        tracking=True,
+        copy=False,
+        company_dependent=True,
+    )
 
     def _search_status(self, operator, value):
         """
@@ -46,21 +68,41 @@ class ResPartner(models.Model):
         """
         if isinstance(value, str):
             value = [value]
-        value = [v for v in value if v in ['in_need_of_action', 'with_overdue_invoices', 'no_action_needed']]
-        if operator not in ('in', '=') or not value:
+        value = [
+            v
+            for v in value
+            if v in ["in_need_of_action", "with_overdue_invoices", "no_action_needed"]
+        ]
+        if operator not in ("in", "=") or not value:
             return []
         followup_data = self._query_followup_level(all_partners=True)
-        return [('id', 'in', [d['partner_id'] for d in followup_data.values() if d['followup_status'] in value])]
+        return [
+            (
+                "id",
+                "in",
+                [
+                    d["partner_id"]
+                    for d in followup_data.values()
+                    if d["followup_status"] in value
+                ],
+            )
+        ]
 
     def _search_followup_level(self, operator, value):
-        company_domain = [('company_id', '=', self.env.company.id)]
+        company_domain = [("company_id", "=", self.env.company.id)]
         if isinstance(value, str):
-            domain = [('name', operator, value)]
+            domain = [("name", operator, value)]
         elif isinstance(value, (int, list, tuple)):
-            domain = [('id', operator, value)]
+            domain = [("id", operator, value)]
 
-        first_followup_level = self.env['account_followup.followup.line'].search(company_domain, order="delay asc", limit=1)
-        level_ids = set(self.env['account_followup.followup.line'].search(domain+company_domain).ids)
+        first_followup_level = self.env["account_followup.followup.line"].search(
+            company_domain, order="delay asc", limit=1
+        )
+        level_ids = set(
+            self.env["account_followup.followup.line"]
+            .search(domain + company_domain)
+            .ids
+        )
         if first_followup_level.id in level_ids:
             # the result from the query is None when it is not  yet at a followup level
             # but it is set to the first level in the compute method
@@ -68,17 +110,25 @@ class ResPartner(models.Model):
 
         followup_data = self._query_followup_level(all_partners=True)
 
-        return [('id', 'in', [
-            d['partner_id']
-            for d in followup_data.values()
-            if d['followup_level'] in level_ids
-        ])]
+        return [
+            (
+                "id",
+                "in",
+                [
+                    d["partner_id"]
+                    for d in followup_data.values()
+                    if d["followup_level"] in level_ids
+                ],
+            )
+        ]
 
     def _compute_for_followup(self):
         """
         Compute the fields 'total_due', 'total_overdue','followup_level' and 'followup_status'
         """
-        first_followup_level = self.env['account_followup.followup.line'].search([('company_id', '=', self.env.company.id)], order="delay asc", limit=1)
+        first_followup_level = self.env["account_followup.followup.line"].search(
+            [("company_id", "=", self.env.company.id)], order="delay asc", limit=1
+        )
         followup_data = self._query_followup_level()
         today = fields.Date.context_today(self)
         for record in self:
@@ -88,27 +138,42 @@ class ResPartner(models.Model):
                 if aml.company_id == self.env.company and not aml.blocked:
                     amount = aml.amount_residual
                     total_due += amount
-                    is_overdue = today > aml.date_maturity if aml.date_maturity else today > aml.date
+                    is_overdue = (
+                        today > aml.date_maturity
+                        if aml.date_maturity
+                        else today > aml.date
+                    )
                     if is_overdue:
                         total_overdue += amount
             record.total_due = total_due
             record.total_overdue = total_overdue
             if record.id in followup_data:
-                record.followup_status = followup_data[record.id]['followup_status']
-                record.followup_level = self.env['account_followup.followup.line'].browse(followup_data[record.id]['followup_level']) or first_followup_level
+                record.followup_status = followup_data[record.id]["followup_status"]
+                record.followup_level = (
+                    self.env["account_followup.followup.line"].browse(
+                        followup_data[record.id]["followup_level"]
+                    )
+                    or first_followup_level
+                )
             else:
-                record.followup_status = 'no_action_needed'
+                record.followup_status = "no_action_needed"
                 record.followup_level = first_followup_level
 
     def _compute_unpaid_invoices(self):
         for record in self:
-            record.unpaid_invoices = self.env['account.move'].search([
-                ('company_id', '=', self.env.company.id),
-                ('commercial_partner_id', '=', record.id),
-                ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
-                ('move_type', 'in', self.env['account.move'].get_sale_types())
-            ]).filtered(lambda inv: not any(inv.line_ids.mapped('blocked')))
+            record.unpaid_invoices = (
+                self.env["account.move"]
+                .search(
+                    [
+                        ("company_id", "=", self.env.company.id),
+                        ("commercial_partner_id", "=", record.id),
+                        ("state", "=", "posted"),
+                        ("payment_state", "in", ("not_paid", "partial")),
+                        ("move_type", "in", self.env["account.move"].get_sale_types()),
+                    ]
+                )
+                .filtered(lambda inv: not any(inv.line_ids.mapped("blocked")))
+            )
 
     def get_next_action(self, followup_line):
         """
@@ -117,40 +182,64 @@ class ResPartner(models.Model):
         self.ensure_one()
         date_auto = followup_line._get_next_date()
         return {
-            'date': self.payment_next_action_date or date_auto,
+            "date": self.payment_next_action_date or date_auto,
         }
 
     def update_next_action(self, options=False):
         """Updates the next_action_date of the right account move lines"""
-        next_action_date = options.get('next_action_date') and options['next_action_date'][0:10] or False
+        next_action_date = (
+            options.get("next_action_date")
+            and options["next_action_date"][0:10]
+            or False
+        )
         next_action_date_done = False
         today = date.today()
         fups = self._compute_followup_lines()
         for partner in self:
-            if options['action'] == 'done':
-                next_action_date_done = datetime.strftime(partner.followup_level._get_next_date(), DEFAULT_SERVER_DATE_FORMAT)
-            partner.payment_next_action_date = (not next_action_date or options['action'] == 'done') and next_action_date_done or next_action_date
-            if options['action'] in ('done', 'later'):
-                msg = _('Next Reminder Date set to %s', format_date(self.env, partner.payment_next_action_date))
+            if options["action"] == "done":
+                next_action_date_done = datetime.strftime(
+                    partner.followup_level._get_next_date(), DEFAULT_SERVER_DATE_FORMAT
+                )
+            partner.payment_next_action_date = (
+                (not next_action_date or options["action"] == "done")
+                and next_action_date_done
+                or next_action_date
+            )
+            if options["action"] in ("done", "later"):
+                msg = _(
+                    "Next Reminder Date set to %s",
+                    format_date(self.env, partner.payment_next_action_date),
+                )
                 partner.message_post(body=msg)
-            if options['action'] == 'done':
+            if options["action"] == "done":
                 for aml in partner.unreconciled_aml_ids:
                     index = aml.followup_line_id.id or None
                     followup_date = fups[index][0]
                     next_level = fups[index][1]
-                    is_overdue = followup_date >= aml.date_maturity if aml.date_maturity else followup_date >= aml.date
+                    is_overdue = (
+                        followup_date >= aml.date_maturity
+                        if aml.date_maturity
+                        else followup_date >= aml.date
+                    )
                     if is_overdue:
-                        aml.write({'followup_line_id': next_level, 'followup_date': today})
+                        aml.write(
+                            {"followup_line_id": next_level, "followup_date": today}
+                        )
 
     def open_action_followup(self):
         self.ensure_one()
         return {
-            'name': _("Overdue Payments for %s", self.display_name),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'views': [[self.env.ref('account_followup.customer_statements_form_view').id, 'form']],
-            'res_model': 'res.partner',
-            'res_id': self.id,
+            "name": _("Overdue Payments for %s", self.display_name),
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "views": [
+                [
+                    self.env.ref("account_followup.customer_statements_form_view").id,
+                    "form",
+                ]
+            ],
+            "res_model": "res.partner",
+            "res_id": self.id,
         }
 
     def send_followup_email(self):
@@ -159,9 +248,9 @@ class ResPartner(models.Model):
         """
         for record in self:
             options = {
-                'partner_id': record.id,
+                "partner_id": record.id,
             }
-            self.env['account.followup.report'].send_email(options)
+            self.env["account.followup.report"].send_email(options)
 
     def send_followup_sms(self):
         """
@@ -169,11 +258,13 @@ class ResPartner(models.Model):
         """
         for partner in self:
             options = {
-                'partner_id': partner.id,
+                "partner_id": partner.id,
             }
             partner._message_sms(
-                body=self.env['account.followup.report'].with_context(lang=self.lang or self.env.user.lang)._get_sms_summary(options),
-                partner_ids=partner.ids
+                body=self.env["account.followup.report"]
+                .with_context(lang=self.lang or self.env.user.lang)
+                ._get_sms_summary(options),
+                partner_ids=partner.ids,
             )
 
     def get_followup_html(self):
@@ -181,14 +272,18 @@ class ResPartner(models.Model):
         Return the content of the follow-up report in HTML
         """
         options = {
-            'partner_id': self.id,
-            'followup_level': (self.followup_level.id, self.followup_level.delay),
-            'keep_summary': True
+            "partner_id": self.id,
+            "followup_level": (self.followup_level.id, self.followup_level.delay),
+            "keep_summary": True,
         }
-        return self.env['account.followup.report'].with_context(print_mode=True, lang=self.lang or self.env.user.lang).get_html(options)
+        return (
+            self.env["account.followup.report"]
+            .with_context(print_mode=True, lang=self.lang or self.env.user.lang)
+            .get_html(options)
+        )
 
     def _compute_followup_lines(self):
-        """ returns the followup plan of the current user's company (of given in context directly)
+        """returns the followup plan of the current user's company (of given in context directly)
         in the form of a dictionary with
          * keys being the different possible levels of followup for account.move.line's (None or IDs of account_followup.followup.line)
          * values being a tuple of 3 elements corresponding respectively to
@@ -196,7 +291,9 @@ class ResPartner(models.Model):
            - the followup ID of the next level
            - the delays in days of the next level
         """
-        followup_line_ids = self.env['account_followup.followup.line'].search([('company_id', '=', self.env.company.id)], order="delay asc")
+        followup_line_ids = self.env["account_followup.followup.line"].search(
+            [("company_id", "=", self.env.company.id)], order="delay asc"
+        )
 
         current_date = fields.Date.today()
 
@@ -303,36 +400,49 @@ class ResPartner(models.Model):
             where="" if all_partners else "AND aml.partner_id in %(partner_ids)s",
         )
         params = {
-            'company_id': self.env.company.id,
-            'partner_ids': tuple(self.ids),
-            'current_date': today,
+            "company_id": self.env.company.id,
+            "partner_ids": tuple(self.ids),
+            "current_date": today,
         }
-        self.env['account.move.line'].flush()
-        self.env['res.partner'].flush()
-        self.env['account_followup.followup.line'].flush()
+        self.env["account.move.line"].flush()
+        self.env["res.partner"].flush()
+        self.env["account_followup.followup.line"].flush()
         self.env.cr.execute(sql, params)
         result = self.env.cr.dictfetchall()
-        result = {r['partner_id']: r for r in result}
+        result = {r["partner_id"]: r for r in result}
         return result
 
     def _execute_followup_partner(self):
         self.ensure_one()
-        if self.followup_status == 'in_need_of_action':
+        if self.followup_status == "in_need_of_action":
             followup_line = self.followup_level
             if followup_line.send_email:
                 self.send_followup_email()
             if followup_line.manual_action:
                 # log a next activity for today
                 self.activity_schedule(
-                    activity_type_id=followup_line.manual_action_type_id and followup_line.manual_action_type_id.id or self._default_activity_type().id,
+                    activity_type_id=followup_line.manual_action_type_id
+                    and followup_line.manual_action_type_id.id
+                    or self._default_activity_type().id,
                     summary=followup_line.manual_action_note,
-                    user_id=(followup_line.manual_action_responsible_id and followup_line.manual_action_responsible_id.id) or self.env.user.id
+                    user_id=(
+                        followup_line.manual_action_responsible_id
+                        and followup_line.manual_action_responsible_id.id
+                    )
+                    or self.env.user.id,
                 )
             if followup_line:
                 next_date = followup_line._get_next_date()
-                self.update_next_action(options={'next_action_date': datetime.strftime(next_date, DEFAULT_SERVER_DATE_FORMAT), 'action': 'done'})
+                self.update_next_action(
+                    options={
+                        "next_action_date": datetime.strftime(
+                            next_date, DEFAULT_SERVER_DATE_FORMAT
+                        ),
+                        "action": "done",
+                    }
+                )
             if followup_line.send_sms:
-               self.send_followup_sms()
+                self.send_followup_sms()
             if followup_line.print_letter:
                 return self
         return None
@@ -341,19 +451,27 @@ class ResPartner(models.Model):
         """
         Execute the actions to do with followups.
         """
-        to_print = self.env['res.partner']
+        to_print = self.env["res.partner"]
         for partner in self:
             partner_tmp = partner._execute_followup_partner()
             if partner_tmp:
                 to_print += partner_tmp
         if not to_print:
             return
-        return self.env['account.followup.report'].print_followups(to_print)
+        return self.env["account.followup.report"].print_followups(to_print)
 
     def _cron_execute_followup_company(self):
         followup_data = self._query_followup_level(all_partners=True)
-        in_need_of_action = self.env['res.partner'].browse([d['partner_id'] for d in followup_data.values() if d['followup_status'] == 'in_need_of_action'])
-        in_need_of_action_auto = in_need_of_action.filtered(lambda p: p.followup_level.auto_execute)
+        in_need_of_action = self.env["res.partner"].browse(
+            [
+                d["partner_id"]
+                for d in followup_data.values()
+                if d["followup_status"] == "in_need_of_action"
+            ]
+        )
+        in_need_of_action_auto = in_need_of_action.filtered(
+            lambda p: p.followup_level.auto_execute
+        )
         for partner in in_need_of_action_auto:
             try:
                 partner._execute_followup_partner()
@@ -364,4 +482,6 @@ class ResPartner(models.Model):
 
     def _cron_execute_followup(self):
         for company in self.env.user.company_ids:
-            self.with_context(allowed_company_ids=company.ids)._cron_execute_followup_company()
+            self.with_context(
+                allowed_company_ids=company.ids
+            )._cron_execute_followup_company()

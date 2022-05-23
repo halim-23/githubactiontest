@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from . import product
 from . import rental_pricing
 from . import res_company

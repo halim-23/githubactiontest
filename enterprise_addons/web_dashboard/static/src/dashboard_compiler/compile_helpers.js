@@ -1,6 +1,6 @@
 /* @odoo-module */
 
-import { evaluateExpr } from "@web/core/py_js/py";
+import {evaluateExpr} from "@web/core/py_js/py";
 
 /**
  * A helper to identify nodes in an arch to allow matching between
@@ -12,34 +12,34 @@ import { evaluateExpr } from "@web/core/py_js/py";
  *  Function.idFor: Produce an Id for the lastNode, or for the given node.
  */
 export function nodeIdentifier() {
-    const mapping = {};
-    let lastNode;
+  const mapping = {};
+  let lastNode;
 
-    function add(node) {
-        const nodeMap = mapping[node.tagName] || {
-            current: null,
-            id: 1,
-        };
-        mapping[node.tagName] = nodeMap;
+  function add(node) {
+    const nodeMap = mapping[node.tagName] || {
+      current: null,
+      id: 1,
+    };
+    mapping[node.tagName] = nodeMap;
 
-        if (node !== nodeMap.current) {
-            nodeMap.id++;
-        }
-        nodeMap.current = node;
-        lastNode = node;
+    if (node !== nodeMap.current) {
+      nodeMap.id++;
     }
+    nodeMap.current = node;
+    lastNode = node;
+  }
 
-    function idFor(node) {
-        node = node || lastNode;
-        const nodeMap = mapping[node.tagName];
-        return `${node.tagName}_${nodeMap.id}`;
-    }
+  function idFor(node) {
+    node = node || lastNode;
+    const nodeMap = mapping[node.tagName];
+    return `${node.tagName}_${nodeMap.id}`;
+  }
 
-    return Object.assign(add, {
-        idFor(node) {
-            return idFor(node);
-        },
-    });
+  return Object.assign(add, {
+    idFor(node) {
+      return idFor(node);
+    },
+  });
 }
 
 /**
@@ -49,13 +49,13 @@ export function nodeIdentifier() {
  * @param {Element} compiled A node of a pre-compiled template
  */
 export function addLegacyNodeInfo(node, compiled) {
-    const modifiers = getAllModifiers(node);
-    if (modifiers) {
-        const legacyNode = {
-            attrs: { modifiers },
-        };
-        compiled.setAttribute("_legacyNode_", `"${encodeObjectForTemplate(legacyNode)}"`);
-    }
+  const modifiers = getAllModifiers(node);
+  if (modifiers) {
+    const legacyNode = {
+      attrs: {modifiers},
+    };
+    compiled.setAttribute("_legacyNode_", `"${encodeObjectForTemplate(legacyNode)}"`);
+  }
 }
 
 /**
@@ -64,7 +64,7 @@ export function addLegacyNodeInfo(node, compiled) {
  * @return {string}
  */
 export function encodeObjectForTemplate(obj) {
-    return encodeURI(JSON.stringify(obj));
+  return encodeURI(JSON.stringify(obj));
 }
 
 /**
@@ -73,7 +73,7 @@ export function encodeObjectForTemplate(obj) {
  * @return {Object}
  */
 export function decodeObjectForTemplate(str) {
-    return JSON.parse(decodeURI(str));
+  return JSON.parse(decodeURI(str));
 }
 
 /**
@@ -89,9 +89,9 @@ export function decodeObjectForTemplate(str) {
  * @return {string}     the valid string to be injected into a component's node props.
  */
 export function tranformStringForExpression(str) {
-    const delimiter = `"`;
-    const newStr = str.replaceAll(delimiter, `\\${delimiter}`);
-    return `${delimiter}${newStr}${delimiter}`;
+  const delimiter = `"`;
+  const newStr = str.replaceAll(delimiter, `\\${delimiter}`);
+  return `${delimiter}${newStr}${delimiter}`;
 }
 
 /**
@@ -103,12 +103,12 @@ export function tranformStringForExpression(str) {
  * @param {string} [glue=" "]
  */
 export const combineAttributes = (node, attr, parts, glue = " ") => {
-    const allValues = [];
-    if (node.hasAttribute(attr)) {
-        allValues.push(node.getAttribute(attr));
-    }
-    allValues.push(...(Array.isArray(parts) ? parts : [parts]));
-    node.setAttribute(attr, allValues.join(glue));
+  const allValues = [];
+  if (node.hasAttribute(attr)) {
+    allValues.push(node.getAttribute(attr));
+  }
+  allValues.push(...(Array.isArray(parts) ? parts : [parts]));
+  node.setAttribute(attr, allValues.join(glue));
 };
 /**
  * there is no particular expectation of what should be a boolean
@@ -117,13 +117,13 @@ export const combineAttributes = (node, attr, parts, glue = " ") => {
  * @return {boolean}
  */
 function evalIrUiViewModifier(expr) {
-    if (!expr) {
-        return false;
-    }
-    return evaluateExpr(expr, {
-        true: true,
-        false: false,
-    });
+  if (!expr) {
+    return false;
+  }
+  return evaluateExpr(expr, {
+    true: true,
+    false: false,
+  });
 }
 
 /**
@@ -132,12 +132,12 @@ function evalIrUiViewModifier(expr) {
  * @return {Object} The modifiers set on the node.
  */
 export function getAllModifiers(node) {
-    const modifiers = node.getAttribute("modifiers");
-    if (!modifiers) {
-        return null;
-    }
-    const parsed = JSON.parse(modifiers);
-    return parsed;
+  const modifiers = node.getAttribute("modifiers");
+  if (!modifiers) {
+    return null;
+  }
+  const parsed = JSON.parse(modifiers);
+  return parsed;
 }
 
 /**
@@ -149,17 +149,17 @@ export function getAllModifiers(node) {
  * @return {boolean|Array}
  */
 export function getModifier(node, modifierName) {
-    /** @type {string|boolean|Array} (mod) */
-    let mod = node.getAttribute(modifierName);
-    if (mod === null) {
-        const modifiers = getAllModifiers(node);
-        mod = modifiers && modifierName in modifiers ? modifiers[modifierName] : null;
-    }
+  /** @type {string|boolean|Array} (mod) */
+  let mod = node.getAttribute(modifierName);
+  if (mod === null) {
+    const modifiers = getAllModifiers(node);
+    mod = modifiers && modifierName in modifiers ? modifiers[modifierName] : null;
+  }
 
-    if (!Array.isArray(mod) && !(typeof mod === "boolean")) {
-        mod = !!evalIrUiViewModifier(mod);
-    }
-    return mod;
+  if (!Array.isArray(mod) && !(typeof mod === "boolean")) {
+    mod = !!evalIrUiViewModifier(mod);
+  }
+  return mod;
 }
 
 /**
@@ -168,8 +168,8 @@ export function getModifier(node, modifierName) {
  * @return {boolean|Array}
  */
 function getInvisible(node) {
-    const invisible = getModifier(node, "invisible");
-    return invisible || false;
+  const invisible = getModifier(node, "invisible");
+  return invisible || false;
 }
 
 /**
@@ -186,12 +186,12 @@ function getInvisible(node) {
  * @return {boolean}
  */
 export function isAlwaysInvisible(node, compilationContext) {
-    const invisibleModifer = getInvisible(node);
-    return (
-        !compilationContext.enableInvisible &&
-        typeof invisibleModifer === "boolean" &&
-        invisibleModifer
-    );
+  const invisibleModifer = getInvisible(node);
+  return (
+    !compilationContext.enableInvisible &&
+    typeof invisibleModifer === "boolean" &&
+    invisibleModifer
+  );
 }
 
 /**
@@ -200,14 +200,14 @@ export function isAlwaysInvisible(node, compilationContext) {
  * @param  {Element|Element[]} node  The future children nodes
  */
 export function appendTo(parent, node) {
-    if (!node) {
-        return;
-    }
-    if (Array.isArray(node) && node.length) {
-        parent.append(...node);
-    } else {
-        parent.append(node);
-    }
+  if (!node) {
+    return;
+  }
+  if (Array.isArray(node) && node.length) {
+    parent.append(...node);
+  } else {
+    parent.append(node);
+  }
 }
 
 /**
@@ -229,13 +229,13 @@ export function appendTo(parent, node) {
  * @return {TAttrString}               The new string.
  */
 function appendToStringifiedObject(originalTattr, string) {
-    const re = /{(.*)}/;
-    const oldString = re.exec(originalTattr);
+  const re = /{(.*)}/;
+  const oldString = re.exec(originalTattr);
 
-    if (oldString) {
-        string = `${oldString[1]}, ${string}`;
-    }
-    return `{ ${string} }`;
+  if (oldString) {
+    string = `${oldString[1]}, ${string}`;
+  }
+  return `{ ${string} }`;
 }
 
 /**
@@ -245,9 +245,9 @@ function appendToStringifiedObject(originalTattr, string) {
  * @param  {TAttrStringPart} string
  */
 export function appendAttr(node, attr, string) {
-    const attrKey = `t-att-${attr}`;
-    const attrVal = node.getAttribute(attrKey);
-    node.setAttribute(attrKey, appendToStringifiedObject(attrVal, string));
+  const attrKey = `t-att-${attr}`;
+  const attrVal = node.getAttribute(attrKey);
+  node.setAttribute(attrKey, appendToStringifiedObject(attrVal, string));
 }
 
 /**
@@ -262,28 +262,32 @@ export function appendAttr(node, attr, string) {
  * @return {Element|undefined}                Return the -pre-compiled
  *   Element if it is not always invisible
  */
-export function applyInvisibleModifier({ node, compiled }, compilationContext, invisible) {
-    if (invisible === undefined && node) {
-        invisible = getInvisible(node);
-    }
-    if (!invisible) {
-        return compiled;
-    }
-    if (typeof invisible === "boolean" && !compilationContext.enableInvisible) {
-        return;
-    }
-
-    const notInvisibleExpr = `!model.evalDomain(record,${JSON.stringify(invisible)})`;
-    if (!compilationContext.enableInvisible) {
-        combineAttributes(compiled, "t-if", `${notInvisibleExpr}`, " and ");
-    } else {
-        let expr;
-        if (Array.isArray(invisible)) {
-            expr = `${notInvisibleExpr}`;
-        } else {
-            expr = invisible;
-        }
-        appendAttr(compiled, "class", `o_invisible_modifier: ${expr}`);
-    }
+export function applyInvisibleModifier(
+  {node, compiled},
+  compilationContext,
+  invisible
+) {
+  if (invisible === undefined && node) {
+    invisible = getInvisible(node);
+  }
+  if (!invisible) {
     return compiled;
+  }
+  if (typeof invisible === "boolean" && !compilationContext.enableInvisible) {
+    return;
+  }
+
+  const notInvisibleExpr = `!model.evalDomain(record,${JSON.stringify(invisible)})`;
+  if (!compilationContext.enableInvisible) {
+    combineAttributes(compiled, "t-if", `${notInvisibleExpr}`, " and ");
+  } else {
+    let expr;
+    if (Array.isArray(invisible)) {
+      expr = `${notInvisibleExpr}`;
+    } else {
+      expr = invisible;
+    }
+    appendAttr(compiled, "class", `o_invisible_modifier: ${expr}`);
+  }
+  return compiled;
 }

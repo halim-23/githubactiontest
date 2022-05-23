@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-        <DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
+<DTE xmlns="http://www.sii.cl/SiiDte" version="1.0">
             <Documento ID="F122T56">
             <Encabezado>
                 <IdDoc>
@@ -39,7 +39,8 @@
             <Detalle>
                 <NroLinDet>1</NroLinDet>
                 <NmbItem>product_a</NmbItem>
-                <DscItem>[WUS-0558538] Conjunto De Control Electr&#243;nico Ps3.39</DscItem>
+                <DscItem
+      >[WUS-0558538] Conjunto De Control Electr&#243;nico Ps3.39</DscItem>
                 <QtyItem>1.000000</QtyItem>
                 <UnmdItem>U</UnmdItem>
                 <PrcItem>497804.440000</PrcItem>
@@ -92,7 +93,8 @@
             <Detalle>
                 <NroLinDet>6</NroLinDet>
                 <NmbItem>product_a</NmbItem>
-                <DscItem>[SERVICIO03] Servicio de Reparaci&#243;n Equipo Airless (Fieldlazer, 695-MarkV, PS3.29-3.39)</DscItem>
+                <DscItem
+      >[SERVICIO03] Servicio de Reparaci&#243;n Equipo Airless (Fieldlazer, 695-MarkV, PS3.29-3.39)</DscItem>
                 <QtyItem>1.000000</QtyItem>
                 <UnmdItem>U</UnmdItem>
                 <PrcItem>114250.000000</PrcItem>
@@ -115,7 +117,8 @@
                 <FolioRef>1961</FolioRef>
                 <FchRef>2019-10-23</FchRef>
                 <CodRef>1</CodRef>
-                <RazonRef>Anulaci&#243;n NC por aceptaci&#243;n con reparo (N/C 001961)</RazonRef>
+                <RazonRef
+      >Anulaci&#243;n NC por aceptaci&#243;n con reparo (N/C 001961)</RazonRef>
             </Referencia>
             <TED version="1.0">
             <DD>
@@ -138,19 +141,38 @@
                         </RNG>
                         <FA>2019-10-22</FA>
                         <RSAPK>
-                            <M>xBcfZfii8tMuKkuuWIYxz68CZg55jaPsQQVkGjqDl1b7osuKzJEHtS0M3PrnSF6DxwUxg2XjS0IOregtLf+FwQ==</M>
+                            <M
+              >xBcfZfii8tMuKkuuWIYxz68CZg55jaPsQQVkGjqDl1b7osuKzJEHtS0M3PrnSF6DxwUxg2XjS0IOregtLf+FwQ==</M>
                             <E>Aw==</E>
                         </RSAPK>
                         <IDK>100</IDK>
                     </DA>
-                    <FRMA algoritmo="SHA1withRSA">UqQWYVsAzPzpaCNwGH67LuqE7sdjAJtX8s2vbI5PyB1s4ZCy+E237uZEt5BzMtUTvJdBTaFlx5jaXAV2pn2hkg==</FRMA>
+                    <FRMA
+            algoritmo="SHA1withRSA"
+          >UqQWYVsAzPzpaCNwGH67LuqE7sdjAJtX8s2vbI5PyB1s4ZCy+E237uZEt5BzMtUTvJdBTaFlx5jaXAV2pn2hkg==</FRMA>
                 </CAF>
                 <TSTED>2019-10-24T20:00:00</TSTED>
             </DD>
-                <FRMT algoritmo="SHA1withRSA">P3EXzjm0wo/4lGDwMW02rAwUFKwVl2tqbbMEzS86XsJqW9xBKeBPSMlROCBnE8BLK0t2WK372hlqswFGQzPMYA==</FRMT>
+                <FRMT
+        algoritmo="SHA1withRSA"
+      >P3EXzjm0wo/4lGDwMW02rAwUFKwVl2tqbbMEzS86XsJqW9xBKeBPSMlROCBnE8BLK0t2WK372hlqswFGQzPMYA==</FRMT>
             </TED><TmstFirma>2019-10-24T20:00:00</TmstFirma>
             </Documento>
-        <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#"><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI="#F122T56"><Transforms><Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>___ignore___</DigestValue></Reference></SignedInfo><SignatureValue>___ignore___</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>z9febWH4bX4RyTuvflZzqd2sxdye2IxC8OHwFlLfNOjcb3+APvvIwP50Eo1jyU8p3+4ylSEOaawBdwj/QOWIdZ9mhbfnZvXD8aQx2Qwt63s9rNtSnlHi/2X4Qfgn777dfgr3AddxCbtM4H5qChginhyPzJeND7dRtgCQU88HABJW3LDQDWrjt6aAGMIHqM2giZVKugz9SMP73R0KrdChRAgx1Z3Qo5K/RB6fsYGvGZDV7pcMGCSNFSTK+7lKeadI+Wupbf8K3UBAFXgwEd0XEpN+ZJvmoRD5Gv6VKbw88sKyQvG1gijmWW5a2vomuJBXhgT02FkL0wgzupsc4kT5q9s51ZIADXiq5G4s5iVaxiqHZKUvLKTCAXEBtyypgOgQ7C9z/9NIKutNW+tXciYZ+ngPHIWwtRmUhv2Kf4I3sjqLfRswMDnbmApw1DXzgJZT6qM/JCIl8SV40wnZ4f/SIQFXbpkP0s9UMY0YC2m0bUrXKfij7ALuZsf2S19tDoEOG49YXXsVoz+LKsO0XLL2XmcTPAxPvgeEGI9eSBczkpGcHBpQAFKZ8vpDkRInyaN9hBLeyTWWebRYZqJU1RgNA1GGbLEfm1e/d1Tza2re8ovrL3DgW1z7FHZuvMlAtoQuqu8E5eMak2u9eMxM6AoOOxIJ4+ALcCrB0FumIwUvgIU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>
+        <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo
+      xmlns="http://www.w3.org/2000/09/xmldsig#"
+    ><CanonicalizationMethod
+        Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
+      /><SignatureMethod
+        Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+      /><Reference URI="#F122T56"><Transforms><Transform
+            Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
+          /></Transforms><DigestMethod
+          Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"
+        /><DigestValue
+        >___ignore___</DigestValue></Reference></SignedInfo><SignatureValue
+    >___ignore___</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus
+          >z9febWH4bX4RyTuvflZzqd2sxdye2IxC8OHwFlLfNOjcb3+APvvIwP50Eo1jyU8p3+4ylSEOaawBdwj/QOWIdZ9mhbfnZvXD8aQx2Qwt63s9rNtSnlHi/2X4Qfgn777dfgr3AddxCbtM4H5qChginhyPzJeND7dRtgCQU88HABJW3LDQDWrjt6aAGMIHqM2giZVKugz9SMP73R0KrdChRAgx1Z3Qo5K/RB6fsYGvGZDV7pcMGCSNFSTK+7lKeadI+Wupbf8K3UBAFXgwEd0XEpN+ZJvmoRD5Gv6VKbw88sKyQvG1gijmWW5a2vomuJBXhgT02FkL0wgzupsc4kT5q9s51ZIADXiq5G4s5iVaxiqHZKUvLKTCAXEBtyypgOgQ7C9z/9NIKutNW+tXciYZ+ngPHIWwtRmUhv2Kf4I3sjqLfRswMDnbmApw1DXzgJZT6qM/JCIl8SV40wnZ4f/SIQFXbpkP0s9UMY0YC2m0bUrXKfij7ALuZsf2S19tDoEOG49YXXsVoz+LKsO0XLL2XmcTPAxPvgeEGI9eSBczkpGcHBpQAFKZ8vpDkRInyaN9hBLeyTWWebRYZqJU1RgNA1GGbLEfm1e/d1Tza2re8ovrL3DgW1z7FHZuvMlAtoQuqu8E5eMak2u9eMxM6AoOOxIJ4+ALcCrB0FumIwUvgIU=</Modulus><Exponent
+          >AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>
 MIIF1jCCA74CCQCRWYi6uLtDIDANBgkqhkiG9w0BAQsFADCBrDELMAkGA1UEBhMC
 Q0wxMzAxBgNVBAoMKlNvYyBkZSBTZXJ2aWNpb3MgSGVjdG9yIERhbmllbCBCbGFu
 Y28gRUlSTDEzMDEGA1UECwwqU29jIGRlIFNlcnZpY2lvcyBIZWN0b3IgRGFuaWVs

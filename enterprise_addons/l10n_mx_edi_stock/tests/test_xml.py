@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
+from odoo.tests import tagged
 
 from .common import TestMXDeliveryGuideCommon
 
-from odoo.tests import tagged
 
-@tagged('post_install', 'post_install_l10n', '-at_install')
+@tagged("post_install", "post_install_l10n", "-at_install")
 class TestGenerateMXDeliveryGuide(TestMXDeliveryGuideCommon):
     def test_generate_delivery_guide(self):
         cfdi = self.picking._l10n_mx_edi_create_delivery_guide()
-        expected_cfdi = '''
+        expected_cfdi = """
             <cfdi:Comprobante
               xmlns:cartaporte20="http://www.sat.gob.mx/CartaPorte20"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -63,7 +62,7 @@ class TestGenerateMXDeliveryGuide(TestMXDeliveryGuideCommon):
                 </cartaporte20:CartaPorte>
               </cfdi:Complemento>
             </cfdi:Comprobante>
-        '''
+        """
         current_etree = self.get_xml_tree_from_string(cfdi)
         expected_etree = self.get_xml_tree_from_string(expected_cfdi)
         self.assertXmlTreeEqual(current_etree, expected_etree)

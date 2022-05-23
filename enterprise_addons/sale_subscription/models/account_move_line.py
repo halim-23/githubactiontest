@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import fields, models, api
+from odoo import api, fields, models
 from odoo.tools.sql import column_exists, create_column
 
 
@@ -13,7 +12,9 @@ class AccountMoveLine(models.Model):
     def _auto_init(self):
         # create column manually to skip initial computation
         if not column_exists(self.env.cr, "account_move_line", "subscription_mrr"):
-            create_column(self.env.cr, "account_move_line", "subscription_mrr", "numeric")
+            create_column(
+                self.env.cr, "account_move_line", "subscription_mrr", "numeric"
+            )
         return super()._auto_init()
 
     subscription_id = fields.Many2one("sale.subscription")

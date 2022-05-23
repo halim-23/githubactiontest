@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
-from odoo import models, api
 from lxml.builder import E
+
+from odoo import api, models
 
 
 class BaseModel(models.AbstractModel):
-    _inherit = 'base'
+    _inherit = "base"
 
     @api.model
     def _get_default_dashboard_view(self):
-        """ Generates a default dashboard view containing default sub graph and
+        """Generates a default dashboard view containing default sub graph and
         pivot views.
 
         :returns: a dashboard view as an lxml document

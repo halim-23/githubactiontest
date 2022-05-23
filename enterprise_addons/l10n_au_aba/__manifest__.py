@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 # Based on the module developped by Richard de Meester, from Willdoo IT
 {
-    'name': "ABA Credit Transfer",
-    'icon': '/l10n_au/static/description/icon.png',
-    'summary': """Export payments as ABA Credit Transfer files""",
-    'description': """
+    "name": "ABA Credit Transfer",
+    "icon": "/l10n_au/static/description/icon.png",
+    "summary": """Export payments as ABA Credit Transfer files""",
+    "description": """
 ABA Credit Transfer
 ===================
 
@@ -102,17 +101,17 @@ Use
     When validating a batch payment, the ABA file will be generated.  It can
     be regenerated.  This file can then be uploaded to the bank.
 """,
-    'category': 'Accounting/Localizations/EDI',
-    'version': '1.0',
-    'depends': ['account_batch_payment', 'l10n_au'],
-    'data': [
-        'data/aba_data.xml',
-        'views/account_journal_views.xml',
-        'views/account_journal_dashboard_views.xml',
-        'views/account_payment_views.xml',
-        'views/res_partner_bank_views.xml',
+    "category": "Accounting/Localizations/EDI",
+    "version": "1.0",
+    "depends": ["account_batch_payment", "l10n_au"],
+    "data": [
+        "data/aba_data.xml",
+        "views/account_journal_views.xml",
+        "views/account_journal_dashboard_views.xml",
+        "views/account_payment_views.xml",
+        "views/res_partner_bank_views.xml",
     ],
-    'installable': True,
-    'auto_install': True,
-    'license': 'OEEL-1',
+    "installable": True,
+    "auto_install": True,
+    "license": "OEEL-1",
 }

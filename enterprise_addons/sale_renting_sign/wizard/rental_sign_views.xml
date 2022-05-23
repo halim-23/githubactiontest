@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
   <record id="rental_sign_documents" model="ir.actions.act_window">
       <field name="name">Sign Documents</field>
@@ -14,11 +14,26 @@
       <form string="Sign Documents">
         <sheet>
           <group>
-            <field name="template_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" kanban_view_ref="%(sign.sign_template_view_kanban_mobile)s"/>
+            <field
+              name="template_id"
+              options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"
+              kanban_view_ref="%(sign.sign_template_view_kanban_mobile)s"
+            />
           </group>
           <footer>
-            <button name="next_step" string="Sign Document" type="object" class="btn-primary" data-hotkey="q"/>
-            <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+            <button
+              name="next_step"
+              string="Sign Document"
+              type="object"
+              class="btn-primary"
+              data-hotkey="q"
+            />
+            <button
+              string="Cancel"
+              class="btn-secondary"
+              special="cancel"
+              data-hotkey="z"
+            />
           </footer>
         </sheet>
       </form>

@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'Vendor Bill: Release to Pay',
-    'category': 'Inventory/Purchase',
-    'description': """
+    "name": "Vendor Bill: Release to Pay",
+    "category": "Inventory/Purchase",
+    "description": """
 Manage 3-way matching on vendor bills
 =====================================
 
@@ -25,10 +24,10 @@ Each vendor bill receives one of the following three states:
     - No (The bill cannot be paid, nothing has been delivered yet)
     - Exception (Received and invoiced quantities differ)
     """,
-    'depends': ['purchase'],
-    'data': [
-        'views/account_invoice_view.xml',
-        'views/account_journal_dashboard_view.xml'
+    "depends": ["purchase"],
+    "data": [
+        "views/account_invoice_view.xml",
+        "views/account_journal_dashboard_view.xml",
     ],
-    'license': 'OEEL-1',
+    "license": "OEEL-1",
 }

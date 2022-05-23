@@ -1,22 +1,30 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
 
+
 class RentalSchedule(models.Model):
     _inherit = "sale.rental.schedule"
 
-    is_available = fields.Boolean(compute='_compute_is_available', readonly=True, compute_sudo=True)
+    is_available = fields.Boolean(
+        compute="_compute_is_available", readonly=True, compute_sudo=True
+    )
 
-    lot_id = fields.Many2one('stock.production.lot', 'Serial Number', readonly=True)
-    warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', readonly=True)
+    lot_id = fields.Many2one("stock.production.lot", "Serial Number", readonly=True)
+    warehouse_id = fields.Many2one("stock.warehouse", "Warehouse", readonly=True)
     # TODO color depending on report_line_status
 
     def _compute_is_available(self):
         for rental in self:
-            if rental.rental_status not in ['return', 'returned', 'cancel'] and rental.return_date > fields.Datetime.now() and rental.product_id.type == 'product':
+            if (
+                rental.rental_status not in ["return", "returned", "cancel"]
+                and rental.return_date > fields.Datetime.now()
+                and rental.product_id.type == "product"
+            ):
                 sol = rental.order_line_id
-                rental.is_available = sol.virtual_available_at_date - sol.product_uom_qty >= 0
+                rental.is_available = (
+                    sol.virtual_available_at_date - sol.product_uom_qty >= 0
+                )
             else:
                 rental.is_available = True
 
@@ -123,20 +131,29 @@ class RentalSchedule(models.Model):
         """
 
     def _select(self):
-        return super(RentalSchedule, self)._select() + """,
+        return (
+            super(RentalSchedule, self)._select()
+            + """,
             lot_info.lot_id as lot_id,
             s.warehouse_id as warehouse_id
         """
+        )
 
     def _from(self):
-        return super(RentalSchedule, self)._from() + """
+        return (
+            super(RentalSchedule, self)._from()
+            + """
             LEFT OUTER JOIN ordered_lots lot_info ON sol.id=lot_info.sol_id,
             padding pdg
         """
+        )
 
     def _groupby(self):
-        return super(RentalSchedule, self)._groupby() + """,
+        return (
+            super(RentalSchedule, self)._groupby()
+            + """,
             pdg.max_id,
             lot_info.lot_id,
             lot_info.name,
             lot_info.report_line_status"""
+        )

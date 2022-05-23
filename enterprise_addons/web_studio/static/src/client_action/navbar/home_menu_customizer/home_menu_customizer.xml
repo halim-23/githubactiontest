@@ -7,18 +7,24 @@
         <t t-set-slot="toggler">
           Customizations
         </t>
-        <DropdownItem class="o_web_studio_change_background" t-on-dropdown-item-selected.stop="">
+        <DropdownItem
+          class="o_web_studio_change_background"
+          t-on-dropdown-item-selected.stop=""
+        >
           <FileInput
             action="'/web/binary/upload_attachment'"
             t-on-uploaded="bgImageUploaded"
-            model="'res.company'" id="company.currentCompany.id"
+            model="'res.company'"
+            id="company.currentCompany.id"
           >
             Change Background
           </FileInput>
         </DropdownItem>
-        <DropdownItem t-if="menus.getMenu('root').backgroundImage"
+        <DropdownItem
+          t-if="menus.getMenu('root').backgroundImage"
           class="o_web_studio_reset_default_background"
-          t-on-click="_resetBgImage">
+          t-on-click="_resetBgImage"
+        >
           Reset Default Background
         </DropdownItem>
         <DropdownItem class="o_web_studio_import" t-on-click="_import">

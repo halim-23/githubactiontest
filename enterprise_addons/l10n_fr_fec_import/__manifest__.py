@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': "France - FEC Import",
-    'icon': '/l10n_fr/static/description/icon.png',
+    "name": "France - FEC Import",
+    "icon": "/l10n_fr/static/description/icon.png",
     "summary": "Import Accounting Data from FEC files",
     "description": """
         Module for the import of FEC standard files, useful for importing accounting history.
@@ -24,9 +23,9 @@
     """,
     "category": "Accounting/Accounting",
     "depends": ["account_accountant", "base_vat", "l10n_fr", "l10n_fr_fec"],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/views.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "views/views.xml",
     ],
-    'license': 'OEEL-1',
+    "license": "OEEL-1",
 }

@@ -1,47 +1,55 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from psycopg2 import sql
 
-from odoo import tools
-from odoo import fields, models
+from odoo import fields, models, tools
 
 
 class HrPayrollReport(models.Model):
     _name = "hr.payroll.report"
     _description = "Payroll Analysis Report"
     _auto = False
-    _rec_name = 'date_from'
-    _order = 'date_from desc'
+    _rec_name = "date_from"
+    _order = "date_from desc"
 
+    count = fields.Integer("# Payslip", group_operator="sum", readonly=True)
+    count_work = fields.Integer("Work Days", group_operator="sum", readonly=True)
+    count_work_hours = fields.Integer("Work Hours", group_operator="sum", readonly=True)
+    count_leave = fields.Integer(
+        "Days of Paid Time Off", group_operator="sum", readonly=True
+    )
+    count_leave_unpaid = fields.Integer(
+        "Days of Unpaid Time Off", group_operator="sum", readonly=True
+    )
+    count_unforeseen_absence = fields.Integer(
+        "Days of Unforeseen Absence", group_operator="sum", readonly=True
+    )
 
-    count = fields.Integer('# Payslip', group_operator="sum", readonly=True)
-    count_work = fields.Integer('Work Days', group_operator="sum", readonly=True)
-    count_work_hours = fields.Integer('Work Hours', group_operator="sum", readonly=True)
-    count_leave = fields.Integer('Days of Paid Time Off', group_operator="sum", readonly=True)
-    count_leave_unpaid = fields.Integer('Days of Unpaid Time Off', group_operator="sum", readonly=True)
-    count_unforeseen_absence = fields.Integer('Days of Unforeseen Absence', group_operator="sum", readonly=True)
+    name = fields.Char("Payslip Name", readonly=True)
+    date_from = fields.Date("Start Date", readonly=True)
+    date_to = fields.Date("End Date", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
 
-    name = fields.Char('Payslip Name', readonly=True)
-    date_from = fields.Date('Start Date', readonly=True)
-    date_to = fields.Date('End Date', readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
+    employee_id = fields.Many2one("hr.employee", "Employee", readonly=True)
+    department_id = fields.Many2one("hr.department", "Department", readonly=True)
+    job_id = fields.Many2one("hr.job", "Job Position", readonly=True)
+    number_of_days = fields.Float("Number of Days", readonly=True)
+    number_of_hours = fields.Float("Number of Hours", readonly=True)
+    net_wage = fields.Float("Net Wage", readonly=True)
+    basic_wage = fields.Float("Basic Wage", readonly=True)
+    gross_wage = fields.Float("Gross Wage", readonly=True)
+    leave_basic_wage = fields.Float("Basic Wage for Time Off", readonly=True)
 
-    employee_id = fields.Many2one('hr.employee', 'Employee', readonly=True)
-    department_id = fields.Many2one('hr.department', 'Department', readonly=True)
-    job_id = fields.Many2one('hr.job', 'Job Position', readonly=True)
-    number_of_days = fields.Float('Number of Days', readonly=True)
-    number_of_hours = fields.Float('Number of Hours', readonly=True)
-    net_wage = fields.Float('Net Wage', readonly=True)
-    basic_wage = fields.Float('Basic Wage', readonly=True)
-    gross_wage = fields.Float('Gross Wage', readonly=True)
-    leave_basic_wage = fields.Float('Basic Wage for Time Off', readonly=True)
-
-    work_code = fields.Many2one('hr.work.entry.type', 'Work type', readonly=True)
-    work_type = fields.Selection([
-        ('1', 'Regular Working Day'),
-        ('2', 'Paid Time Off'),
-        ('3', 'Unpaid Time Off')], string='Work, (un)paid Time Off', readonly=True)
+    work_code = fields.Many2one("hr.work.entry.type", "Work type", readonly=True)
+    work_type = fields.Selection(
+        [
+            ("1", "Regular Working Day"),
+            ("2", "Paid Time Off"),
+            ("3", "Unpaid Time Off"),
+        ],
+        string="Work, (un)paid Time Off",
+        readonly=True,
+    )
 
     def _select(self):
         return """
@@ -102,9 +110,14 @@ class HrPayrollReport(models.Model):
         query = """
         %s
         %s
-        %s""" % (self._select(), self._from(), self._group_by())
+        %s""" % (
+            self._select(),
+            self._from(),
+            self._group_by(),
+        )
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(
             sql.SQL("CREATE or REPLACE VIEW {} as ({})").format(
-                sql.Identifier(self._table),
-                sql.SQL(query)))
+                sql.Identifier(self._table), sql.SQL(query)
+            )
+        )

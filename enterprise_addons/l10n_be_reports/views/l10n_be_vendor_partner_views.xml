@@ -1,20 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
         <record id="res_partner_view_form_inherit" model="ir.ui.view">
             <field name="name">l10n_be_reports.res.partner.view.form.inherit</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="account.partner_view_buttons"/>
+            <field name="inherit_id" ref="account.partner_view_buttons" />
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_view_partner_invoices']" position="before">
-                    <button type="object" class="oe_stat_button" icon="fa-file-text-o" name="create_281_50_form">
+                <xpath
+          expr="//button[@name='action_view_partner_invoices']"
+          position="before"
+        >
+                    <button
+            type="object"
+            class="oe_stat_button"
+            icon="fa-file-text-o"
+            name="create_281_50_form"
+          >
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Form 281.50</span>
                         </div>
                     </button>
                 </xpath>
                 <xpath expr="//field[@name='vat']" position="after">
-                    <field name="citizen_identification" attrs="{'invisible': [('company_type', '=', 'company')]}" placeholder="e.g. 123455 555 6"/>
+                    <field
+            name="citizen_identification"
+            attrs="{'invisible': [('company_type', '=', 'company')]}"
+            placeholder="e.g. 123455 555 6"
+          />
                 </xpath>
             </field>
         </record>
@@ -39,15 +51,16 @@
             <field name="name">Create forms 281.50</field>
             <field name="res_model">l10n_be_reports.281_50_wizard</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="l10n_be_281_50_form_wizard"/>
+            <field name="view_id" ref="l10n_be_281_50_form_wizard" />
             <field name="target">new</field>
         </record>
 
         <menuitem
-            id="menu_action_report_partner_281_50"
-            name="Fee forms 281.50"
-            action="action_get_281_50_report"
-            sequence="60"
-            parent="l10n_be.account_reports_be_statements_menu"/>
+      id="menu_action_report_partner_281_50"
+      name="Fee forms 281.50"
+      action="action_get_281_50_report"
+      sequence="60"
+      parent="l10n_be.account_reports_be_statements_menu"
+    />
     </data>
 </odoo>

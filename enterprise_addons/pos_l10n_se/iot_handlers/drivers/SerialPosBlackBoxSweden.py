@@ -1,11 +1,15 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
+
 import serial
 
 from odoo.addons.hw_drivers.event_manager import event_manager
-from odoo.addons.hw_drivers.iot_handlers.drivers.SerialBaseDriver import SerialDriver, SerialProtocol, serial_connection
+from odoo.addons.hw_drivers.iot_handlers.drivers.SerialBaseDriver import (
+    SerialDriver,
+    SerialProtocol,
+    serial_connection,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -102,7 +106,7 @@ class SwedishBlackBoxDriver(SerialDriver):
                         _logger.warning(
                             ("Received error: %s - Severity: %s"),
                             MainStatus.get(response[4]),
-                            SeverityError.get(response[5][:2])
+                            SeverityError.get(response[5][:2]),
                         )
                         _logger.warning("Sent request: %s", packet)
                     return True

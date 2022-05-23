@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -12,10 +12,12 @@
             <field name="code">action = model.open_aeat_tax_report('111')</field>
         </record>
 
-        <menuitem id="menu_mod_111_report"
-            name="Tax Report (Mod 111)"
-            action="action_mod_111_report"
-            parent="spanish_reports_menu"/>
+        <menuitem
+      id="menu_mod_111_report"
+      name="Tax Report (Mod 111)"
+      action="action_mod_111_report"
+      parent="spanish_reports_menu"
+    />
 
 
         <!--Mod 115-->
@@ -28,10 +30,12 @@
             <field name="code">action = model.open_aeat_tax_report('115')</field>
         </record>
 
-        <menuitem id="menu_mod_115_report"
-            name="Tax Report (Mod 115)"
-            action="action_mod_115_report"
-            parent="spanish_reports_menu"/>
+        <menuitem
+      id="menu_mod_115_report"
+      name="Tax Report (Mod 115)"
+      action="action_mod_115_report"
+      parent="spanish_reports_menu"
+    />
 
 
         <!--Mod 303-->
@@ -44,10 +48,12 @@
             <field name="code">action = model.open_aeat_tax_report('303')</field>
         </record>
 
-        <menuitem id="menu_mod_303_report"
-            name="Tax Report (Mod 303)"
-            action="action_mod_303_report"
-            parent="spanish_reports_menu"/>
+        <menuitem
+      id="menu_mod_303_report"
+      name="Tax Report (Mod 303)"
+      action="action_mod_303_report"
+      parent="spanish_reports_menu"
+    />
 
     </data>
 </odoo>

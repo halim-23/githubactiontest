@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
@@ -8,16 +7,39 @@ from odoo.osv import expression
 class Project(models.Model):
     _inherit = "project.project"
 
-    allow_material = fields.Boolean("Products on Tasks", compute="_compute_allow_material", store=True, readonly=False)
+    allow_material = fields.Boolean(
+        "Products on Tasks",
+        compute="_compute_allow_material",
+        store=True,
+        readonly=False,
+    )
     allow_quotations = fields.Boolean(
-        "Extra Quotations", compute="_compute_allow_quotations", store=True, readonly=False)
-    allow_billable = fields.Boolean(store=True, readonly=False, compute='_compute_allow_billable')
-    sale_line_id = fields.Many2one(compute="_compute_sale_line_id", store=True, readonly=False)
+        "Extra Quotations",
+        compute="_compute_allow_quotations",
+        store=True,
+        readonly=False,
+    )
+    allow_billable = fields.Boolean(
+        store=True, readonly=False, compute="_compute_allow_billable"
+    )
+    sale_line_id = fields.Many2one(
+        compute="_compute_sale_line_id", store=True, readonly=False
+    )
 
     _sql_constraints = [
-        ('material_imply_billable', "CHECK((allow_material = 't' AND allow_billable = 't') OR (allow_material = 'f'))", 'The material can be allowed only when the task can be billed.'),
-        ('fsm_imply_task_rate', "CHECK((is_fsm = 't' AND sale_line_id IS NULL) OR (is_fsm = 'f'))", 'An FSM project must be billed at task rate or employee rate.'),
-        ('timesheet_product_required_if_billable_and_timesheets_and_fsm_projects', """
+        (
+            "material_imply_billable",
+            "CHECK((allow_material = 't' AND allow_billable = 't') OR (allow_material = 'f'))",
+            "The material can be allowed only when the task can be billed.",
+        ),
+        (
+            "fsm_imply_task_rate",
+            "CHECK((is_fsm = 't' AND sale_line_id IS NULL) OR (is_fsm = 'f'))",
+            "An FSM project must be billed at task rate or employee rate.",
+        ),
+        (
+            "timesheet_product_required_if_billable_and_timesheets_and_fsm_projects",
+            """
             CHECK(
                 (allow_billable = 't' AND allow_timesheets = 't' AND is_fsm = 't' AND timesheet_product_id IS NOT NULL)
                 OR (allow_billable IS NOT TRUE)
@@ -26,30 +48,38 @@ class Project(models.Model):
                 OR (allow_billable IS NULL)
                 OR (allow_timesheets IS NULL)
                 OR (is_fsm IS NULL)
-            )""", 'The timesheet product is required when the fsm project can be billed and timesheets are allowed.'),
+            )""",
+            "The timesheet product is required when the fsm project can be billed and timesheets are allowed.",
+        ),
     ]
 
     @api.model
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)
-        if 'allow_quotations' in fields_list and 'allow_quotations' not in defaults and defaults.get('is_fsm'):
-            defaults['allow_quotations'] = self.env.user.has_group('industry_fsm.group_fsm_quotation_from_task')
+        if (
+            "allow_quotations" in fields_list
+            and "allow_quotations" not in defaults
+            and defaults.get("is_fsm")
+        ):
+            defaults["allow_quotations"] = self.env.user.has_group(
+                "industry_fsm.group_fsm_quotation_from_task"
+            )
         return defaults
 
-    @api.depends('is_fsm')
+    @api.depends("is_fsm")
     def _compute_allow_quotations(self):
-        if not self.env.user.has_group('industry_fsm.group_fsm_quotation_from_task'):
+        if not self.env.user.has_group("industry_fsm.group_fsm_quotation_from_task"):
             self.allow_quotations = False
         else:
             for project in self:
                 project.allow_quotations = project.is_fsm
 
-    @api.depends('is_fsm')
+    @api.depends("is_fsm")
     def _compute_allow_billable(self):
-        fsm_projects = self.filtered('is_fsm')
+        fsm_projects = self.filtered("is_fsm")
         fsm_projects.allow_billable = True
 
-    @api.depends('allow_billable', 'is_fsm')
+    @api.depends("allow_billable", "is_fsm")
     def _compute_allow_material(self):
         for project in self:
             if not project._origin:
@@ -62,36 +92,42 @@ class Project(models.Model):
             # force 'allow_billable' and 'allow_material' to be flushed
             # altogether in order to satisfy the SQL constraint above
             fnames = set(fnames)
-            if 'allow_billable' in fnames or 'allow_material' in fnames:
-                fnames.add('allow_billable')
-                fnames.add('allow_material')
+            if "allow_billable" in fnames or "allow_material" in fnames:
+                fnames.add("allow_billable")
+                fnames.add("allow_material")
         return super().flush(fnames, records)
 
-    @api.depends('sale_line_id', 'sale_line_employee_ids', 'allow_billable', 'is_fsm')
+    @api.depends("sale_line_id", "sale_line_employee_ids", "allow_billable", "is_fsm")
     def _compute_pricing_type(self):
-        fsm_projects = self.filtered(lambda project: project.allow_billable and project.is_fsm)
+        fsm_projects = self.filtered(
+            lambda project: project.allow_billable and project.is_fsm
+        )
         for fsm_project in fsm_projects:
             if fsm_project.sale_line_employee_ids:
-                fsm_project.update({'pricing_type': 'employee_rate'})
+                fsm_project.update({"pricing_type": "employee_rate"})
             else:
-                fsm_project.update({'pricing_type': 'task_rate'})
+                fsm_project.update({"pricing_type": "task_rate"})
         super(Project, self - fsm_projects)._compute_pricing_type()
 
     def _search_pricing_type(self, operator, value):
         domain = super()._search_pricing_type(operator, value)
-        if value == 'fixed_rate':
-            fsm_domain = [('is_fsm', operator, False)]
-            if operator == '=':
+        if value == "fixed_rate":
+            fsm_domain = [("is_fsm", operator, False)]
+            if operator == "=":
                 domain = expression.AND([fsm_domain, domain])
             else:
                 domain = expression.OR([fsm_domain, domain])
-        elif value in ['task_rate', 'employee_rate']:
+        elif value in ["task_rate", "employee_rate"]:
             fsm_domain = [
-                ('is_fsm', '=', True),
-                ('allow_billable', '=', True),
-                ('sale_line_employee_ids', '!=' if value == 'employee_rate' else '=', False),
+                ("is_fsm", "=", True),
+                ("allow_billable", "=", True),
+                (
+                    "sale_line_employee_ids",
+                    "!=" if value == "employee_rate" else "=",
+                    False,
+                ),
             ]
-            if operator == '=':
+            if operator == "=":
                 domain = expression.OR([fsm_domain, domain])
             else:
                 fsm_domain = expression.normalize_domain(fsm_domain)
@@ -99,20 +135,20 @@ class Project(models.Model):
                 domain = expression.AND([expression.distribute_not(fsm_domain), domain])
         return domain
 
-    @api.depends('is_fsm')
+    @api.depends("is_fsm")
     def _compute_sale_line_id(self):
         # We cannot have a SOL in the fsm project
-        fsm_projects = self.filtered('is_fsm')
-        fsm_projects.update({'sale_line_id': False})
+        fsm_projects = self.filtered("is_fsm")
+        fsm_projects.update({"sale_line_id": False})
         super(Project, self - fsm_projects)._compute_sale_line_id()
 
-    @api.depends('partner_id', 'pricing_type', 'is_fsm')
+    @api.depends("partner_id", "pricing_type", "is_fsm")
     def _compute_display_create_order(self):
-        fsm_projects = self.filtered('is_fsm')
-        fsm_projects.update({'display_create_order': False})
+        fsm_projects = self.filtered("is_fsm")
+        fsm_projects.update({"display_create_order": False})
         super(Project, self - fsm_projects)._compute_display_create_order()
 
-    @api.depends('sale_line_employee_ids.sale_line_id', 'sale_line_id')
+    @api.depends("sale_line_employee_ids.sale_line_id", "sale_line_id")
     def _compute_partner_id(self):
         basic_projects = self.filtered(lambda project: not project.is_fsm)
         super(Project, basic_projects)._compute_partner_id()

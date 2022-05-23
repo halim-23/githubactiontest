@@ -70,7 +70,7 @@
 		</xsl:call-template>
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@FechaHoraSalidaLlegada"/>
-		</xsl:call-template>		
+		</xsl:call-template>
 		<xsl:call-template name="Opcional">
 			<xsl:with-param name="valor" select="./@TipoEstacion"/>
 		</xsl:call-template>
@@ -110,7 +110,7 @@
 			</xsl:call-template>
 			<xsl:call-template name="Requerido">
 				<xsl:with-param name="valor" select="./@CodigoPostal"/>
-			</xsl:call-template>		
+			</xsl:call-template>
 		</xsl:for-each>
 	</xsl:template>
 	<!--  Iniciamos el manejo de los elementos hijo en la secuencia Origen-->
@@ -239,7 +239,7 @@
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@PesoGuiaIdentificacion"/>
 		</xsl:call-template>
-	</xsl:template>	
+	</xsl:template>
 	<!--  Iniciamos el manejo de los elementos hijo en la secuencia CantidadTransporta-->
 	<xsl:template match="cartaporte20:CantidadTransporta">
 		<!--  Iniciamos el manejo de los nodos dependientes -->

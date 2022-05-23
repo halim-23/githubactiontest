@@ -1,33 +1,33 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import tools
-from odoo import api, fields, models, _
+from odoo import _, fields, models, tools
 
 
 class HrReferralReport(models.Model):
     _name = "hr.referral.report"
     _description = "Employee Referral Report"
     _auto = False
-    _order = 'write_date desc, earned_points desc'
+    _order = "write_date desc, earned_points desc"
 
-    write_date = fields.Date(string='Last Update Date', readonly=True)
-    earned_points = fields.Integer('Earned Points', readonly=True)
-    points_not_hired = fields.Integer('Points Given For Not Hired', readonly=True)
-    applicant_id = fields.Many2one('hr.applicant', readonly=True)
-    employee_referral_hired = fields.Integer('Employee Referral Hired', readonly=True)
-    employee_referral_refused = fields.Integer('Employee Referral Refused', readonly=True)
-    ref_user_id = fields.Many2one('res.users', 'User', readonly=True)
-    job_id = fields.Many2one('hr.job', readonly=True)
-    department_id = fields.Many2one('hr.department', readonly=True)
-    medium_id = fields.Many2one('utm.medium', readonly=True)
-    referral_state = fields.Selection([
-        ('progress', 'In Progress'),
-        ('hired', 'Hired'),
-        ('closed', 'Not Hired')], readonly=True)
+    write_date = fields.Date(string="Last Update Date", readonly=True)
+    earned_points = fields.Integer("Earned Points", readonly=True)
+    points_not_hired = fields.Integer("Points Given For Not Hired", readonly=True)
+    applicant_id = fields.Many2one("hr.applicant", readonly=True)
+    employee_referral_hired = fields.Integer("Employee Referral Hired", readonly=True)
+    employee_referral_refused = fields.Integer(
+        "Employee Referral Refused", readonly=True
+    )
+    ref_user_id = fields.Many2one("res.users", "User", readonly=True)
+    job_id = fields.Many2one("hr.job", readonly=True)
+    department_id = fields.Many2one("hr.department", readonly=True)
+    medium_id = fields.Many2one("utm.medium", readonly=True)
+    referral_state = fields.Selection(
+        [("progress", "In Progress"), ("hired", "Hired"), ("closed", "Not Hired")],
+        readonly=True,
+    )
 
     def init(self):
-        query = '''
+        query = """
             (SELECT
                 a.id as id,
                 a.id as applicant_id,
@@ -55,7 +55,10 @@ class HrReferralReport(models.Model):
             WHERE
                 a.ref_user_id IS NOT NULL
             )
-        '''
+        """
 
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, query), (_('Direct Referral'),))
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" % (self._table, query),
+            (_("Direct Referral"),),
+        )

@@ -1,18 +1,21 @@
 /** @odoo-module **/
 
-import { ChatWindow } from '@mail/components/chat_window/chat_window';
+import {ChatWindow} from "@mail/components/chat_window/chat_window";
 
-import { useBackButton } from 'web_mobile.hooks';
-import { patch } from 'web.utils';
+import {useBackButton} from "web_mobile.hooks";
+import {patch} from "web.utils";
 
-patch(ChatWindow.prototype, 'mail_enterprise/static/src/components/chat_window/chat_window.js', {
+patch(
+  ChatWindow.prototype,
+  "mail_enterprise/static/src/components/chat_window/chat_window.js",
+  {
     /**
      * @override
      */
     _constructor() {
-        this._super(...arguments);
-        this._onBackButtonGlobal = this._onBackButtonGlobal.bind(this);
-        useBackButton(this._onBackButtonGlobal);
+      this._super(...arguments);
+      this._onBackButtonGlobal = this._onBackButtonGlobal.bind(this);
+      useBackButton(this._onBackButtonGlobal);
     },
 
     //--------------------------------------------------------------------------
@@ -27,9 +30,10 @@ patch(ChatWindow.prototype, 'mail_enterprise/static/src/components/chat_window/c
      * @param {CustomEvent} ev
      */
     _onBackButtonGlobal(ev) {
-        if (!this.chatWindow) {
-            return;
-        }
-        this.chatWindow.close();
+      if (!this.chatWindow) {
+        return;
+      }
+      this.chatWindow.close();
     },
-});
+  }
+);

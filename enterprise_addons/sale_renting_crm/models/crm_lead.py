@@ -1,38 +1,53 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
+from odoo import _, fields, models
 
 
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
     rental_quotation_count = fields.Integer(
-        compute="_compute_rental_count", string="Number of Rental Quotations")
+        compute="_compute_rental_count", string="Number of Rental Quotations"
+    )
     rental_amount_total = fields.Monetary(
-        compute='_compute_rental_count', string="Sum of Rental Orders",
-        help="Untaxed Total of Confirmed Orders", currency_field='company_currency')
+        compute="_compute_rental_count",
+        string="Sum of Rental Orders",
+        help="Untaxed Total of Confirmed Orders",
+        currency_field="company_currency",
+    )
     rental_order_count = fields.Integer(
-        compute='_compute_rental_count', string="Number of Rental Orders")
+        compute="_compute_rental_count", string="Number of Rental Orders"
+    )
     rental_order_ids = fields.One2many(
-        "sale.order", "opportunity_id", string="Rental Orders",
-        domain=[("is_rental_order", "=", True)])
+        "sale.order",
+        "opportunity_id",
+        string="Rental Orders",
+        domain=[("is_rental_order", "=", True)],
+    )
 
     def _compute_rental_count(self):
         for lead in self:
             total = 0.0
             company_currency = lead.company_currency or self.env.company.currency_id
-            sale_orders = lead.rental_order_ids.filtered(lambda l: l.state == 'sale')
+            sale_orders = lead.rental_order_ids.filtered(lambda l: l.state == "sale")
             for order in sale_orders:
                 total += order.currency_id._convert(
-                    order.amount_untaxed, company_currency, order.company_id, order.date_order or fields.Date.today())
-            lead.rental_quotation_count = len(lead.rental_order_ids.filtered(lambda l: l.state in ["draft", "sent"]))
+                    order.amount_untaxed,
+                    company_currency,
+                    order.company_id,
+                    order.date_order or fields.Date.today(),
+                )
+            lead.rental_quotation_count = len(
+                lead.rental_order_ids.filtered(lambda l: l.state in ["draft", "sent"])
+            )
             lead.rental_order_count = len(sale_orders)
             lead.rental_amount_total = total
 
     def action_rental_quotations_new(self):
         if not self.partner_id:
-            return self.env["ir.actions.actions"]._for_xml_id("sale_renting_crm.crm_lead_to_rental_action")
+            return self.env["ir.actions.actions"]._for_xml_id(
+                "sale_renting_crm.crm_lead_to_rental_action"
+            )
         return self.action_new_rental_quotation()
 
     def _get_action_rental_context(self):
@@ -56,27 +71,47 @@ class CrmLead(models.Model):
             "name": _("Rental Orders"),
             "res_model": "sale.order",
             "view_mode": "form",
-            "views": [(self.env.ref("sale_renting.rental_order_primary_form_view").id, "form")],
+            "views": [
+                (self.env.ref("sale_renting.rental_order_primary_form_view").id, "form")
+            ],
             "context": self._get_action_rental_context(),
         }
 
     def action_view_rental_quotation(self):
-        action = self.env["ir.actions.actions"]._for_xml_id("sale_renting.rental_order_action")
-        action.update({
-            'context': self._get_action_rental_context(),
-            'domain': [("opportunity_id", "=", self.id), ('is_rental_order', '=', True)]
-        })
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "sale_renting.rental_order_action"
+        )
+        action.update(
+            {
+                "context": self._get_action_rental_context(),
+                "domain": [
+                    ("opportunity_id", "=", self.id),
+                    ("is_rental_order", "=", True),
+                ],
+            }
+        )
 
-        if not self._context.get('is_rental_order'):
-            action['domain'].append(("state", "in", ["draft", "sent"]))
-            orders = self.rental_order_ids.filtered(lambda l: l.state in ("draft", "sent"))
+        if not self._context.get("is_rental_order"):
+            action["domain"].append(("state", "in", ["draft", "sent"]))
+            orders = self.rental_order_ids.filtered(
+                lambda l: l.state in ("draft", "sent")
+            )
         else:
-            action['domain'].append(("state", "=", "sale"))
+            action["domain"].append(("state", "=", "sale"))
             orders = self.rental_order_ids.filtered(lambda l: l.state == "sale")
 
         if len(orders) == 1:
-            action.update({
-                'views': [(self.env.ref("sale_renting.rental_order_primary_form_view").id, "form")],
-                'res_id': orders.id,
-            })
+            action.update(
+                {
+                    "views": [
+                        (
+                            self.env.ref(
+                                "sale_renting.rental_order_primary_form_view"
+                            ).id,
+                            "form",
+                        )
+                    ],
+                    "res_id": orders.id,
+                }
+            )
         return action

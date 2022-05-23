@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from datetime import date
@@ -8,21 +7,24 @@ from odoo.tests import tagged
 from .common import TestPayrollCommon
 
 
-@tagged('post_install_l10n', 'post_install', '-at_install', 'alloc_paid_time_off')
+@tagged("post_install_l10n", "post_install", "-at_install", "alloc_paid_time_off")
 class TestPayrollAllocatingPaidTimeOff(TestPayrollCommon):
-
     def setUp(self):
         super(TestPayrollAllocatingPaidTimeOff, self).setUp()
 
         today = date.today()
-        self.paid_time_off_type = self.holiday_leave_types #self.holiday_leave_types.filtered(lambda leave_type: leave_type.validity_start == date(today.year, 1, 1) and leave_type.validity_stop == date(today.year, 12, 31))
+        self.paid_time_off_type = (
+            self.holiday_leave_types
+        )  # self.holiday_leave_types.filtered(lambda leave_type: leave_type.validity_start == date(today.year, 1, 1) and leave_type.validity_stop == date(today.year, 12, 31))
 
-        self.wizard = self.env['hr.payroll.alloc.paid.leave'].create({
-            'year': today.year - 1,
-            'holiday_status_id': self.paid_time_off_type.id
-        })
+        self.wizard = self.env["hr.payroll.alloc.paid.leave"].create(
+            {"year": today.year - 1, "holiday_status_id": self.paid_time_off_type.id}
+        )
         self.wizard._onchange_struct_id()
-        self.wizard.alloc_employee_ids = self.wizard.alloc_employee_ids.filtered(lambda alloc_employee: alloc_employee.employee_id.id in [self.employee_georges.id, self.employee_john.id])
+        self.wizard.alloc_employee_ids = self.wizard.alloc_employee_ids.filtered(
+            lambda alloc_employee: alloc_employee.employee_id.id
+            in [self.employee_georges.id, self.employee_john.id]
+        )
 
     def test_allocating_paid_time_off(self):
         """
@@ -56,10 +58,28 @@ class TestPayrollAllocatingPaidTimeOff(TestPayrollCommon):
             In total, we have 121.6 hours and we convert it in days to have the value in paid_time_off which is
             16 days = 121.6 / (38 / 5) = 121.6 hours / 7.6 hours/day
         """
-        self.assertEqual(len(self.wizard.alloc_employee_ids), 2, "Normally we should find 2 employees to allocate their paid time off for the next period")
+        self.assertEqual(
+            len(self.wizard.alloc_employee_ids),
+            2,
+            "Normally we should find 2 employees to allocate their paid time off for the next period",
+        )
 
-        self.assertEqual(self.wizard.alloc_employee_ids.filtered(lambda alloc_employee: alloc_employee.employee_id.id == self.employee_georges.id).paid_time_off, 15, "Georges should have 15 days paid time offs for this year.")
-        self.assertEqual(self.wizard.alloc_employee_ids.filtered(lambda alloc_employee: alloc_employee.employee_id.id == self.employee_john.id).paid_time_off, 16, "John Doe should have 16 days paid time offs for this year.")
+        self.assertEqual(
+            self.wizard.alloc_employee_ids.filtered(
+                lambda alloc_employee: alloc_employee.employee_id.id
+                == self.employee_georges.id
+            ).paid_time_off,
+            15,
+            "Georges should have 15 days paid time offs for this year.",
+        )
+        self.assertEqual(
+            self.wizard.alloc_employee_ids.filtered(
+                lambda alloc_employee: alloc_employee.employee_id.id
+                == self.employee_john.id
+            ).paid_time_off,
+            16,
+            "John Doe should have 16 days paid time offs for this year.",
+        )
 
     def test_reallocate_paid_time_off_based_contract_next_year(self):
         """
@@ -77,22 +97,49 @@ class TestPayrollAllocatingPaidTimeOff(TestPayrollCommon):
         121.6 / (19 hours per week / 3 days) = 19.2 days (we round to 19 days)
         But since an employee should never have more than 4 weeks of paid time off, his total is reduced to 4 weeks of 3 days a week aka 12 days
         """
-        self.assertEqual(len(self.wizard.alloc_employee_ids), 2, "Normally, we should find 2 employees to allocate their paid time off for the next period")
+        self.assertEqual(
+            len(self.wizard.alloc_employee_ids),
+            2,
+            "Normally, we should find 2 employees to allocate their paid time off for the next period",
+        )
 
-        alloc_employee = self.wizard.alloc_employee_ids.filtered(lambda alloc_employee: alloc_employee.employee_id.id == self.employee_georges.id)
-        self.assertEqual(alloc_employee.paid_time_off_to_allocate, 14.5, "With a 4/5 time in this period, Georges could have 16 days of paid time off but his working schedule in last period allow him 14.5 days")
+        alloc_employee = self.wizard.alloc_employee_ids.filtered(
+            lambda alloc_employee: alloc_employee.employee_id.id
+            == self.employee_georges.id
+        )
+        self.assertEqual(
+            alloc_employee.paid_time_off_to_allocate,
+            14.5,
+            "With a 4/5 time in this period, Georges could have 16 days of paid time off but his working schedule in last period allow him 14.5 days",
+        )
 
-        alloc_employee = self.wizard.alloc_employee_ids.filtered(lambda alloc_employee: alloc_employee.employee_id.id == self.employee_john.id)
-        self.assertEqual(alloc_employee.paid_time_off_to_allocate, 10, "With a mid-time in this period, John Doe should have 10 half days of paid time off but we must retain that he could have 16 days at total this period")
+        alloc_employee = self.wizard.alloc_employee_ids.filtered(
+            lambda alloc_employee: alloc_employee.employee_id.id
+            == self.employee_john.id
+        )
+        self.assertEqual(
+            alloc_employee.paid_time_off_to_allocate,
+            10,
+            "With a mid-time in this period, John Doe should have 10 half days of paid time off but we must retain that he could have 16 days at total this period",
+        )
 
         view = self.wizard.generate_allocation()
-        allocations = self.env['hr.leave.allocation'].search(view['domain'])
-        georges_allocation = allocations.filtered(lambda alloc: alloc.employee_id.id == self.employee_georges.id)
+        allocations = self.env["hr.leave.allocation"].search(view["domain"])
+        georges_allocation = allocations.filtered(
+            lambda alloc: alloc.employee_id.id == self.employee_georges.id
+        )
 
         self.assertEqual(georges_allocation.number_of_days, 14.5)
-        self.assertAlmostEqual(georges_allocation.max_leaves_allocated, 15 * 7.6, places=0, msg="based on the last year, we retain that Georges can have at most 16 days of paid time off")
+        self.assertAlmostEqual(
+            georges_allocation.max_leaves_allocated,
+            15 * 7.6,
+            places=0,
+            msg="based on the last year, we retain that Georges can have at most 16 days of paid time off",
+        )
 
-        john_allocation = allocations.filtered(lambda alloc: alloc.employee_id.id == self.employee_john.id)
+        john_allocation = allocations.filtered(
+            lambda alloc: alloc.employee_id.id == self.employee_john.id
+        )
 
         self.assertEqual(john_allocation.number_of_days, 10)
         self.assertAlmostEqual(john_allocation.max_leaves_allocated, 16 * 7.6, places=0)

@@ -1,8 +1,8 @@
 /** @odoo-module **/
 
-import { UNTITLED_SPREADSHEET_NAME } from "../../constants";
+import {UNTITLED_SPREADSHEET_NAME} from "../../constants";
 
-const { useState, useRef } = owl.hooks;
+const {useState, useRef} = owl.hooks;
 
 const WIDTH_MARGIN = 3;
 const PADDING_RIGHT = 5;
@@ -31,7 +31,7 @@ export class SpreadsheetName extends owl.Component {
    * @param {string} text in the input element
    */
   _setInputSize(text) {
-    const { fontFamily, fontSize } = window.getComputedStyle(this.input.el);
+    const {fontFamily, fontSize} = window.getComputedStyle(this.input.el);
     const font = `${fontSize} ${fontFamily}`;
     this.state.inputSize =
       this._computeTextWidth(text || this.placeholder, font) +
@@ -107,5 +107,5 @@ export class SpreadsheetName extends owl.Component {
 SpreadsheetName.template = "documents_spreadsheet.SpreadsheetName";
 SpreadsheetName.props = {
   name: String,
-  isReadonly: Boolean
+  isReadonly: Boolean,
 };

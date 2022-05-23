@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from .abstract import AbstractHandler
 
 
 class PeriodsHandler(AbstractHandler):
-    key = 'periods'
+    key = "periods"
 
     def __init__(self, env, max_amount_of_periods: int = 5):
         """
@@ -22,14 +21,16 @@ class PeriodsHandler(AbstractHandler):
         if client_state is None:
             selected_period_ids = []
         else:
-            selected_period_ids = [cs['id'] for cs in client_state if cs['selected']]
-        return [self._to_option_dict(period, selected_period_ids)
-                for period in self.get_all_available_values(base_period)]
+            selected_period_ids = [cs["id"] for cs in client_state if cs["selected"]]
+        return [
+            self._to_option_dict(period, selected_period_ids)
+            for period in self.get_all_available_values(base_period)
+        ]
 
     @classmethod
     def get_selected_values(cls, options: dict) -> list:
         periods_dict = options.get(cls.key, [])
-        return [p['id'] for p in periods_dict if p['selected']]
+        return [p["id"] for p in periods_dict if p["selected"]]
 
     def get_all_available_values(self, base_period):
         """
@@ -50,7 +51,7 @@ class PeriodsHandler(AbstractHandler):
         :rtype: dict
         """
         return {
-            'id': period.id,
-            'name': period.display_name,
-            'selected': period.id in selected_period_ids
+            "id": period.id,
+            "name": period.display_name,
+            "selected": period.id in selected_period_ids,
         }

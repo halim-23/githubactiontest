@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="rule_pos_dsfinvk_export_multi_company" model="ir.rule">
         <field name="name">Point Of Sale DSFinV-K export</field>

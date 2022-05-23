@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
     <record id="calendar_appointment_answer_view_form" model="ir.ui.view">
         <field name="name">calendar.appointment.answer.form</field>
@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Answer">
                 <group>
-                    <field name="name"/>
+                    <field name="name" />
                 </group>
             </form>
         </field>

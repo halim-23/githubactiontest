@@ -11,10 +11,7 @@ select {
   outline: none;
 }
 select {
-  $-down-arrow: url("data:image/svg+xml," +
-    "<svg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'>" +
-        "<polygon fill='%23#{str-slice(#{$o-main-text-color}, 2)}' points='3.5 4 7 0 0 0'/>" +
-    "</svg>");
+  $-down-arrow: url("data:image/svg+xml," + "<svg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'>" + "<polygon fill='%23#{str-slice(#{$o-main-text-color}, 2)}' points='3.5 4 7 0 0 0'/>" + "</svg>");
 
   // FIXME buggy 'padding-left'
   cursor: pointer;
@@ -79,7 +76,8 @@ select {
   // By default, act like a .btn-link
   @include o-hover-text-color($link-color, $link-hover-color);
 
-  &.disabled, &:disabled {
+  &.disabled,
+  &:disabled {
     @include o-hover-text-color($link-color, $link-color);
   }
 }
@@ -112,10 +110,12 @@ select {
   );
 }
 
-.btn-outline-secondary, .btn-light {
+.btn-outline-secondary,
+.btn-light {
   @include o-hover-text-color($o-main-text-color, $o-gray-900);
 
-  &.disabled, &:disabled {
+  &.disabled,
+  &:disabled {
     @include o-hover-text-color($o-main-text-color, $o-main-text-color);
   }
 }
@@ -130,23 +130,26 @@ select {
 // The newcoming API could be used to generate utility classes that use our
 // custom values directly (https://getbootstrap.com/docs/5.0/utilities/api).
 
-
 .rounded {
-  $sizes: (null: $o-border-radius, '-sm': $o-border-radius-sm, '-lg': $o-border-radius-lg);
+  $sizes: (
+    null: $o-border-radius,
+    "-sm": $o-border-radius-sm,
+    "-lg": $o-border-radius-lg,
+  );
 
   @each $size, $radius in $sizes {
     &#{$size} {
       border-radius: $radius !important;
     }
 
-    @each $side in ('left', 'right') {
+    @each $side in ("left", "right") {
       &#{$size}-#{$side} {
         border-top-#{$side}-radius: $radius !important;
         border-bottom-#{$side}-radius: $radius !important;
       }
     }
 
-    @each $direction in ('top', 'bottom') {
+    @each $direction in ("top", "bottom") {
       &#{$size}-#{$direction} {
         border-#{$direction}-left-radius: $radius !important;
         border-#{$direction}-right-radius: $radius !important;
@@ -154,7 +157,6 @@ select {
     }
   }
 }
-
 
 //------------------------------------------------------------------------------
 // Misc.
@@ -226,4 +228,3 @@ select {
   border-radius: 0;
   font-size: 1em; // Override 75% of .label
 }
-

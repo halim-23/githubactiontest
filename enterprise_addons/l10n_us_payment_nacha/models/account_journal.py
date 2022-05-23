@@ -1,5 +1,4 @@
-# coding: utf-8
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class AccountJournal(models.Model):
@@ -7,15 +6,21 @@ class AccountJournal(models.Model):
 
     def _default_outbound_payment_methods(self):
         res = super()._default_outbound_payment_methods()
-        return res | self.env.ref('l10n_us_payment_nacha.account_payment_method_nacha')
+        return res | self.env.ref("l10n_us_payment_nacha.account_payment_method_nacha")
 
-    nacha_immediate_destination = fields.Char(help="This will be provided by your bank.",
-                                              string="Immediate Destination")
-    nacha_destination = fields.Char(help="This will be provided by your bank.",
-                                    string="Destination")
-    nacha_immediate_origin = fields.Char(help="This will be provided by your bank.",
-                                         string="Immediate Origin")
-    nacha_company_identification = fields.Char(help="This will be provided by your bank.",
-                                               string="Company Identification")
-    nacha_origination_dfi_identification = fields.Char(help="This will be provided by your bank.",
-                                                       string="Origination Dfi Identification")
+    nacha_immediate_destination = fields.Char(
+        help="This will be provided by your bank.", string="Immediate Destination"
+    )
+    nacha_destination = fields.Char(
+        help="This will be provided by your bank.", string="Destination"
+    )
+    nacha_immediate_origin = fields.Char(
+        help="This will be provided by your bank.", string="Immediate Origin"
+    )
+    nacha_company_identification = fields.Char(
+        help="This will be provided by your bank.", string="Company Identification"
+    )
+    nacha_origination_dfi_identification = fields.Char(
+        help="This will be provided by your bank.",
+        string="Origination Dfi Identification",
+    )

@@ -5,9 +5,9 @@
         <field name="model">hr.appraisal.note</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
-                <field name="sequence" widget="handle"/>
-                <field name="name"/>
-                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="sequence" widget="handle" />
+                <field name="name" />
+                <field name="company_id" groups="base.group_multi_company" />
             </tree>
         </field>
     </record>
@@ -20,10 +20,11 @@
     </record>
 
     <menuitem
-        id="menu_hr_appraisal_note"
-        name="Evaluation Scale"
-        action="hr_appraisal.action_hr_appraisal_note"
-        parent="menu_hr_appraisal_configuration"
-        sequence="5"
-        groups="hr_appraisal.group_hr_appraisal_manager"/>
+    id="menu_hr_appraisal_note"
+    name="Evaluation Scale"
+    action="hr_appraisal.action_hr_appraisal_note"
+    parent="menu_hr_appraisal_configuration"
+    sequence="5"
+    groups="hr_appraisal.group_hr_appraisal_manager"
+  />
 </odoo>

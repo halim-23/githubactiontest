@@ -10,7 +10,7 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
 -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    
+
     <!-- definition of types -->
     <xs:simpleType name="String3.Type">
         <xs:restriction base="xs:string">
@@ -54,8 +54,8 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
             <xs:fractionDigits value="2" />
         </xs:restriction>
     </xs:simpleType>
-    
-    
+
+
     <!-- definition of simple elements -->
     <xs:element name="CompanyName" type="String100.Type"/>
     <xs:element name="CompanyUEN" type="String16.Type"/>
@@ -65,7 +65,7 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
     <xs:element name="IAFCreationDate" type="xs:date"/>
     <xs:element name="ProductVersion" type="String100.Type"/>
     <xs:element name="IAFVersion" type="String12.Type"/>
-    
+
     <xs:element name="SupplierName" type="String100.Type"/>
     <xs:element name="SupplierUEN" type="String16.Type"/>
     <xs:element name="CustomerName" type="String100.Type"/>
@@ -84,7 +84,7 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
     <xs:element name="PurchaseFCY" type="HundredBillionWith2Decimal.Type"/>
     <xs:element name="SupplyFCY" type="HundredBillionWith2Decimal.Type"/>
     <xs:element name="GSTFCY" type="HundredBillionWith2Decimal.Type"/>
-    
+
     <xs:element name="TransactionDate" type="xs:date"/>
     <xs:element name="AccountID" type="String20.Type"/>
     <xs:element name="AccountName" type="String100.Type"/>
@@ -96,8 +96,8 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
     <xs:element name="Debit" type="HundredBillionWith2Decimal.Type"/>
     <xs:element name="Credit" type="HundredBillionWith2Decimal.Type"/>
     <xs:element name="Balance" type="HundredBillionWith2Decimal.Type"/>
-    
-    
+
+
     <!-- definition of attributes -->
     <xs:attribute name="PurchaseTotalSGD" type="HundredBillionWith2Decimal.Type"/>
     <xs:attribute name="SupplyTotalSGD" type="HundredBillionWith2Decimal.Type"/>
@@ -106,11 +106,11 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
     <xs:attribute name="TotalDebit" type="HundredBillionWith2Decimal.Type"/>
     <xs:attribute name="TotalCredit" type="HundredBillionWith2Decimal.Type"/>
     <xs:attribute name="GLTCurrency" type="String3.Type"/>
-    
-    
+
+
     <!-- definition of complex elements -->
     <!-- for complex elements with restriction/length precision defined -->
-    
+
     <xs:element name="Company">
         <xs:complexType>
             <xs:sequence>
@@ -214,4 +214,4 @@ For info, this file was retrieved from https://www.iras.gov.sg/irashome/Business
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-</xs:schema>              
+</xs:schema>

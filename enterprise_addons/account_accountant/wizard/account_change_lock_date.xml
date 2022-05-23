@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -13,20 +13,40 @@
                                 <div class="text-muted mb-3">
                                     <i>Lock specific journal entries</i>
                                 </div>
-                                <field name="period_lock_date" placeholder="Pick a date to lock"/>
-                                <field name="tax_lock_date" placeholder="Pick a date to lock"/>
+                                <field
+                  name="period_lock_date"
+                  placeholder="Pick a date to lock"
+                />
+                                <field
+                  name="tax_lock_date"
+                  placeholder="Pick a date to lock"
+                />
                             </group>
                             <group string="Accounting Period Closing">
                                 <div class="text-muted mb-3">
                                     <i>Lock all journal entries</i>
                                 </div>
-                                <field name="fiscalyear_lock_date" placeholder="Pick a date to lock"/>
+                                <field
+                  name="fiscalyear_lock_date"
+                  placeholder="Pick a date to lock"
+                />
                             </group>
                         </group>
                     </sheet>
                     <footer>
-                        <button string="Save" name="change_lock_date" type="object" class="btn-primary" data-hotkey="q"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                        <button
+              string="Save"
+              name="change_lock_date"
+              type="object"
+              class="btn-primary"
+              data-hotkey="q"
+            />
+                        <button
+              string="Cancel"
+              class="btn-secondary"
+              special="cancel"
+              data-hotkey="z"
+            />
                     </footer>
                </form>
             </field>
@@ -36,16 +56,17 @@
             <field name="name">Accounting closing dates</field>
             <field name="res_model">account.change.lock.date</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_account_change_lock_date"/>
+            <field name="view_id" ref="view_account_change_lock_date" />
             <field name="target">new</field>
         </record>
 
         <menuitem
-            id="menu_action_change_lock_date"
-            name="Lock Dates"
-            action="action_view_account_change_lock_date"
-            parent="account.menu_finance_entries_actions"
-            sequence="55"
-            groups="account.group_account_manager"/>
+      id="menu_action_change_lock_date"
+      name="Lock Dates"
+      action="action_view_account_change_lock_date"
+      parent="account.menu_finance_entries_actions"
+      sequence="55"
+      groups="account.group_account_manager"
+    />
     </data>
 </odoo>

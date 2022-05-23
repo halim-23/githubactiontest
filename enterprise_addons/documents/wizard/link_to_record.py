@@ -7,26 +7,50 @@ class LinkToRecordWizard(models.TransientModel):
 
     @api.model
     def _selection_target_model(self):
-        return [(model.model, model.name)
-                for model in self.env['ir.model'].sudo().search([('model', '!=', 'documents.document'), ('is_mail_thread', '=', 'True')])]
+        return [
+            (model.model, model.name)
+            for model in self.env["ir.model"]
+            .sudo()
+            .search(
+                [("model", "!=", "documents.document"), ("is_mail_thread", "=", "True")]
+            )
+        ]
 
-    document_ids = fields.Many2many('documents.document', string='Documents', readonly=True)
-    model_id = fields.Many2one('ir.model', string='Model')
-    is_readonly_model = fields.Boolean('is_readonly_model', default=True)
-    resource_ref = fields.Reference(string='Record', selection='_selection_target_model')
-    accessible_model_ids = fields.Many2many('ir.model', string='Models', compute='_compute_accessible_model_ids')
+    document_ids = fields.Many2many(
+        "documents.document", string="Documents", readonly=True
+    )
+    model_id = fields.Many2one("ir.model", string="Model")
+    is_readonly_model = fields.Boolean("is_readonly_model", default=True)
+    resource_ref = fields.Reference(
+        string="Record", selection="_selection_target_model"
+    )
+    accessible_model_ids = fields.Many2many(
+        "ir.model", string="Models", compute="_compute_accessible_model_ids"
+    )
 
-    @api.depends_context('uid')
+    @api.depends_context("uid")
     def _compute_accessible_model_ids(self):
-        model_ids = self.env['ir.model'].sudo().search([('model', '!=', 'documents.document'), ('is_mail_thread', '=', 'True')])
-        model_ids = model_ids.filtered(lambda m: self.env[m.model].check_access_rights('write', raise_exception=False))
+        model_ids = (
+            self.env["ir.model"]
+            .sudo()
+            .search(
+                [("model", "!=", "documents.document"), ("is_mail_thread", "=", "True")]
+            )
+        )
+        model_ids = model_ids.filtered(
+            lambda m: self.env[m.model].check_access_rights(
+                "write", raise_exception=False
+            )
+        )
         for link_to in self:
             link_to.accessible_model_ids = model_ids.ids
 
     def link_to(self):
         self.ensure_one()
-        self.document_ids.with_company(self.env.company).write({
-            'res_model': self.resource_ref._name,
-            'res_id': self.resource_ref.id,
-            'is_editable_attachment': True,
-        })
+        self.document_ids.with_company(self.env.company).write(
+            {
+                "res_model": self.resource_ref._name,
+                "res_id": self.resource_ref.id,
+                "is_editable_attachment": True,
+            }
+        )

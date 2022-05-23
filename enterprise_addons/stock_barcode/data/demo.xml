@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data noupdate="1">
 
@@ -63,7 +63,10 @@
             <field name="ref">0000000000017</field>
         </record>
 
-        <record id="stock_barcode.stock_barcode_action_main_menu" model="ir.actions.client">
+        <record
+      id="stock_barcode.stock_barcode_action_main_menu"
+      model="ir.actions.client"
+    >
             <field name="params" eval="{'message_demo_barcodes': True}" />
         </record>
 
@@ -73,40 +76,52 @@
             <field name="name">Cable Management Box</field>
             <field name="detailed_type">product</field>
             <field name="weight">0.01</field>
-            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="categ_id" ref="product.product_category_5" />
             <field name="lst_price">120.0</field>
             <field name="standard_price">90.0</field>
             <field name="weight">1.1</field>
             <field name="tracking">lot</field>
-            <field name="uom_id" ref="uom.product_uom_unit"/>
-            <field name="uom_po_id" ref="uom.product_uom_unit"/>
-            <field name="image_1920" type="base64" file="stock/static/img/cable_management.png"/>
+            <field name="uom_id" ref="uom.product_uom_unit" />
+            <field name="uom_po_id" ref="uom.product_uom_unit" />
+            <field
+        name="image_1920"
+        type="base64"
+        file="stock/static/img/cable_management.png"
+      />
             <field name="barcode">06016478556677</field>
         </record>
         <record id="product_custom_cabinet_usa" model="product.product">
             <field name="name">Customized Cabinet (USA)</field>
-            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="categ_id" ref="product.product_category_5" />
             <field name="standard_price">175.50</field>
             <field name="list_price">200</field>
             <field name="detailed_type">product</field>
             <field name="weight">2</field>
-            <field name="uom_id" ref="uom.product_uom_cubic_foot"/>
-            <field name="uom_po_id" ref="uom.product_uom_cubic_foot"/>
+            <field name="uom_id" ref="uom.product_uom_cubic_foot" />
+            <field name="uom_po_id" ref="uom.product_uom_cubic_foot" />
             <field name="default_code">E-COM99</field>
-            <field name="image_1920" type="base64" file="product/static/img/product_product_10-image.png"/>
+            <field
+        name="image_1920"
+        type="base64"
+        file="product/static/img/product_product_10-image.png"
+      />
             <field name="barcode">06016478559999</field>
         </record>
         <record id="product_custom_cabinet_metric" model="product.product">
             <field name="name">Customized Cabinet (Metric)</field>
-            <field name="categ_id" ref="product.product_category_5"/>
+            <field name="categ_id" ref="product.product_category_5" />
             <field name="standard_price">190.50</field>
             <field name="list_price">210</field>
             <field name="detailed_type">product</field>
             <field name="weight">2</field>
-            <field name="uom_id" ref="uom.product_uom_cubic_meter"/>
-            <field name="uom_po_id" ref="uom.product_uom_cubic_meter"/>
+            <field name="uom_id" ref="uom.product_uom_cubic_meter" />
+            <field name="uom_po_id" ref="uom.product_uom_cubic_meter" />
             <field name="default_code">E-COM98</field>
-            <field name="image_1920" type="base64" file="product/static/img/product_product_10-image.png"/>
+            <field
+        name="image_1920"
+        type="base64"
+        file="product/static/img/product_product_10-image.png"
+      />
             <field name="barcode">06016478559982</field>
         </record>
 

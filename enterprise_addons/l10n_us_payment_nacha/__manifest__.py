@@ -1,7 +1,6 @@
-# coding: utf-8
 {
     "name": "NACHA Payments",
-    'icon': '/l10n_us/static/description/icon.png',
+    "icon": "/l10n_us/static/description/icon.png",
     "summary": """Export payments as NACHA files""",
     "category": "Accounting/Accounting",
     "description": """

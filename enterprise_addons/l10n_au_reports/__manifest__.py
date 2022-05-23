@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'Australian Reports - Accounting',
-    'icon': '/l10n_au/static/description/icon.png',
-    'version': '1.1',
-    'category': 'Accounting/Localizations/Reporting',
-    'description': """
+    "name": "Australian Reports - Accounting",
+    "icon": "/l10n_au/static/description/icon.png",
+    "version": "1.1",
+    "category": "Accounting/Localizations/Reporting",
+    "description": """
 Australian Accounting Module
 ============================
 
@@ -30,11 +29,11 @@ The annual report must be provided to the Commissioner no later than 28 August a
 
 The report uses tax tags ``Service`` and ``Tax Withheld`` in order to find adequate journal items. These are set using the fiscal positions, and the right type of product (Services).
     """,
-    'depends': ['account_reports_cash_basis', 'l10n_au'],
-    'data': [
-        'views/tpar_views.xml',
+    "depends": ["account_reports_cash_basis", "l10n_au"],
+    "data": [
+        "views/tpar_views.xml",
     ],
-    'installable': True,
-    'auto_install': True,
-    'license': 'OEEL-1',
+    "installable": True,
+    "auto_install": True,
+    "license": "OEEL-1",
 }

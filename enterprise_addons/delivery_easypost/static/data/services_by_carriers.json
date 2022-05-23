@@ -63,16 +63,8 @@
     "StandardWhiteInstallRemove",
     "StandardWhiteRemove"
   ],
-  "Asendia": [
-    "PMI",
-    "ePacket",
-    "IPA",
-    "ISAL"
-  ],
-  "Asendia HK": [
-    "NormalRegistered",
-    "PostExpress"
-  ],
+  "Asendia": ["PMI", "ePacket", "IPA", "ISAL"],
+  "Asendia HK": ["NormalRegistered", "PostExpress"],
   "Australia Post": [
     "ExpressPost",
     "ExpressPostSignature",
@@ -81,12 +73,8 @@
     "ParcelPostExtra",
     "ParcelPostWinePlusSignature"
   ],
-  "AxleHire": [
-    "AxleHireDelivery"
-  ],
-  "Boxberry": [
-    "Boxberry"
-  ],
+  "AxleHire": ["AxleHireDelivery"],
+  "Boxberry": ["Boxberry"],
   "Canada Post": [
     "RegularParcel",
     "ExpeditedParcel",
@@ -126,20 +114,10 @@
     "USA",
     "International"
   ],
-  "CDL Last Mile Solutions": [
-    "DISTRIBUTION",
-    "Same Day"
-  ],
-  "Colis PrivÃ©": [
-    "Parcel"
-  ],
-  "Deliv": [
-    "Scheduled",
-    "OnDemand"
-  ],
-  "Deutsche Post": [
-    "PacketPlus"
-  ],
+  "CDL Last Mile Solutions": ["DISTRIBUTION", "Same Day"],
+  "Colis PrivÃ©": ["Parcel"],
+  "Deliv": ["Scheduled", "OnDemand"],
+  "Deutsche Post": ["PacketPlus"],
   "DHL eCommerce Asia": [
     "Packet",
     "PacketPlus",
@@ -205,17 +183,9 @@
     "DHLParcelDirectInternationalPriority",
     "DHLParcelDirectInternationalExpedited"
   ],
-  "Dicom": [
-    "Ground"
-  ],
-  "Direct Link": [
-    "RegisteredMail",
-    "UntrackedMail",
-    "ParcelMail"
-  ],
-  "Doorman": [
-    "DoormanDirect"
-  ],
+  "Dicom": ["Ground"],
+  "Direct Link": ["RegisteredMail", "UntrackedMail", "ParcelMail"],
+  "Doorman": ["DoormanDirect"],
   "DPD": [
     "DPDCLASSIC",
     "DPD8:30",
@@ -276,18 +246,8 @@
     "FreightParcelSaturday10",
     "ParcelShipToShop"
   ],
-  "Estafeta": [
-    "NextDayBy930",
-    "NextDayBy1130",
-    "NextDay",
-    "Ground",
-    "TwoDay",
-    "LTL"
-  ],
-  "Fastway": [
-    "Parcel",
-    "Satchel"
-  ],
+  "Estafeta": ["NextDayBy930", "NextDayBy1130", "NextDay", "Ground", "TwoDay", "LTL"],
+  "Fastway": ["Parcel", "Satchel"],
   "FedEx": [
     "FEDEX_GROUND",
     "FEDEX_2_DAY",
@@ -316,9 +276,7 @@
     "FEDEX_DISTANCE_DEFERRED",
     "FEDEX_NEXT_DAY_FREIGHT"
   ],
-  "FedEx SmartPost": [
-    "SMART_POST"
-  ],
+  "FedEx SmartPost": ["SMART_POST"],
   "Globegistics": [
     "PMEI",
     "PMI",
@@ -391,13 +349,8 @@
     "InterlinkParcelTwoDay",
     "InterlinkPickupParcelDpdEuropeByRoad"
   ],
-  "LaserShip": [
-    "SameDay",
-    "NextDay"
-  ],
-  "Liefery": [
-    "TourAppointment20161124From1600To1900"
-  ],
+  "LaserShip": ["SameDay", "NextDay"],
+  "Liefery": ["TourAppointment20161124From1600To1900"],
   "LSO": [
     "GroundEarly",
     "GroundBasic",
@@ -426,10 +379,7 @@
     "PriorityMail",
     "BoundPrintedMatter"
   ],
-  "Ninja Van": [
-    "Standard Courier",
-    "Express Courier"
-  ],
+  "Ninja Van": ["Standard Courier", "Express Courier"],
   "Norco": [
     "EarlyOvernite",
     "MorningOvernite",
@@ -440,13 +390,7 @@
     "Ground",
     "Overnight"
   ],
-  "OnTrac": [
-    "Sunrise",
-    "Gold",
-    "OnTrac Gold",
-    "Ground",
-    "Overnight"
-  ],
+  "OnTrac": ["Sunrise", "Gold", "OnTrac Gold", "Ground", "Overnight"],
   "OnTrac DirectPost": [
     "FirstClassMail",
     "PriorityMail",
@@ -461,9 +405,7 @@
     "OrangeDSTracking",
     "OrangeDSSecureShip"
   ],
-  "Postmates": [
-    "OnDemand"
-  ],
+  "Postmates": ["OnDemand"],
   "PostNL": [
     "EUPackSpecialCOD",
     "EUPackStandard",
@@ -602,27 +544,11 @@
     "PriorityParcelDeliveryConfirmationDDU",
     "ePacketService"
   ],
-  "Spee-Dee": [
-    "SpeeDeeDelivery"
-  ],
-  "SprintShip": [
-    "RoutedDeliveries",
-    "OnDemand",
-    "WhiteGloveDeliveries"
-  ],
-  "TForce": [
-    "SameDay",
-    "SameDayWhiteGlove",
-    "NextDay",
-    "NextDayWhiteGlove"
-  ],
-  "Uber RUSH": [
-    "Scheduled",
-    "OnDemand"
-  ],
-  "UDS": [
-    "DeliveryService"
-  ],
+  "Spee-Dee": ["SpeeDeeDelivery"],
+  "SprintShip": ["RoutedDeliveries", "OnDemand", "WhiteGloveDeliveries"],
+  "TForce": ["SameDay", "SameDayWhiteGlove", "NextDay", "NextDayWhiteGlove"],
+  "Uber RUSH": ["Scheduled", "OnDemand"],
+  "UDS": ["DeliveryService"],
   "UPS": [
     "Ground",
     "UPSStandard",

@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+import base64
 import json
 import logging
-import base64
+from datetime import timedelta
+from typing import Any, Dict, List
+
 import psycopg2
 
-from datetime import timedelta
-from typing import Dict, Any, List
-
-from odoo import fields, models, api
+from odoo import api, fields, models
 from odoo.exceptions import AccessError
 from odoo.tools import image_process, mute_logger
 
@@ -27,7 +26,8 @@ class Document(models.Model):
     raw = fields.Binary(related="attachment_id.raw", readonly=False)
     spreadsheet_snapshot = fields.Binary()
     spreadsheet_revision_ids = fields.One2many(
-        "spreadsheet.revision", "document_id",
+        "spreadsheet.revision",
+        "document_id",
         groups="documents.group_documents_manager",
     )
     # TODO extend the versioning system to use raw.
@@ -41,11 +41,15 @@ class Document(models.Model):
         return documents
 
     def write(self, vals):
-        if 'mimetype' in vals and 'handler' not in vals:
-            vals['handler'] = 'spreadsheet' if vals['mimetype'] == 'application/o-spreadsheet' else False
-        if 'raw' in vals:
+        if "mimetype" in vals and "handler" not in vals:
+            vals["handler"] = (
+                "spreadsheet"
+                if vals["mimetype"] == "application/o-spreadsheet"
+                else False
+            )
+        if "raw" in vals:
             self._update_spreadsheet_contributors()
-        if all(document.handler == 'spreadsheet' for document in self):
+        if all(document.handler == "spreadsheet" for document in self):
             vals = self._resize_thumbnail_value(vals)
         return super().write(vals)
 
@@ -57,10 +61,12 @@ class Document(models.Model):
         super(Document, self - spreadsheets)._compute_thumbnail()
 
     def _resize_thumbnail_value(self, vals):
-        if 'thumbnail' in vals:
+        if "thumbnail" in vals:
             return dict(
                 vals,
-                thumbnail=image_process(vals['thumbnail'], size=(750, 750), crop='center'),
+                thumbnail=image_process(
+                    vals["thumbnail"], size=(750, 750), crop="center"
+                ),
             )
         return vals
 
@@ -68,7 +74,7 @@ class Document(models.Model):
         return [
             (
                 self._resize_thumbnail_value(vals)
-                if vals.get('handler') == 'spreadsheet'
+                if vals.get("handler") == "spreadsheet"
                 else vals
             )
             for vals in vals_list
@@ -82,22 +88,23 @@ class Document(models.Model):
         # on `folder_id` we do not need to check vals_list for different companies.
         default_folder = self.env.company.documents_spreadsheet_folder_id
         if not default_folder:
-            default_folder = self.env['documents.folder'].search([], limit=1, order="sequence asc")
+            default_folder = self.env["documents.folder"].search(
+                [], limit=1, order="sequence asc"
+            )
         return [
             (
-                dict(vals, folder_id=vals.get('folder_id', default_folder.id))
-                if vals.get('handler') == 'spreadsheet'
+                dict(vals, folder_id=vals.get("folder_id", default_folder.id))
+                if vals.get("handler") == "spreadsheet"
                 else vals
             )
             for vals in vals_list
         ]
 
     def _update_spreadsheet_contributors(self):
-        """Add the current user to the spreadsheet contributors.
-        """
+        """Add the current user to the spreadsheet contributors."""
         for document in self:
-            if document.handler == 'spreadsheet':
-                self.env['spreadsheet.contributor']._update(self.env.user, document)
+            if document.handler == "spreadsheet":
+                self.env["spreadsheet.contributor"]._update(self.env.user, document)
 
     def join_spreadsheet_session(self):
         """Join a spreadsheet session.
@@ -110,7 +117,9 @@ class Document(models.Model):
         """
         self.ensure_one()
         self._check_collaborative_spreadsheet_access("read")
-        can_write = self._check_collaborative_spreadsheet_access("write", raise_exception=False)
+        can_write = self._check_collaborative_spreadsheet_access(
+            "write", raise_exception=False
+        )
         return {
             "id": self.id,
             "name": self.name,
@@ -161,16 +170,14 @@ class Document(models.Model):
             is_accepted = self._save_concurrent_revision(
                 message["nextRevisionId"],
                 message["serverRevisionId"],
-                self._build_spreadsheet_revision_data(message)
+                self._build_spreadsheet_revision_data(message),
             )
             if is_accepted:
                 self._broadcast_spreadsheet_message(message)
             return is_accepted
         elif message["type"] == "SNAPSHOT":
             return self._snapshot_spreadsheet(
-                message["serverRevisionId"],
-                message["nextRevisionId"],
-                message["data"]
+                message["serverRevisionId"], message["nextRevisionId"], message["data"]
             )
         elif message["type"] in ["CLIENT_JOINED", "CLIENT_LEFT", "CLIENT_MOVED"]:
             self._check_collaborative_spreadsheet_access("read")
@@ -178,7 +185,9 @@ class Document(models.Model):
             return True
         return False
 
-    def _snapshot_spreadsheet(self, revision_id: str, snapshot_revision_id, spreadsheet_snapshot: dict):
+    def _snapshot_spreadsheet(
+        self, revision_id: str, snapshot_revision_id, spreadsheet_snapshot: dict
+    ):
         """Save the spreadsheet snapshot along the revision id. Delete previous
         revisions which are no longer needed.
         If the `revision_id` is not the same as the server revision, the snapshot is
@@ -195,13 +204,17 @@ class Document(models.Model):
             {"type": "SNAPSHOT_CREATED", "version": 1},
         )
         if is_accepted:
-            self.spreadsheet_snapshot = base64.encodebytes(json.dumps(spreadsheet_snapshot).encode("utf-8"))
+            self.spreadsheet_snapshot = base64.encodebytes(
+                json.dumps(spreadsheet_snapshot).encode("utf-8")
+            )
             self._delete_spreadsheet_revisions()
-            self._broadcast_spreadsheet_message({
-                "type": "SNAPSHOT_CREATED",
-                "serverRevisionId": revision_id,
-                "nextRevisionId": snapshot_revision_id,
-            })
+            self._broadcast_spreadsheet_message(
+                {
+                    "type": "SNAPSHOT_CREATED",
+                    "serverRevisionId": revision_id,
+                    "nextRevisionId": snapshot_revision_id,
+                }
+            )
         return is_accepted
 
     def _get_spreadsheet_snapshot(self):
@@ -288,7 +301,7 @@ class Document(models.Model):
     def _broadcast_spreadsheet_message(self, message: CollaborationMessage):
         """Send the message to the spreadsheet channel"""
         self.ensure_one()
-        self.env["bus.bus"]._sendone(self, 'spreadsheet', message)
+        self.env["bus.bus"]._sendone(self, "spreadsheet", message)
 
     def _delete_spreadsheet_revisions(self):
         """Delete spreadsheet revisions"""

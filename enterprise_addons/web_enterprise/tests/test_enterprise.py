@@ -4,13 +4,14 @@ from odoo.tests.common import HttpCase
 
 
 class LoadMenusTests(HttpCase):
-
     def setUp(self):
         super().setUp()
-        self.menu = self.env["ir.ui.menu"].create({
-            "name": "test_menu",
-            "parent_id": False,
-        })
+        self.menu = self.env["ir.ui.menu"].create(
+            {
+                "name": "test_menu",
+                "parent_id": False,
+            }
+        )
 
         def search(*args, **kwargs):
             return self.menu
@@ -34,22 +35,20 @@ class LoadMenusTests(HttpCase):
                 "name": "test_menu",
                 "webIcon": False,
                 "webIconData": "data:image/png;base64,ZW5jb2Rl",
-                "xmlid": ""
+                "xmlid": "",
             },
             "root": {
                 "actionID": False,
                 "actionModel": False,
                 "appID": False,
-                "children": [
-                    self.menu.id
-                ],
+                "children": [self.menu.id],
                 "id": "root",
                 "name": "root",
                 "webIcon": None,
                 "webIconData": None,
                 "xmlid": "",
-                'backgroundImage': None,
-            }
+                "backgroundImage": None,
+            },
         }
 
         self.assertDictEqual(menu_loaded.json(), expected)

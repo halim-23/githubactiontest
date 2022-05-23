@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
 import DialingPanel from "voip.DialingPanel";
-import { DialingPanelAdapter } from "./legacy_compatibility";
+import {DialingPanelAdapter} from "./legacy_compatibility";
 
-const { Component, tags } = owl;
+const {Component, tags} = owl;
 
 /**
  * Main component to wrap the DialingPanel. Ideally, it should conditionally
@@ -13,12 +13,12 @@ const { Component, tags } = owl;
  * converted in owl (e.g. rpcs done in the service at deployment).
  */
 export class DialingPanelContainer extends Component {
-    setup() {
-        this.DialingPanel = DialingPanel;
-    }
+  setup() {
+    this.DialingPanel = DialingPanel;
+  }
 }
 DialingPanelContainer.template = tags.xml`
     <div class="o_voip_dialing_panel_container">
         <DialingPanelAdapter Component="DialingPanel" bus="props.bus" />
     </div>`;
-DialingPanelContainer.components = { DialingPanelAdapter };
+DialingPanelContainer.components = {DialingPanelAdapter};

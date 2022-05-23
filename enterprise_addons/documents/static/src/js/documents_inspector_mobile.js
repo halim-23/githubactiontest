@@ -1,29 +1,29 @@
-odoo.define('documents.DocumentsInspectorMobile', function (require) {
-"use strict";
+odoo.define("documents.DocumentsInspectorMobile", function (require) {
+  "use strict";
 
-var config = require('web.config');
+  var config = require("web.config");
 
-if (!config.device.isMobile) {
+  if (!config.device.isMobile) {
     return;
-}
+  }
 
-var DocumentsInspector = require('documents.DocumentsInspector');
+  var DocumentsInspector = require("documents.DocumentsInspector");
 
-DocumentsInspector.include({
-    template: 'documents.DocumentsInspectorMobile',
+  DocumentsInspector.include({
+    template: "documents.DocumentsInspectorMobile",
 
-    init: function() {
-        this._super.apply(this, arguments);
-        this.isMobile = true;
+    init: function () {
+      this._super.apply(this, arguments);
+      this.isMobile = true;
     },
-    
+
     async start() {
-        await this._super(...arguments);
-        this.trigger_up('open_chatter');
+      await this._super(...arguments);
+      this.trigger_up("open_chatter");
     },
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Public
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Return the insternal state of the widget.
@@ -33,9 +33,9 @@ DocumentsInspector.include({
      * @returns {Object}
      */
     getLocalState: function () {
-        return _.extend({}, this._super.apply(this, arguments), {
-            open: this.el.getAttribute('open') === '',
-        });
+      return _.extend({}, this._super.apply(this, arguments), {
+        open: this.el.getAttribute("open") === "",
+      });
     },
     /**
      * Restore the given state.
@@ -45,17 +45,16 @@ DocumentsInspector.include({
      * @param {integer} state.open the 'open' status to restore
      */
     setLocalState: function (state) {
-        this._super.apply(this, arguments);
-        if (state.open) {
-            this.open();
-        }
+      this._super.apply(this, arguments);
+      if (state.open) {
+        this.open();
+      }
     },
     /**
      * Open the inspector.
      */
     open: function () {
-        this.el.setAttribute('open', '');
+      this.el.setAttribute("open", "");
     },
-});
-
+  });
 });

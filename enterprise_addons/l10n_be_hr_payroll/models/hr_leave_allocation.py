@@ -1,8 +1,10 @@
-from odoo import models, fields
+from odoo import fields, models
 
 
 class PaidTimeOffAllocation(models.Model):
-    _name = 'hr.leave.allocation'
-    _inherit = 'hr.leave.allocation'
+    _name = "hr.leave.allocation"
+    _inherit = "hr.leave.allocation"
 
-    max_leaves_allocated = fields.Float(string='Max Leaves Allocated', default=20, readonly=True)
+    max_leaves_allocated = fields.Float(
+        string="Max Leaves Allocated", default=20, readonly=True
+    )

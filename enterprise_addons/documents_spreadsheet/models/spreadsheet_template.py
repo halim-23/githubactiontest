@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
+from odoo import _, fields, models
 from odoo.exceptions import AccessError
+
 
 class SpreadsheetTemplate(models.Model):
     _name = "spreadsheet.template"
@@ -22,7 +22,7 @@ class SpreadsheetTemplate(models.Model):
         return super().copy(default)
 
     def fetch_template_data(self):
-        """ Method called on template load
+        """Method called on template load
         Returns the following data:
         - the template name
         - its raw data

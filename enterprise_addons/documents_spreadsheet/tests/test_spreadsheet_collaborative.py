@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-import json
 import base64
-
-from freezegun import freeze_time
+import json
 from uuid import uuid4
 
-from .common import SpreadsheetTestCommon, TEXT
-from odoo.tests.common import new_test_user, tagged
+from freezegun import freeze_time
+
 from odoo.exceptions import AccessError
+from odoo.tests.common import new_test_user, tagged
+
+from .common import TEXT, SpreadsheetTestCommon
 
 
 @tagged("collaborative_spreadsheet")
@@ -43,7 +43,11 @@ class SpreadsheetCollaborative(SpreadsheetTestCommon):
         )
         self.assertEqual(
             json.loads(spreadsheet.spreadsheet_revision_ids.commands),
-            {"commands": commands["commands"], "id": spreadsheet.id, "type": commands["type"]},
+            {
+                "commands": commands["commands"],
+                "id": spreadsheet.id,
+                "type": commands["type"],
+            },
             "It should have saved the revision data",
         )
 
@@ -95,7 +99,9 @@ class SpreadsheetCollaborative(SpreadsheetTestCommon):
         )
         is_accepted = self.snapshot(
             spreadsheet,
-            self.get_revision(spreadsheet), "snapshot-revision-id", {"sheets": []},
+            self.get_revision(spreadsheet),
+            "snapshot-revision-id",
+            {"sheets": []},
         )
         self.assertTrue(is_accepted, "It should have accepted the snapshot")
         self.assertEqual(
@@ -103,11 +109,15 @@ class SpreadsheetCollaborative(SpreadsheetTestCommon):
             0,
             "It should have archived the revision history",
         )
-        self.assertEqual(base64.decodebytes(spreadsheet.spreadsheet_snapshot), b'{"sheets": []}', "It should have saved the data")
+        self.assertEqual(
+            base64.decodebytes(spreadsheet.spreadsheet_snapshot),
+            b'{"sheets": []}',
+            "It should have saved the data",
+        )
         self.assertEqual(
             self.get_revision(spreadsheet),
             "snapshot-revision-id",
-            "It should have updated the snapshot revision"
+            "It should have updated the snapshot revision",
         )
 
     def test_snapshot_spreadsheet_with_invalid_revision(self):
@@ -120,9 +130,15 @@ class SpreadsheetCollaborative(SpreadsheetTestCommon):
         self.assertEqual(
             len(spreadsheet.spreadsheet_revision_ids), 1, "It should have 1 revision"
         )
-        is_accepted = self.snapshot(spreadsheet, first_revision, "snapshot-revision-id", "new data")
+        is_accepted = self.snapshot(
+            spreadsheet, first_revision, "snapshot-revision-id", "new data"
+        )
         self.assertFalse(is_accepted, "It should not have accepted the snapshot")
-        self.assertEqual(spreadsheet.spreadsheet_snapshot, current_data, "It should not have saved the data")
+        self.assertEqual(
+            spreadsheet.spreadsheet_snapshot,
+            current_data,
+            "It should not have saved the data",
+        )
         self.assertEqual(
             current_revision,
             self.get_revision(spreadsheet),
@@ -286,12 +302,16 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         self.folder.read_group_ids = self.group
         with freeze_time("2020-02-03 18:00"):
             self.assertFalse(
-                self.spreadsheet.with_user(self.user).join_spreadsheet_session().get("snapshot_requested"),
+                self.spreadsheet.with_user(self.user)
+                .join_spreadsheet_session()
+                .get("snapshot_requested"),
                 "It should not have requested a snapshot",
             )
             self.folder.group_ids = self.group  # grant write access
             self.assertTrue(
-                self.spreadsheet.with_user(self.user).join_spreadsheet_session().get("snapshot_requested"),
+                self.spreadsheet.with_user(self.user)
+                .join_spreadsheet_session()
+                .get("snapshot_requested"),
                 "It should have requested a snapshot",
             )
 
@@ -299,7 +319,9 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         with self.assertRaises(AccessError):
             self.snapshot(
                 self.spreadsheet.with_user(self.user),
-                self.get_revision(self.spreadsheet), "snapshot-id", "{}",
+                self.get_revision(self.spreadsheet),
+                "snapshot-id",
+                "{}",
             )
 
     def test_snapshot_user_with_doc_access(self):
@@ -311,7 +333,9 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         self.spreadsheet.invalidate_cache()
         self.snapshot(
             self.spreadsheet.with_user(self.user),
-            self.get_revision(self.spreadsheet), "snapshot-id", "{}",
+            self.get_revision(self.spreadsheet),
+            "snapshot-id",
+            "{}",
         )
         self.assertEqual(len(self.spreadsheet.spreadsheet_revision_ids), 0)
 
@@ -324,7 +348,9 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         with self.assertRaises(AccessError):
             self.snapshot(
                 self.spreadsheet.with_user(self.user),
-                self.get_revision(self.spreadsheet), "snapshot-id", "{}"
+                self.get_revision(self.spreadsheet),
+                "snapshot-id",
+                "{}",
             )
 
     def test_dispatch_user(self):
@@ -340,7 +366,11 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         self.spreadsheet.with_user(self.user).dispatch_spreadsheet_message(commands)
         self.assertEqual(
             json.loads(self.spreadsheet.spreadsheet_revision_ids.commands),
-            {"commands": commands["commands"], "id": self.spreadsheet.id, "type": commands["type"]},
+            {
+                "commands": commands["commands"],
+                "id": self.spreadsheet.id,
+                "type": commands["type"],
+            },
         )
 
     def test_dispatch_user_with_read_doc_access(self):
@@ -349,9 +379,7 @@ class SpreadsheetORMAccess(SpreadsheetTestCommon):
         self.folder.read_group_ids = self.group
         commands = self.new_revision_data(self.spreadsheet)
         with self.assertRaises(AccessError):
-            self.spreadsheet.with_user(self.user).dispatch_spreadsheet_message(
-                commands
-            )
+            self.spreadsheet.with_user(self.user).dispatch_spreadsheet_message(commands)
 
     def test_dispatch_user_with_read_doc_access_move(self):
         self.user.groups_id |= self.group

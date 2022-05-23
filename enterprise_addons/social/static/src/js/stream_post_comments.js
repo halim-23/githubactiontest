@@ -1,16 +1,16 @@
 /** @odoo-module **/
 
-import BasicFields from 'web.basic_fields';
-import { qweb as QWeb, _t } from 'web.core';
-import Dialog from 'web.Dialog';
-import dom from 'web.dom';
-import emojis from '@mail/js/emojis';
-import PostKanbanImagesCarousel from 'social.social_post_kanban_images_carousel';
-import MailEmojisMixin from '@mail/js/emojis_mixin';
-import { Markup } from 'web.utils';
-import SocialStreamPostFormatterMixin from 'social.post_formatter_mixin';
-import StreamPostCommentDelete from 'social.social_post_kanban_comments_delete';
-import time from 'web.time';
+import BasicFields from "web.basic_fields";
+import {qweb as QWeb, _t} from "web.core";
+import Dialog from "web.Dialog";
+import dom from "web.dom";
+import emojis from "@mail/js/emojis";
+import PostKanbanImagesCarousel from "social.social_post_kanban_images_carousel";
+import MailEmojisMixin from "@mail/js/emojis_mixin";
+import {Markup} from "web.utils";
+import SocialStreamPostFormatterMixin from "social.post_formatter_mixin";
+import StreamPostCommentDelete from "social.social_post_kanban_comments_delete";
+import time from "web.time";
 
 var FieldBinaryImage = BasicFields.FieldBinaryImage;
 
@@ -37,52 +37,56 @@ var DATE_TIME_FORMAT = time.getLangDatetimeFormat();
  * - The comment link (getCommentLink)
  * - ...
  */
-var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatterMixin, {
-    template: 'social.StreamPostComments',
+var StreamPostComments = Dialog.extend(
+  MailEmojisMixin,
+  SocialStreamPostFormatterMixin,
+  {
+    template: "social.StreamPostComments",
     events: {
-        'keydown .o_social_add_comment': '_onAddComment',
-        'click .o_social_comment_add_image': '_onAddImage',
-        'change .o_input_file': '_onImageChange',
-        'click .o_social_write_reply .fa-times': '_onImageRemove',
-        'click .o_social_write_reply .o_mail_emoji': '_onEmojiClick',
-        'click .o_social_comment_like': '_onLikeComment',
-        'click .o_social_edit_comment': '_onEditComment',
-        'click .o_social_edit_comment_cancel': '_onEditCommentCancel',
-        'click .o_social_delete_comment': '_onDeleteComment',
-        'click .o_social_comment_reply': '_onReplyComment',
-        'click .o_social_load_more_comments': '_onLoadMoreComments',
-        'click .o_social_comment_load_replies': '_onLoadReplies',
-        'click .o_social_original_post_image_more, .o_social_original_post_image_click': '_onClickMoreImages',
+      "keydown .o_social_add_comment": "_onAddComment",
+      "click .o_social_comment_add_image": "_onAddImage",
+      "change .o_input_file": "_onImageChange",
+      "click .o_social_write_reply .fa-times": "_onImageRemove",
+      "click .o_social_write_reply .o_mail_emoji": "_onEmojiClick",
+      "click .o_social_comment_like": "_onLikeComment",
+      "click .o_social_edit_comment": "_onEditComment",
+      "click .o_social_edit_comment_cancel": "_onEditCommentCancel",
+      "click .o_social_delete_comment": "_onDeleteComment",
+      "click .o_social_comment_reply": "_onReplyComment",
+      "click .o_social_load_more_comments": "_onLoadMoreComments",
+      "click .o_social_comment_load_replies": "_onLoadReplies",
+      "click .o_social_original_post_image_more, .o_social_original_post_image_click":
+        "_onClickMoreImages",
     },
 
     init: function (parent, options) {
-        options = _.defaults(options || {}, {
-            title: options.title || _t('Comments'),
-            renderFooter: false,
-            size: 'medium',
-        });
+      options = _.defaults(options || {}, {
+        title: options.title || _t("Comments"),
+        renderFooter: false,
+        size: "medium",
+      });
 
-        this.accountId = options.accountId;
-        this.originalPost = options.originalPost;
-        this.emojis = emojis;
-        this.postId = options.postId;
-        this.comments = options.comments;
-        this.commentName = options.commentName;
+      this.accountId = options.accountId;
+      this.originalPost = options.originalPost;
+      this.emojis = emojis;
+      this.postId = options.postId;
+      this.comments = options.comments;
+      this.commentName = options.commentName;
 
-        this._super.apply(this, arguments);
+      this._super.apply(this, arguments);
     },
 
     /**
      * Used to automatically resize the textarea when the user input exceeds the available space.
      */
     start: function () {
-        var self = this;
-        return this._super.apply(this, arguments).then(function () {
-            dom.autoresize(self.$('textarea').first(), {
-                parent: self,
-                min_height: 60
-            });
+      var self = this;
+      return this._super.apply(this, arguments).then(function () {
+        dom.autoresize(self.$("textarea").first(), {
+          parent: self,
+          min_height: 60,
         });
+      });
     },
 
     //--------------------------------------------------------------------------
@@ -90,48 +94,47 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
     //--------------------------------------------------------------------------
 
     getAuthorPictureSrc: function (comment) {
-        return "";
+      return "";
     },
 
     getCommentLink: function (comment) {
-        return "";
+      return "";
     },
 
     isCommentDeletable: function (comment) {
-        return false;
+      return false;
     },
 
     isCommentEditable: function () {
-        return false;
+      return false;
     },
 
     isCommentLikable: function () {
-        return true;
+      return true;
     },
 
     getAuthorLink: function (comment) {
-        return "";
+      return "";
     },
 
     getLikesClass: function () {
-        return "fa-thumbs-up";
+      return "fa-thumbs-up";
     },
 
     getAddCommentEndpoint: function () {
-        return null;
+      return null;
     },
 
     getDeleteCommentEndpoint: function () {
-        return null;
+      return null;
     },
 
-
     canAddImage: function () {
-        return true;
+      return true;
     },
 
     showMoreComments: function (result) {
-        return false;
+      return false;
     },
 
     //--------------------------------------------------------------------------
@@ -145,25 +148,23 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onAddComment: function (ev) {
-        if (ev.keyCode !== $.ui.keyCode.ENTER ||
-            ev.ctrlKey ||
-            ev.shiftKey) {
-            return;
-        }
+      if (ev.keyCode !== $.ui.keyCode.ENTER || ev.ctrlKey || ev.shiftKey) {
+        return;
+      }
 
-        ev.preventDefault();
-        var $textarea = $(ev.currentTarget);
+      ev.preventDefault();
+      var $textarea = $(ev.currentTarget);
 
-        if ($textarea.val().trim() === '') {
-            return;
-        }
+      if ($textarea.val().trim() === "") {
+        return;
+      }
 
-        var isCommentReply = $textarea.data('isCommentReply');
-        var isCommentEdit = $textarea.data('isCommentEdit');
-        var commentId = $textarea.data('commentId');
+      var isCommentReply = $textarea.data("isCommentReply");
+      var isCommentEdit = $textarea.data("isCommentEdit");
+      var commentId = $textarea.data("commentId");
 
-        this._addComment($textarea, isCommentReply, commentId, isCommentEdit);
-        this.$('.o_social_no_comment_message').remove();
+      this._addComment($textarea, isCommentReply, commentId, isCommentEdit);
+      this.$(".o_social_no_comment_message").remove();
     },
 
     /**
@@ -172,13 +173,13 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onAddImage: function (ev) {
-        ev.preventDefault();
+      ev.preventDefault();
 
-        $(ev.currentTarget)
-            .closest('.o_social_write_reply')
-            .find('.o_input_file')
-            .first()
-            .click();
+      $(ev.currentTarget)
+        .closest(".o_social_write_reply")
+        .find(".o_input_file")
+        .first()
+        .click();
     },
 
     /**
@@ -190,31 +191,35 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {Event} ev
      */
     _onImageChange: function (ev) {
-        var $target = $(ev.currentTarget);
+      var $target = $(ev.currentTarget);
 
-        var fileNode = ev.target;
-        var fileReader = new FileReader();
-        var file = fileNode.files[0];
+      var fileNode = ev.target;
+      var fileReader = new FileReader();
+      var file = fileNode.files[0];
 
-        if (!file) {
-            // the user didn't select a file
-            return;
-        }
+      if (!file) {
+        // the user didn't select a file
+        return;
+      }
 
-        fileReader.readAsDataURL(file);
-        fileReader.onloadend = function (upload) {
-            var data = upload.target.result.split(',')[1];
+      fileReader.readAsDataURL(file);
+      fileReader.onloadend = function (upload) {
+        var data = upload.target.result.split(",")[1];
 
-            var $replyEl = $target.closest('.o_social_write_reply');
-            var $imagePreview = $replyEl.find('.o_social_comment_image_preview');
-            $imagePreview.removeClass('d-none');
-            var fileType = FieldBinaryImage.prototype.file_type_magic_word[data[0]] || 'png';
-            $imagePreview.find('img').attr('src', 'data:image/' + fileType + ';base64,' + data);
+        var $replyEl = $target.closest(".o_social_write_reply");
+        var $imagePreview = $replyEl.find(".o_social_comment_image_preview");
+        $imagePreview.removeClass("d-none");
+        var fileType =
+          FieldBinaryImage.prototype.file_type_magic_word[data[0]] || "png";
+        $imagePreview
+          .find("img")
+          .attr("src", "data:image/" + fileType + ";base64," + data);
 
-            $replyEl.find('textarea')
-                .removeAttr('data-existing-attachment-id')
-                .removeData('existingAttachmentId');
-        };
+        $replyEl
+          .find("textarea")
+          .removeAttr("data-existing-attachment-id")
+          .removeData("existingAttachmentId");
+      };
     },
 
     /**
@@ -223,13 +228,14 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onImageRemove: function (ev) {
-        var $target = $(ev.currentTarget);
-        var $replyEl = $target.closest('.o_social_write_reply');
-        $replyEl.find('.o_social_comment_image_preview').addClass('d-none');
-        $replyEl.find('.o_input_file').val('');
-        $replyEl.find('textarea')
-            .removeAttr('data-existing-attachment-id')
-            .removeData('existingAttachmentId');
+      var $target = $(ev.currentTarget);
+      var $replyEl = $target.closest(".o_social_write_reply");
+      $replyEl.find(".o_social_comment_image_preview").addClass("d-none");
+      $replyEl.find(".o_input_file").val("");
+      $replyEl
+        .find("textarea")
+        .removeAttr("data-existing-attachment-id")
+        .removeData("existingAttachmentId");
     },
 
     /**
@@ -242,33 +248,39 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onEditComment: function (ev) {
-        ev.preventDefault();
+      ev.preventDefault();
 
-        var $targetComment = $(ev.currentTarget).closest('.o_social_comment');
+      var $targetComment = $(ev.currentTarget).closest(".o_social_comment");
 
-        var $editComment = $(QWeb.render("social.StreamPostReply", {
-            widget: this,
-            comment: {
-                id: $targetComment.data('commentId')
-            },
-            isCommentEdit: true,
-            initialValue: $targetComment
-                .find('.o_social_comment_text')
-                .first()
-                .data('originalMessage'),
-            existingAttachmentId: $targetComment.data('existingAttachmentId'),
-            existingAttachmentSrc: $targetComment.data('existingAttachmentSrc'),
-        }));
+      var $editComment = $(
+        QWeb.render("social.StreamPostReply", {
+          widget: this,
+          comment: {
+            id: $targetComment.data("commentId"),
+          },
+          isCommentEdit: true,
+          initialValue: $targetComment
+            .find(".o_social_comment_text")
+            .first()
+            .data("originalMessage"),
+          existingAttachmentId: $targetComment.data("existingAttachmentId"),
+          existingAttachmentSrc: $targetComment.data("existingAttachmentSrc"),
+        })
+      );
 
-        $targetComment.find('.o_social_comment_wrapper').first().removeClass('d-flex').addClass('d-none');
-        $targetComment.find('.o_social_comment_commands').first().hide();
-        $targetComment.find('.o_social_comment_attachment').first().hide();
-        $targetComment.prepend($editComment);
+      $targetComment
+        .find(".o_social_comment_wrapper")
+        .first()
+        .removeClass("d-flex")
+        .addClass("d-none");
+      $targetComment.find(".o_social_comment_commands").first().hide();
+      $targetComment.find(".o_social_comment_attachment").first().hide();
+      $targetComment.prepend($editComment);
 
-        dom.autoresize($editComment.find('textarea').first(), {
-            parent: this,
-            min_height: 60
-        });
+      dom.autoresize($editComment.find("textarea").first(), {
+        parent: this,
+        min_height: 60,
+      });
     },
 
     /**
@@ -277,13 +289,17 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onEditCommentCancel: function (ev) {
-        ev.preventDefault();
+      ev.preventDefault();
 
-        var $targetComment = $(ev.currentTarget).closest('.o_social_comment');
-        $targetComment.find('.o_social_write_reply').first().remove();
-        $targetComment.find('.o_social_comment_wrapper').first().addClass('d-flex').removeClass('d-none');
-        $targetComment.find('.o_social_comment_commands').first().show();
-        $targetComment.find('.o_social_comment_attachment').first().show();
+      var $targetComment = $(ev.currentTarget).closest(".o_social_comment");
+      $targetComment.find(".o_social_write_reply").first().remove();
+      $targetComment
+        .find(".o_social_comment_wrapper")
+        .first()
+        .addClass("d-flex")
+        .removeClass("d-none");
+      $targetComment.find(".o_social_comment_commands").first().show();
+      $targetComment.find(".o_social_comment_attachment").first().show();
     },
 
     /**
@@ -293,17 +309,17 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onDeleteComment: function (ev) {
-        ev.preventDefault();
-        var postDeleteWindow = new StreamPostCommentDelete(this, {
-            postId: this.postId,
-            commentName: this.commentName,
-            deleteCommentEndpoint: this.getDeleteCommentEndpoint(),
-            commentId: $(ev.currentTarget).closest('.o_social_comment').data('commentId')
-        }).open();
+      ev.preventDefault();
+      var postDeleteWindow = new StreamPostCommentDelete(this, {
+        postId: this.postId,
+        commentName: this.commentName,
+        deleteCommentEndpoint: this.getDeleteCommentEndpoint(),
+        commentId: $(ev.currentTarget).closest(".o_social_comment").data("commentId"),
+      }).open();
 
-        postDeleteWindow.on('comment_deleted', null, function () {
-            $(ev.currentTarget).closest('.o_social_comment').remove();
-        });
+      postDeleteWindow.on("comment_deleted", null, function () {
+        $(ev.currentTarget).closest(".o_social_comment").remove();
+      });
     },
 
     /**
@@ -325,22 +341,22 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onReplyComment: function (ev) {
-        ev.preventDefault();
+      ev.preventDefault();
 
-        var $target = $(ev.currentTarget);
-        var $targetComment = $target.closest('.o_social_root_comment');
-        var $textarea = $targetComment
-            .find('.o_social_write_comment_reply')
-            .removeClass('d-none')
-            .find('textarea')
-            .focus();
+      var $target = $(ev.currentTarget);
+      var $targetComment = $target.closest(".o_social_root_comment");
+      var $textarea = $targetComment
+        .find(".o_social_write_comment_reply")
+        .removeClass("d-none")
+        .find("textarea")
+        .focus();
 
-        $textarea.focus();
+      $textarea.focus();
 
-        dom.autoresize($textarea, {
-            parent: this,
-            min_height: 60
-        });
+      dom.autoresize($textarea, {
+        parent: this,
+        min_height: 60,
+      });
     },
 
     /**
@@ -354,25 +370,28 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {MouseEvent} ev
      */
     _onLoadReplies: function (ev) {
-        ev.preventDefault();
+      ev.preventDefault();
 
-        var self = this;
-        var $target = $(ev.currentTarget);
-        var innerComments = $target.data('innerComments');
-        var $commentsRepliesContainer = $target.closest('.o_social_comment')
-            .find('.o_social_comment_replies');
+      var self = this;
+      var $target = $(ev.currentTarget);
+      var innerComments = $target.data("innerComments");
+      var $commentsRepliesContainer = $target
+        .closest(".o_social_comment")
+        .find(".o_social_comment_replies");
 
-        innerComments.forEach(function (innerComment) {
-            var $innerComment = $(QWeb.render("social.StreamPostComment", {
-                widget: self,
-                isSubComment: true,
-                comment: innerComment
-            }));
+      innerComments.forEach(function (innerComment) {
+        var $innerComment = $(
+          QWeb.render("social.StreamPostComment", {
+            widget: self,
+            isSubComment: true,
+            comment: innerComment,
+          })
+        );
 
-            $commentsRepliesContainer.append($innerComment);
-        });
-        $commentsRepliesContainer.removeClass('d-none');
-        $target.remove();
+        $commentsRepliesContainer.append($innerComment);
+      });
+      $commentsRepliesContainer.removeClass("d-none");
+      $target.remove();
     },
 
     /**
@@ -383,14 +402,12 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @private
      */
     _onClickMoreImages: function (ev) {
-        var $target = $(ev.currentTarget);
+      var $target = $(ev.currentTarget);
 
-        new PostKanbanImagesCarousel(
-            this, {
-                'activeIndex': $target.data('currentIndex'),
-                'images': this.originalPost.postImages
-            }
-        ).open();
+      new PostKanbanImagesCarousel(this, {
+        activeIndex: $target.data("currentIndex"),
+        images: this.originalPost.postImages,
+      }).open();
     },
 
     //--------------------------------------------------------------------------
@@ -421,54 +438,56 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {Boolean} isEdit Flags that indicates this is editing a existing comment.
      */
     _addComment: function ($textarea, isCommentReply, commentId, isEdit) {
-        var self = this;
+      var self = this;
 
-        var $replyEl = $textarea.closest('.o_social_write_reply');
-        var formData = new FormData($replyEl.find('form').first()[0]);
+      var $replyEl = $textarea.closest(".o_social_write_reply");
+      var formData = new FormData($replyEl.find("form").first()[0]);
 
-        formData.append('csrf_token', odoo.csrf_token);
-        formData.append('stream_post_id', this.postId);
-        if (isEdit) {
-            formData.append('is_edit', isEdit);
+      formData.append("csrf_token", odoo.csrf_token);
+      formData.append("stream_post_id", this.postId);
+      if (isEdit) {
+        formData.append("is_edit", isEdit);
+      }
+      if (isCommentReply || isEdit) {
+        formData.append("comment_id", commentId);
+      }
+      $textarea.prop("disabled", true);
+      var existingAttachmentId = $textarea.data("existingAttachmentId");
+      if (existingAttachmentId) {
+        formData.append("existing_attachment_id", existingAttachmentId);
+      }
+
+      this._ajaxRequest(this.getAddCommentEndpoint(), {
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: "POST",
+      }).then(function (comment) {
+        comment = JSON.parse(comment);
+        var $newMessage = $(
+          QWeb.render("social.StreamPostComment", {
+            widget: self,
+            comment: comment,
+            isSubComment: isCommentReply,
+          })
+        );
+
+        if (isCommentReply) {
+          self._addCommentReply($textarea, $newMessage);
+        } else if (isEdit) {
+          var $targetComment = $textarea.closest(".o_social_comment");
+          $targetComment.after($newMessage);
+          $targetComment.remove();
+        } else {
+          self.$(".o_social_comments_messages").prepend($newMessage);
         }
-        if (isCommentReply || isEdit) {
-            formData.append('comment_id', commentId);
-        }
-        $textarea.prop('disabled', true);
-        var existingAttachmentId = $textarea.data('existingAttachmentId');
-        if (existingAttachmentId) {
-            formData.append('existing_attachment_id', existingAttachmentId);
-        }
 
-        this._ajaxRequest(this.getAddCommentEndpoint(), {
-            data: formData,
-            processData: false,
-            contentType: false,
-            type: 'POST'
-        }).then(function (comment) {
-            comment = JSON.parse(comment);
-            var $newMessage = $(QWeb.render("social.StreamPostComment", {
-                widget: self,
-                comment: comment,
-                isSubComment: isCommentReply
-            }));
-
-            if (isCommentReply) {
-                self._addCommentReply($textarea, $newMessage);
-            } else if (isEdit) {
-                var $targetComment = $textarea.closest('.o_social_comment');
-                $targetComment.after($newMessage);
-                $targetComment.remove();
-            } else {
-                self.$('.o_social_comments_messages').prepend($newMessage);
-            }
-
-            $textarea.val('');
-            $replyEl.find('.o_social_comment_image_preview').addClass('d-none');
-            $replyEl.find('.o_input_file').val('');
-            $textarea.prop('disabled', false);
-            $textarea.focus();
-        });
+        $textarea.val("");
+        $replyEl.find(".o_social_comment_image_preview").addClass("d-none");
+        $replyEl.find(".o_input_file").val("");
+        $textarea.prop("disabled", false);
+        $textarea.focus();
+      });
     },
 
     /**
@@ -478,7 +497,7 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {Object} params
      */
     _ajaxRequest: function (endpoint, params) {
-        return $.ajax(endpoint, params);
+      return $.ajax(endpoint, params);
     },
 
     /**
@@ -488,10 +507,10 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @private
      */
     _htmlEscape: function (s) {
-        if (s == null) {
-            return '';
-        }
-        return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      if (s == null) {
+        return "";
+      }
+      return String(s).replace(/</g, "&lt;").replace(/>/g, "&gt;");
     },
 
     /**
@@ -508,18 +527,20 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {$.Element} $newMessage The new reply to be appended to existing ones
      */
     _addCommentReply: function ($textarea, $newMessage) {
-        var $repliesContainer = $textarea.closest('.o_social_root_comment')
-            .find('.o_social_comment_replies');
+      var $repliesContainer = $textarea
+        .closest(".o_social_root_comment")
+        .find(".o_social_comment_replies");
 
-        var $loadReplies = $textarea.closest('.o_social_root_comment')
-            .find('.o_social_comment_load_replies');
-        if ($loadReplies.length !== 0){
-            $loadReplies.click();
-        } else {
-            $repliesContainer.removeClass('d-none');
-        }
+      var $loadReplies = $textarea
+        .closest(".o_social_root_comment")
+        .find(".o_social_comment_load_replies");
+      if ($loadReplies.length !== 0) {
+        $loadReplies.click();
+      } else {
+        $repliesContainer.removeClass("d-none");
+      }
 
-        $repliesContainer.append($newMessage);
+      $repliesContainer.append($newMessage);
     },
 
     /**
@@ -533,35 +554,36 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @param {$.Element} $target
      */
     _updateLikesCount: function ($target) {
-        var userLikes = $target.data('userLikes');
-        $target.data('userLikes', !userLikes);
+      var userLikes = $target.data("userLikes");
+      $target.data("userLikes", !userLikes);
 
-        var $likesTotal = $target
-            .closest('.o_social_comment')
-            .find('.o_social_comment_likes_total').eq(0);
+      var $likesTotal = $target
+        .closest(".o_social_comment")
+        .find(".o_social_comment_likes_total")
+        .eq(0);
 
-        var likesCount = $likesTotal.find('.o_social_likes_count').text();
-        likesCount = likesCount === '' ? 0 : parseInt(likesCount);
+      var likesCount = $likesTotal.find(".o_social_likes_count").text();
+      likesCount = likesCount === "" ? 0 : parseInt(likesCount);
 
-        if (userLikes) {
-            if (likesCount > 0) {
-                likesCount--;
-            }
-        } else {
-            likesCount++;
+      if (userLikes) {
+        if (likesCount > 0) {
+          likesCount--;
         }
+      } else {
+        likesCount++;
+      }
 
-        $likesTotal.find('.o_social_likes_count').text(likesCount);
+      $likesTotal.find(".o_social_likes_count").text(likesCount);
 
-        if (likesCount === 0){
-            $likesTotal.addClass('d-none');
-        } else {
-            $likesTotal.removeClass('d-none');
-        }
+      if (likesCount === 0) {
+        $likesTotal.addClass("d-none");
+      } else {
+        $likesTotal.removeClass("d-none");
+      }
     },
 
     _formatDateTime: function (date) {
-        return moment(date).format(DATE_TIME_FORMAT);
+      return moment(date).format(DATE_TIME_FORMAT);
     },
 
     /**
@@ -572,12 +594,13 @@ var StreamPostComments = Dialog.extend(MailEmojisMixin, SocialStreamPostFormatte
      * @private
      */
     _formatCommentStreamPost: function (message) {
-        return Markup(this._formatPost(message));
+      return Markup(this._formatPost(message));
     },
 
     _getTargetTextElement($emoji) {
-        return $emoji.closest('.o_social_write_reply').find('textarea');
-    }
-});
+      return $emoji.closest(".o_social_write_reply").find("textarea");
+    },
+  }
+);
 
 export default StreamPostComments;

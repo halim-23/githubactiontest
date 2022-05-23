@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:aerolineas="http://www.sat.gob.mx/aerolineas">
 
-  <!-- Manejador de nodos tipo aerolineas:Aerolineas --> 
+  <!-- Manejador de nodos tipo aerolineas:Aerolineas -->
   <xsl:template match="aerolineas:Aerolineas">
 
     <!-- Iniciamos el tratamiento de los atributos de aerolineas:Aerolineas -->
@@ -26,7 +26,7 @@
       <xsl:with-param name="valor" select="./@TotalCargos"/>
     </xsl:call-template>
 
-    <!-- Iniciamos el manejo de los nodos dependientes -->    
+    <!-- Iniciamos el manejo de los nodos dependientes -->
     <xsl:for-each select="./aerolineas:Cargo">
       <xsl:apply-templates select="."/>
     </xsl:for-each>

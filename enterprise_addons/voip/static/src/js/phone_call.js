@@ -1,47 +1,49 @@
-odoo.define('voip.PhoneCall', function (require) {
-"use strict";
+odoo.define("voip.PhoneCall", function (require) {
+  "use strict";
 
-const Widget = require('web.Widget');
+  const Widget = require("web.Widget");
 
-const { Component } = owl;
+  const {Component} = owl;
 
-const PhoneCall = Widget.extend({
-    template: 'voip.PhoneCall',
+  const PhoneCall = Widget.extend({
+    template: "voip.PhoneCall",
     events: {
-        'click': '_onClick',
-        'click .o_dial_remove_phonecall': '_onClickRemovePhoneCall',
+      click: "_onClick",
+      "click .o_dial_remove_phonecall": "_onClickRemovePhoneCall",
     },
     /**
      * @override
      * @param {voip.PhoneCallTab} parent
      * @param {Object} param1
      * @param {integer} param1.activity_id
-     * @param {string} param1.activity_model_name
+     * @param {String} param1.activity_model_name
      * @param {integer} param1.activity_res_id
-     * @param {string} param1.activity_res_model
-     * @param {string} param1.activity_summary
+     * @param {String} param1.activity_res_model
+     * @param {String} param1.activity_summary
      * @param {integer} [param1.callTries=0]
-     * @param {string} param1.call_date
+     * @param {String} param1.call_date
      * @param {integer} param1.duration
      * @param {integer} param1.id
-     * @param {boolean} param1.isContact
-     * @param {boolean} param1.isRecent
-     * @param {string} param1.mobile
-     * @param {string} param1.name
-     * @param {string} param1.partner_email
+     * @param {Boolean} param1.isContact
+     * @param {Boolean} param1.isRecent
+     * @param {String} param1.mobile
+     * @param {String} param1.name
+     * @param {String} param1.partner_email
      * @param {integer} param1.partner_id
-     * @param {string} param1.partner_avatar_128
-     * @param {string} [param1.partner_name]
-     * @param {string} param1.phone
-     * @param {string} param1.state ['cancel', 'done', 'open', 'pending']
+     * @param {String} param1.partner_avatar_128
+     * @param {String} [param1.partner_name]
+     * @param {String} param1.phone
+     * @param {String} param1.state ['cancel', 'done', 'open', 'pending']
      */
-    init(parent, {
+    init(
+      parent,
+      {
         activity_id,
         activity_model_name,
         activity_res_id,
         activity_res_model,
         activity_summary,
-        callTries=0,
+        callTries = 0,
         call_date,
         duration,
         id,
@@ -55,33 +57,34 @@ const PhoneCall = Widget.extend({
         partner_name,
         phone,
         state,
-    }) {
-        this._super(...arguments);
+      }
+    ) {
+      this._super(...arguments);
 
-        this.activityId = activity_id;
-        this.activityModelName = activity_model_name;
-        this.activityResId = activity_res_id;
-        this.activityResModel = activity_res_model;
-        this.callTries = callTries;
-        this.date = call_date;
-        this.email = partner_email;
-        this.id = id;
-        this.imageSmall = partner_avatar_128;
-        this.isContact = isContact;
-        this.isRecent = isRecent;
-        this.minutes = Math.floor(duration).toString();
-        this.mobileNumber = mobile;
-        this.name = name;
-        this.partnerId = partner_id;
-        this.partnerName = partner_name;
-        this.phoneNumber = phone;
-        this.seconds = (duration % 1 * 60).toFixed();
-        this.state = state;
+      this.activityId = activity_id;
+      this.activityModelName = activity_model_name;
+      this.activityResId = activity_res_id;
+      this.activityResModel = activity_res_model;
+      this.callTries = callTries;
+      this.date = call_date;
+      this.email = partner_email;
+      this.id = id;
+      this.imageSmall = partner_avatar_128;
+      this.isContact = isContact;
+      this.isRecent = isRecent;
+      this.minutes = Math.floor(duration).toString();
+      this.mobileNumber = mobile;
+      this.name = name;
+      this.partnerId = partner_id;
+      this.partnerName = partner_name;
+      this.phoneNumber = phone;
+      this.seconds = ((duration % 1) * 60).toFixed();
+      this.state = state;
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Public
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Makes rpc to log the hangup call.
@@ -89,56 +92,53 @@ const PhoneCall = Widget.extend({
      * @param {Object} param0 contains the duration of the call and if the call
      *   is finished
      * @param {integer} param0.durationSeconds
-     * @param {boolean} param0.isDone
-     * @return {Promise}
+     * @param {Boolean} param0.isDone
+     * @returns {Promise}
      */
-    async hangUp({
-        durationSeconds,
-        isDone,
-    }) {
-        if (this.id === undefined) {
-            console.warn('phonecall has no id!');
-        } else {
-            await this._rpc({
-                model: 'voip.phonecall',
-                method: 'hangup_call',
-                args: [this.id],
-                kwargs: {
-                    done: isDone,
-                    duration_seconds: durationSeconds,
-                },
-            });
-        }
-        Component.env.bus.trigger('voip_reload_chatter');
+    async hangUp({durationSeconds, isDone}) {
+      if (this.id === undefined) {
+        console.warn("phonecall has no id!");
+      } else {
+        await this._rpc({
+          model: "voip.phonecall",
+          method: "hangup_call",
+          args: [this.id],
+          kwargs: {
+            done: isDone,
+            duration_seconds: durationSeconds,
+          },
+        });
+      }
+      Component.env.bus.trigger("voip_reload_chatter");
     },
     /**
      * Makes rpc to set the call as canceled.
      *
-     * @return {Promise}
+     * @returns {Promise}
      */
     async markPhonecallAsCanceled() {
-        if (this.id === undefined) {
-            console.warn('phonecall has no id!');
-            return;
-        }
-        return this._rpc({
-            model: 'voip.phonecall',
-            method: 'canceled_call',
-            args: [this.id],
-        });
+      if (this.id === undefined) {
+        console.warn("phonecall has no id!");
+        return;
+      }
+      return this._rpc({
+        model: "voip.phonecall",
+        method: "canceled_call",
+        args: [this.id],
+      });
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * @private
      */
     _onClick() {
-        this.trigger_up('selectCall', {
-            phoneCallId: this.id,
-        });
+      this.trigger_up("selectCall", {
+        phoneCallId: this.id,
+      });
     },
     /**
      * @private
@@ -146,14 +146,13 @@ const PhoneCall = Widget.extend({
      * @param {MouseEvent} ev
      */
     _onClickRemovePhoneCall(ev) {
-        ev.stopPropagation();
-        ev.preventDefault();
-        this.trigger_up('removePhoneCall', {
-            phoneCallId: this.id,
-        });
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.trigger_up("removePhoneCall", {
+        phoneCallId: this.id,
+      });
     },
-});
+  });
 
-return PhoneCall;
-
+  return PhoneCall;
 });

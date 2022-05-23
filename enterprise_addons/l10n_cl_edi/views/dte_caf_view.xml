@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
         <record id="view_dte_caf_form" model="ir.ui.view">
@@ -7,25 +7,36 @@
             <field name="arch" type="xml">
                 <form string="SII CAF Files for DTE">
                     <header>
-                        <button string="Cancel" type="object" name="action_spend"
-                                status="in_use"/>
-                        <field name="status" widget="statusbar"/>
+                        <button
+              string="Cancel"
+              type="object"
+              name="action_spend"
+              status="in_use"
+            />
+                        <field name="status" widget="statusbar" />
                     </header>
                     <sheet>
                         <group>
                             <h4>
-                                <field name="caf_file" widget="binary" filename="filename"/>
+                                <field
+                  name="caf_file"
+                  widget="binary"
+                  filename="filename"
+                />
                             </h4>
                         </group>
                         <group>
                             <group>
-                                <field name="l10n_latam_document_type_id" readonly="1"/>
+                                <field
+                  name="l10n_latam_document_type_id"
+                  readonly="1"
+                />
                                 <field name="company_id" />
                             </group>
                             <group>
-                                <field name="issued_date" readonly="1"/>
-                                <field name="start_nb" readonly="1"/>
-                                <field name="final_nb" readonly="1"/>
+                                <field name="issued_date" readonly="1" />
+                                <field name="start_nb" readonly="1" />
+                                <field name="final_nb" readonly="1" />
                             </group>
                         </group>
                     </sheet>
@@ -38,8 +49,8 @@
             <field name="model">l10n_cl.dte.caf</field>
             <field name="arch" type="xml">
                 <tree string="CAF Files">
-                    <field name="filename"/>
-                    <field name="l10n_latam_document_type_id"/>
+                    <field name="filename" />
+                    <field name="l10n_latam_document_type_id" />
                     <field name="start_nb" />
                     <field name="final_nb" />
                     <field name="company_id" />
@@ -51,12 +62,24 @@
         <record model="ir.actions.act_window" id="action_l10n_cl_dte_caf">
             <field name="name">CAFs</field>
             <field name="res_model">l10n_cl.dte.caf</field>
-            <field name="domain">['|', ('status', '=', 'in_use'), ('status', '=', 'spent')]</field>
+            <field
+        name="domain"
+      >['|', ('status', '=', 'in_use'), ('status', '=', 'spent')]</field>
             <field name="context">{"search_default_active":1}</field>
         </record>
 
-        <menuitem name="Chilean SII" id="menu_sii_chile" sequence="5" parent="account.menu_finance_configuration"/>
-        <menuitem action="action_l10n_cl_dte_caf" id="menu_l10n_cl_dte_caf" sequence="21" parent="l10n_cl_edi.menu_sii_chile"/>
+        <menuitem
+      name="Chilean SII"
+      id="menu_sii_chile"
+      sequence="5"
+      parent="account.menu_finance_configuration"
+    />
+        <menuitem
+      action="action_l10n_cl_dte_caf"
+      id="menu_l10n_cl_dte_caf"
+      sequence="21"
+      parent="l10n_cl_edi.menu_sii_chile"
+    />
 
     </data>
 </odoo>

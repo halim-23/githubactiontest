@@ -1,6 +1,6 @@
 /** @odoo-module */
 
-import { UNTITLED_SPREADSHEET_NAME } from "../../../constants";
+import {UNTITLED_SPREADSHEET_NAME} from "../../../constants";
 import CommandResult from "../plugins/cancelled_reason";
 
 /**
@@ -13,7 +13,7 @@ import CommandResult from "../plugins/cancelled_reason";
  * @returns {Array} intersection between a and b
  */
 export function intersect(a, b) {
-    return a.filter((x) => b.includes(x));
+  return a.filter((x) => b.includes(x));
 }
 
 /**
@@ -25,27 +25,27 @@ export function intersect(a, b) {
  * @returns ID of the newly created spreadsheet
  */
 export async function createEmptySpreadsheet(rpc) {
-    let callRPC;
-    if (rpc && rpc.constructor.name === "ORM") {
-        callRPC = legacyRPC(rpc);
-    } else {
-        callRPC = rpc;
-    }
-    if (!callRPC) {
-        throw new Error("rpc cannot be undefined");
-    }
-    return callRPC({
-        model: "documents.document",
-        method: "create",
-        args: [
-            {
-                name: UNTITLED_SPREADSHEET_NAME,
-                mimetype: "application/o-spreadsheet",
-                handler: "spreadsheet",
-                raw: "{}",
-            },
-        ],
-    });
+  let callRPC;
+  if (rpc && rpc.constructor.name === "ORM") {
+    callRPC = legacyRPC(rpc);
+  } else {
+    callRPC = rpc;
+  }
+  if (!callRPC) {
+    throw new Error("rpc cannot be undefined");
+  }
+  return callRPC({
+    model: "documents.document",
+    method: "create",
+    args: [
+      {
+        name: UNTITLED_SPREADSHEET_NAME,
+        mimetype: "application/o-spreadsheet",
+        handler: "spreadsheet",
+        raw: "{}",
+      },
+    ],
+  });
 }
 
 /**
@@ -58,37 +58,37 @@ export async function createEmptySpreadsheet(rpc) {
  * @returns {number}
  */
 export function getMaxObjectId(o) {
-    const keys = Object.keys(o);
-    if (!keys.length) {
-        return 0;
-    }
-    const nums = keys.map((id) => parseInt(id, 10));
-    const max = Math.max(...nums);
-    return max;
+  const keys = Object.keys(o);
+  if (!keys.length) {
+    return 0;
+  }
+  const nums = keys.map((id) => parseInt(id, 10));
+  const max = Math.max(...nums);
+  return max;
 }
 
 export function checkFiltersTypeValueCombination(type, value) {
-    if (value !== undefined) {
-        switch (type) {
-            case "text":
-                if (typeof value !== "string") {
-                    return CommandResult.InvalidValueTypeCombination;
-                }
-                break;
-            case "date":
-                if (typeof value !== "object" || Array.isArray(value)) {
-                    // not a date
-                    return CommandResult.InvalidValueTypeCombination;
-                }
-                break;
-            case "relation":
-                if (!Array.isArray(value)) {
-                    return CommandResult.InvalidValueTypeCombination;
-                }
-                break;
+  if (value !== undefined) {
+    switch (type) {
+      case "text":
+        if (typeof value !== "string") {
+          return CommandResult.InvalidValueTypeCombination;
         }
+        break;
+      case "date":
+        if (typeof value !== "object" || Array.isArray(value)) {
+          // not a date
+          return CommandResult.InvalidValueTypeCombination;
+        }
+        break;
+      case "relation":
+        if (!Array.isArray(value)) {
+          return CommandResult.InvalidValueTypeCombination;
+        }
+        break;
     }
-    return CommandResult.Success;
+  }
+  return CommandResult.Success;
 }
 
 /**
@@ -103,23 +103,23 @@ export function checkFiltersTypeValueCombination(type, value) {
  * @param {Object} orm
  */
 export function legacyRPC(orm) {
-    return (params) => {
-        params = { ...params };
-        const model = params.model;
-        delete params.model;
-        const method = params.method;
-        delete params.method;
-        if (params.groupBy) {
-            params.groupby = params.groupBy;
-            delete params.groupBy;
-        }
-        if (params.orderBy) {
-            params.order = params.orderBy
-                .map((order) => order.name + (order.asc !== false ? " ASC" : " DESC"))
-                .join(", ");
-            delete params.orderBy;
-        }
-        const { args, ...kwargs } = params;
-        return orm.call(model, method, args || [], kwargs);
-    };
+  return (params) => {
+    params = {...params};
+    const model = params.model;
+    delete params.model;
+    const method = params.method;
+    delete params.method;
+    if (params.groupBy) {
+      params.groupby = params.groupBy;
+      delete params.groupBy;
+    }
+    if (params.orderBy) {
+      params.order = params.orderBy
+        .map((order) => order.name + (order.asc !== false ? " ASC" : " DESC"))
+        .join(", ");
+      delete params.orderBy;
+    }
+    const {args, ...kwargs} = params;
+    return orm.call(model, method, args || [], kwargs);
+  };
 }

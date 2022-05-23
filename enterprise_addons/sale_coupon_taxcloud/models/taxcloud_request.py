@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.addons.sale_account_taxcloud.models import taxcloud_request
@@ -15,8 +14,8 @@ def subn(price, discount):
 
 class TaxCloudRequest(taxcloud_request.TaxCloudRequest):
     """We apply the discount directly on the target lines.
-       We send the corrected lines to Taxcloud, as intended.
-       This gives us the taxes per line, as before, so we don't need to change anything else.
+    We send the corrected lines to Taxcloud, as intended.
+    This gives us the taxes per line, as before, so we don't need to change anything else.
     """
 
     def _process_lines(self, lines):
@@ -25,9 +24,9 @@ class TaxCloudRequest(taxcloud_request.TaxCloudRequest):
 
     def _apply_discount_on_lines(self, lines):
         """We need to sort the discounts to apply first line-specific discounts first.
-           Then we apply the discount evenly, and the rest sequentially.
-           In the case there is still a remainder, it is ignored,
-           as it would be a negative SO/invoice without taxes anyway.
+        Then we apply the discount evenly, and the rest sequentially.
+        In the case there is still a remainder, it is ignored,
+        as it would be a negative SO/invoice without taxes anyway.
         """
         for line in lines:
             line.price_taxcloud = line.price_unit
@@ -40,8 +39,12 @@ class TaxCloudRequest(taxcloud_request.TaxCloudRequest):
             discount_sum = discount_line._get_qty() * discount_line.price_unit
             remainder = self._apply_evenly(discount_sum, discountable_lines)
             remainder = self._apply_sequentially(remainder, discountable_lines)
-            if remainder:  # in case some product-specific discount could not be applied, backup on all lines
-                all_discountable_lines = lines.filtered(lambda l: l.price_taxcloud > 0 and l._get_qty() > 0)
+            if (
+                remainder
+            ):  # in case some product-specific discount could not be applied, backup on all lines
+                all_discountable_lines = lines.filtered(
+                    lambda l: l.price_taxcloud > 0 and l._get_qty() > 0
+                )
                 remainder = self._apply_evenly(remainder, all_discountable_lines)
                 remainder = self._apply_sequentially(remainder, all_discountable_lines)
 
@@ -67,22 +70,24 @@ class TaxCloudRequest(taxcloud_request.TaxCloudRequest):
 
     def _rank_discount_line(self, line):
         return [
-            line.coupon_program_id.reward_type != 'product',
-            line.coupon_program_id.discount_apply_on != 'specific_products',
-            line.coupon_program_id.discount_apply_on != 'cheapest_product',
-            line.coupon_program_id.discount_type != 'fixed_amount',
+            line.coupon_program_id.reward_type != "product",
+            line.coupon_program_id.discount_apply_on != "specific_products",
+            line.coupon_program_id.discount_apply_on != "cheapest_product",
+            line.coupon_program_id.discount_type != "fixed_amount",
         ]
 
     def _get_discountable_lines(self, discount_line, lines):
         program = discount_line.coupon_program_id
         lines = lines.filtered(lambda l: l.price_taxcloud > 0 and l._get_qty() > 0)
-        if program.reward_type == 'product':
+        if program.reward_type == "product":
             lines = lines.filtered(lambda l: l.product_id == program.reward_product_id)
-        elif program.discount_apply_on == 'specific_products':
-            lines = lines.filtered(lambda l: l.product_id in program.discount_specific_product_ids)
-        elif program.discount_apply_on == 'cheapest_product':
+        elif program.discount_apply_on == "specific_products":
+            lines = lines.filtered(
+                lambda l: l.product_id in program.discount_specific_product_ids
+            )
+        elif program.discount_apply_on == "cheapest_product":
             lines = self._get_cheapest_line(lines)
         return lines
 
     def _get_cheapest_line(self, lines):
-        return min(lines, key=lambda l: l['price_taxcloud']) if lines else lines
+        return min(lines, key=lambda l: l["price_taxcloud"]) if lines else lines

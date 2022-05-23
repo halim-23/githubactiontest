@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import models
 
 
 class DemoSocialStreamPost(models.Model):
-    """ Mostly contains methods that return 'mock' data for the comments feature. """
+    """Mostly contains methods that return 'mock' data for the comments feature."""
 
-    _inherit = 'social.stream.post'
+    _inherit = "social.stream.post"
 
     # ========================================================
     # COMMENTS / LIKES
@@ -16,17 +15,16 @@ class DemoSocialStreamPost(models.Model):
     # FACEBOOK
 
     def _facebook_comment_fetch(self, next_records_token=False, count=20):
-        return {
-            'comments': self._get_demo_comments(),
-            'summary': {'totalCount': 1}
-        }
+        return {"comments": self._get_demo_comments(), "summary": {"totalCount": 1}}
 
-    def _facebook_comment_post(self, endpoint_url, message, existing_attachment_id=None, attachment=None):
-        """ Returns a fake comment containing the passed 'message' """
+    def _facebook_comment_post(
+        self, endpoint_url, message, existing_attachment_id=None, attachment=None
+    ):
+        """Returns a fake comment containing the passed 'message'"""
         return self._get_new_comment_demo(message)
 
     def _facebook_like(self, object_id, like):
-        """ Overridden to bypass third-party API calls. """
+        """Overridden to bypass third-party API calls."""
         return
 
     # INSTAGRAM
@@ -36,23 +34,23 @@ class DemoSocialStreamPost(models.Model):
 
     def _instagram_comment_fetch(self, next_records_token=False, count=20):
         return {
-            'comments': self._get_demo_comments(),
+            "comments": self._get_demo_comments(),
         }
 
     # LINKEDIN
 
     def _linkedin_comment_add(self, message, comment_urn=None):
-        """ Returns a fake comment containing the passed 'message' """
+        """Returns a fake comment containing the passed 'message'"""
         return {
-            'id': 'urn:li:comment:(urn:li:activity:12547,452542)',
-            'formatted_created_time': '10/02/2019',
-            'likes': {'summary': {'total_count': 0}},
-            'from': {
-                'name': 'Mitchell Admin',
-                'profile_image_url_https': '/web/image/res.users/2/avatar_128',
-                'authorUrn': 'urn:li:organization:2414183',
+            "id": "urn:li:comment:(urn:li:activity:12547,452542)",
+            "formatted_created_time": "10/02/2019",
+            "likes": {"summary": {"total_count": 0}},
+            "from": {
+                "name": "Mitchell Admin",
+                "profile_image_url_https": "/web/image/res.users/2/avatar_128",
+                "authorUrn": "urn:li:organization:2414183",
             },
-            'message': message
+            "message": message,
         }
 
     def _linkedin_comment_delete(self, comment_urn):
@@ -65,29 +63,24 @@ class DemoSocialStreamPost(models.Model):
             comments = self._get_demo_comments()
 
         for comment in comments:
-            comment['id'] = 'urn:li:comment:(urn:li:activity:12547,452542)'
+            comment["id"] = "urn:li:comment:(urn:li:activity:12547,452542)"
 
-            if 'comments' in comment:
-                comment['comments']['data'] = {
-                    'length': len(comment['comments']['data']),
-                    'parentUrn': comment['id'],
+            if "comments" in comment:
+                comment["comments"]["data"] = {
+                    "length": len(comment["comments"]["data"]),
+                    "parentUrn": comment["id"],
                 }
 
-        return {
-            'comments': comments,
-            'summary': {'totalCount': len(comments)}
-        }
+        return {"comments": comments, "summary": {"totalCount": len(comments)}}
 
     # TWITTER
 
     def _twitter_comment_add(self, stream, comment_id, message):
-        """ Returns a fake comment containing the passed 'message' """
+        """Returns a fake comment containing the passed 'message'"""
         return self._get_new_comment_demo(message)
 
     def _twitter_comment_fetch(self, page=1):
-        return {
-            'comments': self._get_demo_comments()
-        }
+        return {"comments": self._get_demo_comments()}
 
     def _twitter_tweet_like(self, stream, tweet_id, like):
         return True
@@ -98,21 +91,19 @@ class DemoSocialStreamPost(models.Model):
         return self._get_new_comment_demo(message)
 
     def _youtube_comment_fetch(self, next_page_token=False, count=20):
-        return {
-            'comments': self._get_demo_comments()
-        }
+        return {"comments": self._get_demo_comments()}
 
     def _get_new_comment_demo(self, message):
         return {
-            'id': 5,
-            'created_time': '2019-02-10 11:11:11',
-            'formatted_created_time': '10/02/2019',
-            'likes': {'summary': {'total_count': 0}},
-            'from': {
-                'name': 'Mitchell Admin',
-                'profile_image_url_https': '/web/image/res.users/2/avatar_128'
+            "id": 5,
+            "created_time": "2019-02-10 11:11:11",
+            "formatted_created_time": "10/02/2019",
+            "likes": {"summary": {"total_count": 0}},
+            "from": {
+                "name": "Mitchell Admin",
+                "profile_image_url_https": "/web/image/res.users/2/avatar_128",
             },
-            'message': message
+            "message": message,
         }
 
     # ========================================================
@@ -120,68 +111,110 @@ class DemoSocialStreamPost(models.Model):
     # ========================================================
 
     def _get_demo_comments(self):
-        """ Return some fake comments. """
+        """Return some fake comments."""
 
-        res_partner_2 = self.env.ref('social_demo.res_partner_2', raise_if_not_found=False)
-        res_partner_3 = self.env.ref('social_demo.res_partner_3', raise_if_not_found=False)
-        res_partner_4 = self.env.ref('social_demo.res_partner_4', raise_if_not_found=False)
-        res_partner_10 = self.env.ref('social_demo.res_partner_10', raise_if_not_found=False)
+        res_partner_2 = self.env.ref(
+            "social_demo.res_partner_2", raise_if_not_found=False
+        )
+        res_partner_3 = self.env.ref(
+            "social_demo.res_partner_3", raise_if_not_found=False
+        )
+        res_partner_4 = self.env.ref(
+            "social_demo.res_partner_4", raise_if_not_found=False
+        )
+        res_partner_10 = self.env.ref(
+            "social_demo.res_partner_10", raise_if_not_found=False
+        )
 
-        if not all(res_partner for res_partner in [res_partner_2, res_partner_3, res_partner_4, res_partner_10]):
+        if not all(
+            res_partner
+            for res_partner in [
+                res_partner_2,
+                res_partner_3,
+                res_partner_4,
+                res_partner_10,
+            ]
+        ):
             return []
 
-        return [{
-            'id': 1,
-            'formatted_created_time': '10/02/2019',
-            'likes': {'summary': {'total_count': 53}},
-            'from': {
-                'name': 'The Jackson Group',
-                'profile_image_url_https': '/web/image/res.partner/%s/avatar_128' % res_partner_10.id,
-                'id': 'urn:li:organization:2414183',
+        return [
+            {
+                "id": 1,
+                "formatted_created_time": "10/02/2019",
+                "likes": {"summary": {"total_count": 53}},
+                "from": {
+                    "name": "The Jackson Group",
+                    "profile_image_url_https": "/web/image/res.partner/%s/avatar_128"
+                    % res_partner_10.id,
+                    "id": "urn:li:organization:2414183",
+                },
+                "message": "Great products!",
+                "user_likes": True,
+                "comments": {"data": self._get_demo_sub_comments()},
             },
-            'message': 'Great products!',
-            'user_likes': True,
-            'comments': {'data': self._get_demo_sub_comments()},
-        }, {
-            'id': 2,
-            'formatted_created_time': '09/02/2019',
-            'likes': {'summary': {'total_count': 4}},
-            'from': {
-                'name': 'Deco Addict',
-                'profile_image_url_https': '/web/image/res.partner/%s/avatar_128' % res_partner_2.id,
-                'id': 'urn:li:organization:2414183',
+            {
+                "id": 2,
+                "formatted_created_time": "09/02/2019",
+                "likes": {"summary": {"total_count": 4}},
+                "from": {
+                    "name": "Deco Addict",
+                    "profile_image_url_https": "/web/image/res.partner/%s/avatar_128"
+                    % res_partner_2.id,
+                    "id": "urn:li:organization:2414183",
+                },
+                "message": "Can I get in touch with one of your salesman?",
+                "user_likes": True,
             },
-            'message': 'Can I get in touch with one of your salesman?',
-            'user_likes': True
-        }]
+        ]
 
     def _get_demo_sub_comments(self):
-        res_partner_2 = self.env.ref('social_demo.res_partner_2', raise_if_not_found=False)
-        res_partner_3 = self.env.ref('social_demo.res_partner_3', raise_if_not_found=False)
-        res_partner_4 = self.env.ref('social_demo.res_partner_4', raise_if_not_found=False)
-        res_partner_10 = self.env.ref('social_demo.res_partner_10', raise_if_not_found=False)
+        res_partner_2 = self.env.ref(
+            "social_demo.res_partner_2", raise_if_not_found=False
+        )
+        res_partner_3 = self.env.ref(
+            "social_demo.res_partner_3", raise_if_not_found=False
+        )
+        res_partner_4 = self.env.ref(
+            "social_demo.res_partner_4", raise_if_not_found=False
+        )
+        res_partner_10 = self.env.ref(
+            "social_demo.res_partner_10", raise_if_not_found=False
+        )
 
-        if not all(res_partner for res_partner in [res_partner_2, res_partner_3, res_partner_4, res_partner_10]):
+        if not all(
+            res_partner
+            for res_partner in [
+                res_partner_2,
+                res_partner_3,
+                res_partner_4,
+                res_partner_10,
+            ]
+        ):
             return []
 
-        return [{
-            'id': 3,
-            'formatted_created_time': '10/02/2019',
-            'likes': {'summary': {'total_count': 21}},
-            'from': {
-                'name': 'Ready Mat',
-                'profile_image_url_https': '/web/image/res.partner/%s/avatar_128' % res_partner_4.id,
-                'authorUrn': 'urn:li:organization:2414183',
+        return [
+            {
+                "id": 3,
+                "formatted_created_time": "10/02/2019",
+                "likes": {"summary": {"total_count": 21}},
+                "from": {
+                    "name": "Ready Mat",
+                    "profile_image_url_https": "/web/image/res.partner/%s/avatar_128"
+                    % res_partner_4.id,
+                    "authorUrn": "urn:li:organization:2414183",
+                },
+                "message": "I agree!",
             },
-            'message': 'I agree!'
-        }, {
-            'id': 4,
-            'formatted_created_time': '10/02/2019',
-            'likes': {'summary': {'total_count': 13}},
-            'from': {
-                'name': 'Gemini Furniture',
-                'profile_image_url_https': '/web/image/res.partner/%s/avatar_128' % res_partner_3.id,
-                'authorUrn': 'urn:li:organization:2414183',
+            {
+                "id": 4,
+                "formatted_created_time": "10/02/2019",
+                "likes": {"summary": {"total_count": 13}},
+                "from": {
+                    "name": "Gemini Furniture",
+                    "profile_image_url_https": "/web/image/res.partner/%s/avatar_128"
+                    % res_partner_3.id,
+                    "authorUrn": "urn:li:organization:2414183",
+                },
+                "message": "Me too ❤️",
             },
-            'message': 'Me too ❤️'
-        }]
+        ]

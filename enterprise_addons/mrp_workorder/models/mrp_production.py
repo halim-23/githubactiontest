@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
-from odoo.exceptions import UserError
+from odoo import fields, models
 
 
 class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+    _inherit = "mrp.production"
     _start_name = "date_planned_start"
     _stop_name = "date_planned_finished"
 
-    check_ids = fields.One2many('quality.check', 'production_id', string="Checks")
+    check_ids = fields.One2many("quality.check", "production_id", string="Checks")
 
     def _generate_backorder_productions(self, close_mo=True):
         backorders = super()._generate_backorder_productions(close_mo=close_mo)

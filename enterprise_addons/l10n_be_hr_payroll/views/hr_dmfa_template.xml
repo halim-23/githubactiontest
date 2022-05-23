@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!-- https://www.socialsecurity.be/portail/glossaires/dmfa.nsf/ConsultFrImprPDF/149524602BB4229CC125835B00491C32/$FILE/VersComplDMFA191_F.pdf -->
 <odoo>
 <data>
     <template id="dmfa_xml_report">
-        <DmfAOriginal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DmfAOriginal_20211.xsd">
+        <DmfAOriginal
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="DmfAOriginal_20211.xsd"
+      >
             <Form>
 
                 <!-- 00296
@@ -38,7 +41,7 @@
                     · MM est le mois
                     . JJ est le jour
                 -->
-                <FormCreationDate t-esc="datetime.date.today()"/>
+                <FormCreationDate t-esc="datetime.date.today()" />
 
                 <!-- 00299
                     DESCRIPTION:    Moment précis, exprimé en heures, minutes, secondes et millièmes de secondes.
@@ -61,7 +64,7 @@
                     . SS sont les secondes
                     . SSS sont les millièmes de secondes
                 -->
-                <FormCreationHour t-esc="time.strftime('%H:%M:%S.000')"/>
+                <FormCreationHour t-esc="time.strftime('%H:%M:%S.000')" />
 
                 <!-- 00110
                     DESCRIPTION:
@@ -145,7 +148,8 @@
 
                         PRESENCE:   Indispensable
                     -->
-                    <ReferenceOrigin>1</ReferenceOrigin> <!-- 1 = reference given by an employer -->
+                    <ReferenceOrigin
+            >1</ReferenceOrigin> <!-- 1 = reference given by an employer -->
 
                     <!-- 00222
                         DESCRIPTION:    Le numéro de référence.
@@ -158,7 +162,7 @@
 
                         PRESENCE:   Indispensable
                     -->
-                    <ReferenceNbr t-esc="data.reference"/>
+                    <ReferenceNbr t-esc="data.reference" />
                 </Reference>
 
                 <!-- 90007 Bloc fonctionnel permettant de déclarer les données de la déclaration. -->
@@ -176,7 +180,7 @@
                         . AAAA est l'année
                         . T est le trimestre
                      -->
-                    <Quarter t-esc="quarter_repr"/>
+                    <Quarter t-esc="quarter_repr" />
 
                     <!-- 00011
                         DESCRIPTION: Chaque employeur, qu'il soit une personne physique, un groupement de personnes physiques ou une personne morale, qui occupe du personnel soumis à la loi du 27 juin 1969, doit être inscrit à l'ONSS. Il s'agit d'un numéro ONSS définitif.
@@ -189,7 +193,7 @@
                         . NNNNNNN est le numéro
                         · CC est le numéro de contrôle.
                      -->
-                    <NOSSRegistrationNbr t-esc="onss_registration_number"/>
+                    <NOSSRegistrationNbr t-esc="onss_registration_number" />
 
                     <!-- 00012
                         DESCRIPTION:    Code qui indique si une déclaration se rapporte à une période pendant laquelle elle est sous curatelle.
@@ -212,7 +216,7 @@
                         LONGUEUR:   10
                         PRESENCE:   Indispensable
                      -->
-                    <CompanyID t-esc="onss_company_id"/>
+                    <CompanyID t-esc="onss_company_id" />
 
                     <!--  00015
                         DESCRIPTION:    Montant net à payer par l'employeur à l'ONSS.
@@ -221,7 +225,7 @@
                         LONGUEUR:   15
                         PRESENCE: Indispensable
                     -->
-                    <NetOwedAmount t-esc="global_contribution"/>
+                    <NetOwedAmount t-esc="global_contribution" />
 
                     <!-- 00016
                         DESCRIPTION:    Code qui indique que les données de temps de travail (nombre de jours par semaine du régime de travail et nombre de jours de la prestation et les jours de vacances) sont converties.
@@ -234,7 +238,7 @@
                         LONGUEUR:   1
                         PRESENCE:   Obligatoire si le trimestre de déclaration est antérieur au troisième trimestre 2004.
                     -->
-                    <System5 t-esc="system5"/>
+                    <System5 t-esc="system5" />
 
                     <!-- 00017
                         DESCRIPTION:
@@ -253,11 +257,11 @@
                         . JJ est le jour
                      -->
                     <t t-if="holiday_starting_date != -1">
-                        <HolidayStartingDate t-esc="holiday_starting_date"/>
+                        <HolidayStartingDate t-esc="holiday_starting_date" />
                     </t>
 
                     <t t-foreach="natural_persons" t-as="person">
-                        <t t-call="l10n_be_hr_payroll.NaturalPerson"/>
+                        <t t-call="l10n_be_hr_payroll.NaturalPerson" />
                     </t>
 
                     <!-- 90002: Bloc fonctionnel permettant de déclarer les cotisations non liées à une personne physique dues par l'employeur. -->
@@ -275,7 +279,7 @@
                             LONGUEUR:   3
                             PRESENCE:   Indispensable
                          -->
-                        <UnrelatedEmployerClass t-esc="employer_class"/>
+                        <UnrelatedEmployerClass t-esc="employer_class" />
 
                         <!-- 00020
                             DESCRIPTION:    Ce code travailleur permet d'identifier une cotisation qui n'est pas liée à une personne physique mais qui est due au niveau de l'indice de catégorie de l'employeur.
@@ -295,7 +299,9 @@
                             PRESENCE:   Obligatoire si la cotisation déclarée doit être calculée à partir d’une base de calcul.
                          -->
                         <t t-if="unrelated_calculation_basis != -1">
-                            <UnrelatedCalculationBasis t-esc="unrelated_calculation_basis"/>
+                            <UnrelatedCalculationBasis
+                  t-esc="unrelated_calculation_basis"
+                />
                         </t>
 
                         <!-- 00022
@@ -305,7 +311,7 @@
                             LONGUEUR:   13
                             PRESENCE:   Indispensable
                         -->
-                        <UnrelatedAmount t-esc="double_holiday_pay_contribution"/>
+                        <UnrelatedAmount t-esc="double_holiday_pay_contribution" />
                     </ContributionUnrelatedToNP>
                 </EmployerDeclaration>
             </Form>
@@ -326,7 +332,7 @@
 
                 PRESENCE:   Indispensable
             -->
-            <NaturalPersonSequenceNbr t-esc="person.sequence"/>
+            <NaturalPersonSequenceNbr t-esc="person.sequence" />
             <!-- 00024
                 DESCRIPTION:    Numéro d'identification d'une personne physique au sein de la sécurité sociale. Il s'agit du numéro d'identification de la personne physique au registre national ou au registre bis des personnes physiques.
 
@@ -343,7 +349,7 @@
                 · NNNNNNNNN est le numéro
                 · CC est le chiffre de contrôle.
              -->
-            <INSS t-esc="person.identification_id"/>
+            <INSS t-esc="person.identification_id" />
             <!-- Note, the following values are now forbidden:
                 - 00025 WorkerName
                 - 00026 WorkerFirstName
@@ -373,9 +379,9 @@
 
                 PRESENCE:   Facultative
              -->
-            <NaturalPersonUserReference t-esc="person.employee.id"/>
+            <NaturalPersonUserReference t-esc="person.employee.id" />
             <t t-foreach="person.worker_records" t-as="worker">
-                <t t-call="l10n_be_hr_payroll.WorkerRecord"/>
+                <t t-call="l10n_be_hr_payroll.WorkerRecord" />
             </t>
         </NaturalPerson>
     </template>
@@ -395,7 +401,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
              -->
-            <EmployerClass t-esc="employer_class"/>
+            <EmployerClass t-esc="employer_class" />
             <!-- 00037
                 DESCRIPTION:    Ce code permet d'identifier le type de travailleur pour lequel une cotisation spécifique est exigée (cotisation ordinaire, cotisation Fedris, cotisation spéciale prépensionné, cotisation spéciale personnel statutaire licencié, cotisation spéciale étudiant ou cotisation spéciale indemnités complémentaires).
                 DOMAINE DE DEFINITION:  Voir annexe 2 - Liste des codes travailleurs pour lesquels des cotisations sont dues ; uniquement les codes travailleurs pour lesquels la présence est égale à 1 ou 3.
@@ -405,7 +411,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
              -->
-            <WorkerCode t-esc="worker.worker_code"/>
+            <WorkerCode t-esc="worker.worker_code" />
             <!-- 00038
                 DESCRIPTION:
                 Date de début du trimestre sur lequel porte la déclaration du contrat travailleur.
@@ -427,7 +433,7 @@
                 · MM est le mois
                 . JJ est le jour
              -->
-            <NOSSQuarterStartingDate t-esc="quarter_start"/>
+            <NOSSQuarterStartingDate t-esc="quarter_start" />
             <!-- 00039
                 DESCRIPTION:
                 Date de fin du trimestre sur lequel porte la déclaration du contrat travailleur.
@@ -445,7 +451,7 @@
                 · MM est le mois
                 . JJ est le jour
              -->
-            <NOSSQuarterEndingDate t-esc="quarter_end"/>
+            <NOSSQuarterEndingDate t-esc="quarter_end" />
             <!-- 00040
                 DESCRIPTION:    Code permettant de désigner un travailleur ayant le statut fiscal de frontalier.
                 DOMAINE DE DEFINITION:
@@ -456,7 +462,7 @@
                 LONGUEUR:   1
                 PRESENCE:   Indispensable
              -->
-            <Border t-esc="worker.frontier_worker"/>
+            <Border t-esc="worker.frontier_worker" />
             <!-- 00041
                 DESCRIPTION:    Code se référant à la nomenclature des classes de risques génériques utilisées par les entreprises d'assurance pour la détermination des primes Accidents du Travail (AT). Les conditions précises de déclaration sont reprises dans le document des instructions DMFA à destination des employeurs.
 
@@ -479,11 +485,11 @@
 
               -->
             <t t-if="worker.activity_with_risk != -1">
-                <ActivityWithRisk t-esc="worker.activity_with_risk"/>
+                <ActivityWithRisk t-esc="worker.activity_with_risk" />
             </t>
             <!-- See 00042: Deprecated since 2014-->
             <t t-if="worker.local_unit_id != -1">
-                <LocalUnitID t-esc="worker.local_unit_id"/>
+                <LocalUnitID t-esc="worker.local_unit_id" />
             </t>
             <!-- 00616
                 DESCRIPTION:   Référence.
@@ -496,16 +502,16 @@
             -->
             <!-- <WorkerRecordUserReference t-esc="worker.user_reference"/> -->
             <t t-foreach="worker.occupations" t-as="occupation">
-                <t t-call="l10n_be_hr_payroll.Occupation"/>
+                <t t-call="l10n_be_hr_payroll.Occupation" />
             </t>
             <t t-foreach="worker.contributions" t-as="contribution">
-                <t t-call="l10n_be_hr_payroll.WorkerContribution"/>
+                <t t-call="l10n_be_hr_payroll.WorkerContribution" />
             </t>
             <t t-foreach="worker.deductions" t-as="deduction">
-                <t t-call="l10n_be_hr_payroll.WorkerDeduction"/>
+                <t t-call="l10n_be_hr_payroll.WorkerDeduction" />
             </t>
             <t t-foreach="worker.student_contributions" t-as="contribution">
-                <t t-call="l10n_be_hr_payroll.StudentContribution"/>
+                <t t-call="l10n_be_hr_payroll.StudentContribution" />
             </t>
         </WorkerRecord>
     </template>
@@ -525,7 +531,7 @@
 
                 PRESENCE:   Indispensable
             -->
-            <DeductionCode t-esc="deduction.code"/>
+            <DeductionCode t-esc="deduction.code" />
             <!-- 00088
                 DESCRIPTION:    Montant sur lequel un taux doit être appliqué afin de connaître le montant de la déduction demandée pour cette ligne travailleur ou occupation.
                 DOMAINE DE DEFINITION:  [0;99999999999]
@@ -537,7 +543,9 @@
                 PRESENCE:   Obligatoire si la déduction demandée est calculée à partir d’une base de calcul sur laquelle un taux doit être appliqué.
             -->
             <t t-if="deduction.deduction_calculation_basis != -1">
-                <DeductionCalculationBasis t-esc="deduction.deduction_calculation_basis"/>
+                <DeductionCalculationBasis
+            t-esc="deduction.deduction_calculation_basis"
+          />
             </t>
             <!-- 00089
                 DESCRIPTION:    Montant de la déduction demandée pour cette ligne travailleur ou occupation.
@@ -549,7 +557,7 @@
 
                 PRESENCE:   Obligatoire si la déduction demandée correspond à un montant déductible du montant net à payer.
             -->
-            <DeductionAmount t-esc="deduction.amount"/>
+            <DeductionAmount t-esc="deduction.amount" />
             <!-- 00090
                 DESCRIPTION:
                 Date à laquelle la déduction prend cours pour cette ligne travailleur ou occupation.
@@ -569,7 +577,9 @@
                 . JJ est le jour
             -->
             <t t-if="deduction.deduction_right_starting_date != -1">
-                <DeductionRightStartingDate t-esc="deduction.deduction_right_starting_date"/>
+                <DeductionRightStartingDate
+            t-esc="deduction.deduction_right_starting_date"
+          />
             </t>
             <!-- 00091
                 DESCRIPTION:    Nombre de mois faisant l'objet, au cours du trimestre traité, de la prise en charge temporaire, par l'ONSS, des frais d'administration encourus par l'employeur affilié à un Secrétariat Social Agréé.
@@ -582,7 +592,7 @@
                 PRESENCE:   Obligatoire si le Secrétariat Social revendique l'intervention de l'ONSS dans ses frais d'administration pour cet employeur.
             -->
             <t t-if="deduction.manager_cost_nbr_months != -1">
-                <ManagementCostNbrMonths t-esc="deduction.manager_cost_nbr_months"/>
+                <ManagementCostNbrMonths t-esc="deduction.manager_cost_nbr_months" />
             </t>
             <!-- 00092
                 DESCRIPTION:    Numéro d'identification d'une personne physique au sein de la sécurité sociale. Il s'agit du numéro d'identification de la personne physique au registre national ou au registre bis des personnes physiques.
@@ -602,7 +612,7 @@
                 · CC est le chiffre de contrôle.
             -->
             <t t-if="deduction.replace_inss != -1">
-                <ReplacedINSS t-esc="deduction.replace_inss"/>
+                <ReplacedINSS t-esc="deduction.replace_inss" />
             </t>
             <!-- 00093
                 DESCRIPTION:    Numéro d'identification d'une personne physique au sein de la sécurité sociale. Il s'agit du numéro d'identification de la personne physique au registre national ou au registre bis des personnes physiques.
@@ -622,7 +632,7 @@
                 · CC est le chiffre de contrôle.
             -->
             <t t-if="deduction.applicant_inss != -1">
-                <ApplicantINSS t-esc="deduction.applicant_inss"/>
+                <ApplicantINSS t-esc="deduction.applicant_inss" />
             </t>
             <!-- 00094
                 DESCRIPTION:    Origine de l'attestation nécessaire à l'octroi de la déduction.
@@ -641,7 +651,7 @@
                 PRESENCE:   Facultative
              -->
             <t t-if="deduction.certificate_origin != -1">
-                 <CertificateOrigin t-esc="deduction.certificate_origin"/>
+                 <CertificateOrigin t-esc="deduction.certificate_origin" />
             </t>
              <!-- DeductionDetail: Check annexe 4 to see if mandatory -->
         </WorkerDeduction>
@@ -674,7 +684,7 @@
                 LONGUEUR:   9
                 PRESENCE:   Indispensable
              -->
-            <StudentRemunAmount t-esc="contribution.student_remun_amount"/>
+            <StudentRemunAmount t-esc="contribution.student_remun_amount" />
             <!-- 00077
                 DESCRIPTION:    Montant de la cotisation de solidarité due pour les étudiants occupés dans le cadre d'un contrat d'occupation d'étudiants à condition que la durée d'engagement n'excède pas un certain nombre d’heures (à partir du 1/2017) ou de journées de travail (avant 1/2017) sur l’ensemble de l'année civile (voir zones nombre d’heures étudiant ou nombre de jours étudiant).
                 DOMAINE DE DEFINITION:  [0;999999999].
@@ -682,7 +692,9 @@
                 LONGUEUR:   9
                 PRESENCE:   Indispensable
             -->
-            <StudentContributionAmount t-esc="contribution.student_contribution_amount"/>
+            <StudentContributionAmount
+          t-esc="contribution.student_contribution_amount"
+        />
             <!-- 00078
                 DESCRIPTION:    Jusqu’au 4ème trimestre 2016 inclus :
                 Nombre de jours rémunérés à déclarer pour les étudiants occupés dans le cadre d'un contrat d'occupation d'étudiants à condition que la durée d'engagement n'excède pas un certain nombre de journées de travail sur l’ensemble de l’année civile (voir domaine de définition).
@@ -694,7 +706,7 @@
                 Interdit à partir des déclarations du 1/2017.
             -->
             <t t-if="contribution.student_nbr_days != -1">
-                <StudentNbrDays t-esc="contribution.student_nbr_days"/>
+                <StudentNbrDays t-esc="contribution.student_nbr_days" />
             </t>
             <!--
                 DESCRIPTION:    A partir du 1er trimestre 2017 :
@@ -705,9 +717,9 @@
                 PRESENCE:   Obligatoire si le travailleur étudiant est déclaré pour un trimestre postérieur au 4/2016.
                 Interdit pour les déclarations antérieures au 1/2017.
              -->
-            <StudentHoursNbr t-esc="contribution.student_hours_nbr"/>
+            <StudentHoursNbr t-esc="contribution.student_hours_nbr" />
             <!-- See 00042 -->
-            <LocalUnitID t-esc="contribution.local_unit_id"/>
+            <LocalUnitID t-esc="contribution.local_unit_id" />
         </StudentContribution>
     </template>
 
@@ -721,7 +733,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
             -->
-            <ContributionWorkerCode t-esc="contribution.worker_code"/>
+            <ContributionWorkerCode t-esc="contribution.worker_code" />
             <!-- 00083
                 DESCRIPTION:    Le type de cotisation permet, en combinaison avec le code travailleur cotisation, d’identifier la cotisation déclarée, de déterminer si la cotisation est due et de connaître le taux ou le forfait de la cotisation.
                 DOMAINE DE DEFINITION:  Les valeurs admises en fonction du code travailleur cotisation se trouvent en annexe 3 - Valeurs autorisées pour le "Type de cotisation" en fonction des codes travailleurs cotisations.
@@ -729,7 +741,7 @@
                 LONGUEUR:   1
                 PRESENCE:   Indispensable
             -->
-            <ContributionType t-esc="contribution.contribution_type"/>
+            <ContributionType t-esc="contribution.contribution_type" />
             <!-- 00084
                 DESCRIPTION:    Montant sur lequel un taux doit être appliqué afin de connaître le montant de la cotisation due pour cette ligne travailleur.
                 DOMAINE DE DEFINITION:  [0;99999999999]
@@ -738,7 +750,9 @@
                 PRESENCE:   Obligatoire si la cotisation déclarée doit être calculée à partir d’une base de calcul sur laquelle un taux doit être appliqué.
             -->
             <t t-if="contribution.calculation_basis != -1">
-                <ContributionCalculationBasis t-esc="contribution.calculation_basis"/>  <!-- Probably not required -->
+                <ContributionCalculationBasis
+            t-esc="contribution.calculation_basis"
+          />  <!-- Probably not required -->
             </t>
             <!-- 00085
                 DESCRIPTION:   Montant de la cotisation due pour cette ligne travailleur ou pour cette indemnité complémentaire.
@@ -747,7 +761,7 @@
                 LONGUEUR:   11
                 PRESENCE:   Indispensable
              -->
-            <ContributionAmount t-esc="contribution.amount"/>
+            <ContributionAmount t-esc="contribution.amount" />
             <!-- 00086
                 DESCRIPTION:
                 Date à laquelle le travailleur a été embauché pour la première fois chez l’employeur
@@ -762,7 +776,7 @@
                 . JJ est le jour
             -->
             <t t-if="contribution.first_hiring_date != -1">
-                <FirstHiringDate t-esc="first_hiring_date"/>
+                <FirstHiringDate t-esc="first_hiring_date" />
             </t>
         </WorkerContribution>
     </template>
@@ -780,7 +794,7 @@
                 LONGUEUR:   2
                 PRESENCE:   Indispensable
              -->
-            <OccupationSequenceNbr t-esc="occupation.sequence"/>
+            <OccupationSequenceNbr t-esc="occupation.sequence" />
 
             <!-- 00044
                 DESCRIPTION:
@@ -803,7 +817,7 @@
                 · MM est le mois
                 . JJ est le jour
              -->
-            <OccupationStartingDate t-esc="occupation.date_start"/>
+            <OccupationStartingDate t-esc="occupation.date_start" />
 
             <!-- 00045
                 DESCRIPTION:
@@ -833,7 +847,7 @@
                 . JJ est le jour
              -->
             <t t-if="occupation.date_stop != -1">
-                <OccupationEndingDate t-esc="occupation.date_stop"/>
+                <OccupationEndingDate t-esc="occupation.date_stop" />
             </t>
 
             <!-- 00046
@@ -849,7 +863,7 @@
                 PRESENCE:   Indispensable
                 FORMAT: CCC ou CCC.CC ou CCC.CC.CC
              -->
-            <JointCommissionNbr t-esc="occupation.commission"/>
+            <JointCommissionNbr t-esc="occupation.commission" />
 
             <!-- 00047
                 DESCRIPTION:    Si le régime de travail hebdomadaire est fixe, il s'agit du nombre de jours par semaine du travailleur. Le régime de travail est dit fixe lorsque le travailleur travaille un nombre fixe de jours par semaine. Il peut alors prendre les valeurs 1, 2, 3, 4, 5, 6 ou 7 jours/semaine.
@@ -871,7 +885,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
              -->
-            <WorkingDaysSystem t-esc="occupation.days_per_week"/>
+            <WorkingDaysSystem t-esc="occupation.days_per_week" />
 
             <!-- 00050
                 DESCRIPTION:    Code qui indique si l'occupation est effectuée dans le cadre d'un contrat temps plein ou temps partiel.
@@ -886,7 +900,7 @@
                 LONGUEUR:   1
                 PRESENCE:   Indispensable
              -->
-            <ContractType t-esc="occupation.is_parttime"/>
+            <ContractType t-esc="occupation.is_parttime" />
 
             <!-- 00049
                 DESCRIPTION:    Nombre moyen d'heures par semaine (exprimé en centièmes d’heures) pendant lesquelles la personne de référence est censée effectuer un travail.
@@ -909,7 +923,7 @@
                 A partir du 3/2005 : obligatoire si la déclaration ne concerne pas un tiers payant (déclarations pour des catégories de l'employeur différentes de 033, 099, 199, 299 et 699).
              -->
             <t t-if="occupation.ref_mean_working_hours != -1">
-                <RefMeanWorkingHours t-esc="occupation.ref_mean_working_hours"/>
+                <RefMeanWorkingHours t-esc="occupation.ref_mean_working_hours" />
             </t>
 
             <!-- 90015
@@ -933,7 +947,7 @@
                 PRESENCE:   Obligatoire si le travailleur concerné travaille à temps partiel ou, indépendamment du fait que le travailleur est occupé à temps plein ou à temps partiel, s'il s'agit d'un travailleur saisonnier, intérimaire, temporaire, d'un travailleur à domicile, d'un travailleur en interruption de carrière, d'un travailleur ayant repris le travail à temps partiel suite à l'avis du médecin conseil, d'un travailleur en prépension à mi-temps ou d'un travailleur avec des prestations réduites, jusqu'au 2/2005 inclus.
                 A partir du 3/2005 : obligatoire si la déclaration ne concerne pas un tiers payant (déclarations pour des catégories de l'employeur différentes de 033, 099, 199, 299 et 699).
              -->
-            <MeanWorkingHours t-esc="occupation.mean_working_hours"/>
+            <MeanWorkingHours t-esc="occupation.mean_working_hours" />
 
             <!-- 00051
                 DESCRIPTION:    Code qui indique que le travailleur est occupé dans le cadre d'une mesure de réduction du temps de travail, indépendamment du fait qu'une éventuelle réduction des cotisations afférente à la mesure est demandée.
@@ -947,7 +961,7 @@
                 Indispensable lorsque cette donnée est reprise dans le bloc 90438.
              -->
             <t t-if="occupation.reorganisation_measure != -1">
-                <ReorganisationMeasure t-esc="occupation.reorganisation_measure"/>
+                <ReorganisationMeasure t-esc="occupation.reorganisation_measure" />
             </t>
 
             <!-- 00052
@@ -959,7 +973,7 @@
                 PRESENCE:   Obligatoire si l'occupation du travailleur est effectuée dans le cadre d'une mesure de promotion de l'emploi susmentionnée.
              -->
             <t t-if="occupation.employment_promotion != -1">
-                <EmploymentPromotion t-esc="occupation.employment_promotion"/>
+                <EmploymentPromotion t-esc="occupation.employment_promotion" />
             </t>
 
             <!-- 00053
@@ -972,7 +986,7 @@
                 PRESENCE:   Obligatoire si l'occupation du travailleur est effectuée dans le cadre d'un contrat particulier mentionné à l'annexe 21.
              -->
             <t t-if="occupation.worker_status != -1">
-                <WorkerStatus t-esc="occupation.worker_status"/>
+                <WorkerStatus t-esc="occupation.worker_status" />
             </t>
 
             <!-- 00054
@@ -985,7 +999,7 @@
                 LONGUEUR:   1
                 PRESENCE:   Indispensable
              -->
-            <Retired t-esc="occupation.retired"/>
+            <Retired t-esc="occupation.retired" />
 
             <!-- 00055
                 DESCRIPTION:    Code permettant de distinguer un apprenti.
@@ -1004,7 +1018,7 @@
                 PRESENCE:   Obligatoire si le travailleur est un apprenti.
             -->
             <t t-if="occupation.apprenticeship != -1">
-                <Apprenticeship t-esc="occupation.apprenticeship"/>
+                <Apprenticeship t-esc="occupation.apprenticeship" />
             </t>
 
             <!-- 00056
@@ -1023,7 +1037,7 @@
                 PRESENCE:   Obligatoire si le travailleur est payé selon un mode de rémunération susmentionné.
             -->
             <t t-if="occupation.remun_method != -1">
-                <RemunMethod t-esc="occupation.remun_method"/>
+                <RemunMethod t-esc="occupation.remun_method" />
             </t>
 
             <!-- 00057
@@ -1040,7 +1054,7 @@
                 PRESENCE:   Obligatoire si le travailleur est rémunéré totalement ou partiellement au pourboire ou au service, ou s’il s’agit d’un marin pêcheur et si la rémunération est déclarée sur une base forfaitaire.
              -->
             <t t-if="occupation.position_code != -1">
-                <PositionCode t-esc="occupation.position_code"/>
+                <PositionCode t-esc="occupation.position_code" />
             </t>
 
             <!-- 00059
@@ -1059,7 +1073,7 @@
                 PRESENCE:   Obligatoire si le travailleur fait partie du personnel volant d’une compagnie aérienne ou s'il est un pilote militaire.
              -->
             <t t-if="occupation.flying_staff_class != -1">
-                <FlyingStaffClass t-esc="occupation.flying_staff_class"/>
+                <FlyingStaffClass t-esc="occupation.flying_staff_class" />
             </t>
 
              <!-- 00060
@@ -1074,7 +1088,7 @@
                 PRESENCE:   Obligatoire si le travailleur exerce une fonction d'enseignant.
             -->
             <t t-if="occupation.TenthOrTwelfth != -1">
-                <TenthOrTwelfth t-esc="occupation.TenthOrTwelfth"/>
+                <TenthOrTwelfth t-esc="occupation.TenthOrTwelfth" />
             </t>
 
             <!-- 00228
@@ -1090,7 +1104,7 @@
                 Facultatif dans le bloc Occupation de la ligne travailleur.
              -->
             <t t-if="occupation.ActivityCode != -1">
-                <ActivityCode t-esc="occupation.ActivityCode"/>
+                <ActivityCode t-esc="occupation.ActivityCode" />
             </t>
 
             <!-- 00617
@@ -1103,7 +1117,7 @@
                 LONGUEUR:   200
                 PRESENCE:   Facultative
              -->
-            <OccupationUserReference t-esc="occupation.contract.id"/>
+            <OccupationUserReference t-esc="occupation.contract.id" />
 
             <!-- 00042
                 DESCRIPTION:    Il s'agit du numéro identifiant une unité d'établissement (numéro attribué par la Banque-Carrefour des Entreprises).
@@ -1135,7 +1149,7 @@
                 Obligatoire si l'employeur a plusieurs sièges d'exploitation pour les déclarations des deuxième et quatrième trimestres de chaque année (du deuxième trimestre 2004 au deuxième trimestre 2006 inclus), sauf pour les codes travailleurs et les catégories d’employeur mentionnés ci-dessus.
                 Obligatoire si la déclaration concerne le quatrième trimestre 2003, sauf pour les codes travailleurs et les catégories d'employeur mentionnés ci-dessus.
             -->
-            <LocalUnitID t-esc="occupation.work_place"/>
+            <LocalUnitID t-esc="occupation.work_place" />
 
             <!-- 00625
                 DESCRIPTION:    Code qui indique que le travailleur est occupé au cours du trimestre selon un cycle de travail particulier
@@ -1154,17 +1168,17 @@
                 PRESENCE:   Obligatoire si l'occupation du travailleur est effectuée selon une particularité reprise ci-dessus.
              -->
             <t t-if="occupation.days_justification != -1">
-                <DaysJustification t-esc="occupation.days_justification"/>
+                <DaysJustification t-esc="occupation.days_justification" />
             </t>
 
             <t t-foreach="occupation.occupation_informations" t-as="info">
-                <t t-call="l10n_be_hr_payroll.OccupationInformations"/>
+                <t t-call="l10n_be_hr_payroll.OccupationInformations" />
             </t>
             <t t-foreach="occupation.services" t-as="service">
-                <t t-call="l10n_be_hr_payroll.Service"/>
+                <t t-call="l10n_be_hr_payroll.Service" />
             </t>
             <t t-foreach="occupation.remunerations" t-as="remuneration">
-                <t t-call="l10n_be_hr_payroll.Remun"/>
+                <t t-call="l10n_be_hr_payroll.Remun" />
             </t>
         </Occupation>
     </template>
@@ -1182,7 +1196,7 @@
                 PRESENCE:   Obligatoire si il s’agit d'un membre du personnel d’un employeur déclaré avec la catégorie employeur 105, 205 ou 305 qui a acquis ces jours de vacances.
                 Cette donnée ne peut pas être utilisée pour les déclarations antérieures au 1er trimestre 2018.
              -->
-            <HolidayDaysNumber t-esc="info.holiday_days_number"/>
+            <HolidayDaysNumber t-esc="info.holiday_days_number" />
 
             <!-- 00728
                 DESCRIPTION:
@@ -1202,7 +1216,7 @@
                 · MM est le mois
                 . JJ est le jour
               -->
-            <SixMonthsIllnessDate t-esc="info.six_months_illness_date"/>
+            <SixMonthsIllnessDate t-esc="info.six_months_illness_date" />
 
             <!-- 00794
                 DESCRIPTION:    Code qui détermine si le travailleur est engagé dans le cadre d'une mesure pour l'emploi pour le secteur non marchand (maribel social et secteur non marchand).
@@ -1228,7 +1242,7 @@
 
                 PRESENCE:   Obligatoire si l'engagement s'effectue dans le secteur public dans le cadre du maribel social ou si le jeune est engagé dans le secteur non marchand en exécution du pacte de solidarité entre les générations
             -->
-            <NOSSLPASocialMaribel t-esc="info.maribel"/>
+            <NOSSLPASocialMaribel t-esc="info.maribel" />
 
             <!-- 00795
                 DESCRIPTION:    A partir du 1/2020 travailleur occasionnel occupé dans l'Horeca ou dans le secteur des pompes funèbres.
@@ -1244,7 +1258,7 @@
                 A partir du 3/2007 jusqu'au 3/2013, obligatoire si le travailleur est un occasionnel de l'Horeca déclaré par un bureau d'intérim.
                 A partir du 2/2005 jusqu'au 2/2007, obligatoire si le travailleur est un extra de l'Horeca qui ne bénéficie pas de l'assujettissement réduit.
             -->
-            <HorecaExtra t-esc="info.horeca_extra"/>
+            <HorecaExtra t-esc="info.horeca_extra" />
 
             <!-- 00812
                 DESCRIPTION:    Le salaire horaire est le salaire, tel que convenu dans le contrat de travail, qui est dû pour une heure normale de travail prestée dans le trimestre.
@@ -1261,7 +1275,7 @@
 
                 PRESENCE:   Obligatoire si la déclaration concerne le 3ème trimestre et qu’il s’agit d’un ouvrier de la construction, à partir des déclarations du 3/2005 jusqu'aux déclarations du 2/2007.
              -->
-            <HourRemun t-esc="info.hour_remun"/>
+            <HourRemun t-esc="info.hour_remun" />
 
             <!-- 00826
                 DESCRIPTION:    Notion signalant si le travailleur est dispensé ou non, de l’exécution de ses prestations.
@@ -1287,7 +1301,7 @@
 
                 Obligatoire dans le bloc Occupation - Informations (90313), si dispense de prestations durant tout le trimestre ou, si application de la réduction travailleurs âgés - Région flamande (à partir du 1/2018) ou si application de la réduction travailleurs âgés - Communauté germanophone (à partir du 2/2018) ou si application de la réduction travailleurs âgés - Région wallonne (à partir du 3/2018).
             -->
-            <ServiceExemptionNotion t-esc="info.service_exemption_notion"/>
+            <ServiceExemptionNotion t-esc="info.service_exemption_notion" />
 
             <!-- 00862
                 DESCRIPTION:    Le salaire horaire est le salaire, tel que convenu dans le contrat de travail, qui est dû pour une heure normale de travail prestée dans le trimestre.
@@ -1305,7 +1319,7 @@
 
                 PRESENCE:   Obligatoire si la déclaration concerne le 3ème trimestre et qu'il s'agit d'un ouvrier de la construction, à partir des déclarations du 3/2007. A partir de 2011, obligatoire pour chaque trimestre lorsqu'il s'agit d'un ouvrier de la construction.
             -->
-            <HourRemunInThousandthOfEuro t-esc="info.hour_remun_thousandth"/>
+            <HourRemunInThousandthOfEuro t-esc="info.hour_remun_thousandth" />
 
             <!-- 00893
                 DESCRIPTION:    Code indiquant si le membre du personnel a été mis à disposition par l'employeur chez un autre employeur ou à été mis à disposition chez l'employeur par un autre employeur.
@@ -1319,7 +1333,7 @@
 
                 PRESENCE:   Obligatoire si la déclaration concerne un trimestre à partir du 1/2022 et s'il s'agit d'un travailleur mis à disposition à temps plein auprès d'un employeur pour lequel la cotisation prime syndicale est due.
             -->
-            <PostedWorker t-esc="info.posted_employee"/>
+            <PostedWorker t-esc="info.posted_employee" />
 
             <!-- 01010
                 DESCRIPTION:    Nombre de jours d'incapacité de travail suite à une maladie ou à un accident de droit commun avec salaire garanti la première semaine, non compris le nombre de jours avec rémunération journalière garantie. Les jours de carence sont inclus lorsqu'ils sont payés par l'employeur.
@@ -1333,7 +1347,9 @@
 
                 PRESENCE:   Obligatoire si il s'agit d'un ouvrier de la construction et que les jours sont couverts par un salaire garanti la première semaine ou lorsqu'il y a des jours de carence payés par l'employeur, à partir des déclarations du 1er trimestre 2011.
             -->
-            <FirstWeekGuaranteedSalaryNbrDays t-esc="info.first_week_guaranteed_salary"/>
+            <FirstWeekGuaranteedSalaryNbrDays
+            t-esc="info.first_week_guaranteed_salary"
+          />
 
             <!-- 01011
                 DESCRIPTION:    Total des rémunérations brutes, y compris celles qui ne sont pas soumises à des cotisations de sécurité sociale, payées par l'employeur dans le cadre d'une maladie ou d'un accident de droit commun au cours du trimestre concerné, non compris les indemnités payées par l'employeur pour le(s) jour(s) avec rémunération journalière garantie.
@@ -1348,7 +1364,7 @@
                 PRESENCE:   Obligatoire si il s'agit d'un ouvrier de la construction et que des rémunérations sont payées dans le cadre d'une maladie, à partir des déclarations du 1er trimestre 2011 jusqu’au 2020/1.
                 A partir du 2020/2, obligatoire s'il s'agit d’un travailleur contractuel et que des rémunérations sont payées dans le cadre d'une maladie.
             -->
-            <IllnessGrossRemunAmount t-esc="info.illness_gross_remun"/>
+            <IllnessGrossRemunAmount t-esc="info.illness_gross_remun" />
 
             <!-- 01012
                 DESCRIPTION:    Zone qui indique, pour une occupation a priori couverte par le champ d'application de Capelo (combinaison catégorie d'employeur – code travailleur ET employeur faisant partie du champ d'application), que la déclaration des blocs dits Capelo (Données de l'occupation relatives au secteur public, Traitement barémique et Supplément de traitement) n'est pas requise, parce que cette occupation n'est pas susceptible d'ouvrir le droit à une pension secteur public.
@@ -1360,7 +1376,7 @@
 
                 PRESENCE:   Obligatoire si l'occupation n'est pas susceptible d'ouvrir le droit à une pension dans le secteur public pour un travailleur contractuel au service d'un employeur dans le champ d'application de Capelo.
             -->
-            <PSDDclExemption t-esc="info.psddcl_exemption"/>
+            <PSDDclExemption t-esc="info.psddcl_exemption" />
 
             <!-- 01013
                 DESCRIPTION:    Zone qui fournit des informations supplémentaires concernant le champ d’application du régime de pension complémentaire.
@@ -1377,7 +1393,7 @@
                 ou si les régimes de pension complémentaires « contractuels locaux » et « Provant » ne sont pas d'application au travailleur en question d'une administration locale (code 1)
                 ou si une administration locale est affiliée à plusieurs régimes de pension complémentaires et que le travailleur en question relève du régime de « Provant » (code 2).
             -->
-            <SupplPensionContributionExemption t-esc="info.suppl_pension_exemption"/>
+            <SupplPensionContributionExemption t-esc="info.suppl_pension_exemption" />
 
             <!-- 01063
                 DESCRIPTION:    Information permettant de prendre en compte un travailleur dans le calcul d’une obligation d’un employeur.
@@ -1389,7 +1405,7 @@
 
                 PRESENCE:   Obligatoire si le travailleur est un ancien stagiaire d’intégration engagé immédiatement après le stage par le même employeur et s’il s’agit du trimestre d’engagement ou un des trois trimestres suivant l’engagement.
             -->
-            <ObligationControlInformation t-esc="info.obligation_control"/>
+            <ObligationControlInformation t-esc="info.obligation_control" />
 
             <!-- 01092
                 DESCRIPTION:
@@ -1411,7 +1427,7 @@
                 · MM est le mois
                 . JJ est le jour
             -->
-            <DefinitiveNominationDate t-esc="info.definitive_nomination_date"/>
+            <DefinitiveNominationDate t-esc="info.definitive_nomination_date" />
 
             <!-- 01148
                 DESCRIPTION:
@@ -1431,7 +1447,7 @@
                 · MM est le mois
                 . JJ est le jour
             -->
-            <NewMaribelEmploymentDate t-esc="info.maribel_date"/>
+            <NewMaribelEmploymentDate t-esc="info.maribel_date" />
 
             <!-- 01176
                 DESCRIPTION:    Zone qui indique que la cotisation pension du secteur public pour travailleurs statutaires, suite à des circonstances particulières, a une base de calcul dérogatoire.
@@ -1444,7 +1460,7 @@
                 PRESENCE:   Obligatoire si la base de calcul de la cotisation pension du secteur public pour travailleurs statutaires est dérogatoire, à partir du 1/2017.
                 Interdite avant le 1/2017.
             -->
-            <PSPContribCalcBasisDerogation t-esc="info.psp_contrib_derogation"/>
+            <PSPContribCalcBasisDerogation t-esc="info.psp_contrib_derogation" />
 
             <!-- 01194
                 DESCRIPTION:    Code qui détermine si le travailleur est occupé dans le cadre d’une mesure carrière.
@@ -1461,7 +1477,7 @@
                 PRESENCE:   Obligatoire si l'occupation du travailleur est effectuée dans le cadre d'une mesure carrière susmentionnée.
                 Interdite avant le premier trimestre 2018.
             -->
-            <CareerMeasure t-esc="info.career_measure"/>
+            <CareerMeasure t-esc="info.career_measure" />
 
             <!-- 01215
                 DESCRIPTION:    Indication du sous-secteur qui relève de la compétence flamande en matière d'activités non marchandes (accord intersectoriel flamand).
@@ -1474,7 +1490,7 @@
                 PRESENCE:   Obligatoire si l’occupation a lieu dans un sous-secteur relevant de la compétence flamande en matière d'activités non marchandes.
                 Cette donnée ne peut pas être utilisée pour les déclarations antérieures au 1er trimestre 2019.
             -->
-            <SectorDetail t-esc="info.sector_detail"/>
+            <SectorDetail t-esc="info.sector_detail" />
 
             <!-- 01216
                 DESCRIPTION:    Budget total qui est attribué au travailleur sur le plan de la mobilité, et qu’il peut consacrer à un ou plusieurs piliers prévus par la législation : un véhicule de société respectueux de l’environnement, modes de transports alternatifs et durables et le paiement du solde du budget.
@@ -1487,7 +1503,7 @@
 
                 PRESENCE:   Obligatoire si le travailleur opte pour le budget mobilité et la partie non utilisée du solde du budget est versée au travailleur.
             -->
-            <MobilityBudget t-esc="info.mobility_budget"/>
+            <MobilityBudget t-esc="info.mobility_budget" />
 
             <!-- 01232
                 DESCRIPTION:    Nombre d'heures d'absence en vue de suivre une formation dans le cadre d'un congé formation flamand.
@@ -1503,7 +1519,7 @@
 
                 PRESENCE:   Obligatoire si une absence concerne une formation suivie dans le cadre d’un congé formation flamand, à partir du 1/2020.
             -->
-            <FlemishTrainingHolidayHoursNbr t-esc="info.flemish_training_hours"/>
+            <FlemishTrainingHolidayHoursNbr t-esc="info.flemish_training_hours" />
 
             <!-- 01237
                 DESCRIPTION:    Code qui indique que l’occupation du travailleur est effectuée dans le cadre d’une aide régionale à l’emploi.
@@ -1516,7 +1532,7 @@
                 PRESENCE:   Obligatoire si l'occupation du travailleur est effectuée dans le cadre d'une aide régionale à l’emploi susmentionnée.
                 Cette donnée ne peut pas être utilisée pour les déclarations antérieures au 1er trimestre 2021.
             -->
-            <RegionalAidMeasure t-esc="info.regional_aid_measure"/>
+            <RegionalAidMeasure t-esc="info.regional_aid_measure" />
         </OccupationInformations>
         </t>
     </template>
@@ -1539,7 +1555,7 @@
 
                 PRESENCE:   Indispensable
             -->
-            <ServiceSequenceNbr t-esc="service.sequence"/>
+            <ServiceSequenceNbr t-esc="service.sequence" />
             <!-- 00062
                 DESCRIPTION:    Code permettant de déterminer le type de la prestation déclarée pour l'occupation du travailleur concerné.
                 DOMAINE DE DEFINITION:  Voir Annexe 8 - Codification des données de temps de travail.
@@ -1547,7 +1563,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
             -->
-            <ServiceCode t-esc="service.code"/>
+            <ServiceCode t-esc="service.code" />
             <!-- 00063
                 DESCRIPTION:    Nombre de jours de la prestation à déclarer pour l'occupation du travailleur concerné.
                 Lorsque le nombre de jours de la prestation correspond à des données réelles, il est arrondi au demi-jour. Par contre lorsque le nombre de jours de la prestation est converti, il est arrondi au centième de jour.
@@ -1562,7 +1578,7 @@
 
                 PRESENCE:   Indispensable
             -->
-            <ServiceNbrDays t-esc="service.nbr_days"/>
+            <ServiceNbrDays t-esc="service.nbr_days" />
             <!-- 00064
                 DESCRIPTION:    Nombre d'heures de la prestation (exprimé en centièmes d’heures) lorsque le travailleur concerné travaille à temps partiel ou, indépendamment du fait qu’il est occupé à temps plein ou à temps partiel, s'il s'agit d'un travailleur saisonnier, intermittent, d'un travailleur en interruption partielle de la carrière professionnelle, d’un travailleur en prépension à mi-temps, d'un travailleur ayant repris le travail à temps partiel suite à l'avis du médecin conseil, d’un travailleur avec des prestations réduites, d'un gardien ou gardienne d’enfants qui n'est pas lié par un contrat de travail, d’un travailleur statutaire occupé dans le cadre d’une mesure de réorganisation du temps de travail pour laquelle il peut effectuer des prestations (mesure de réorganisation = 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 514, 531, 541 ou 544), d'un travailleur rémunéré par des titres-services, d'un travailleur de l'Horeca, d’un travailleur Flexi-Job, d'un contractuel dans le secteur public en congé pour prestations partielles temporaires, d'un travailleur occupé par une administration provinciale ou locale.
                 Par travailleur intermittent, on entend :
@@ -1581,7 +1597,7 @@
                 PRESENCE:   Obligatoire si le travailleur concerné travaille à temps partiel ou, indépendamment du fait que le travailleur est occupé à temps plein ou à temps partiel, s'il s'agit d'un travailleur saisonnier, intérimaire, temporaire, d'un travailleur à domicile, d'un travailleur en interruption partielle de la carrière professionnelle, d'un travailleur ayant repris le travail à temps partiel suite à l'avis du médecin conseil, d'un travailleur en prépension à mi-temps, d'un travailleur avec des prestations réduites, d'un gardien ou gardienne d’enfants qui n’est pas lié par un contrat de travail, d'un travailleur statutaire occupé dans le cadre d’une mesure de réorganisation du temps de travail pour laquelle il peut effectuer des prestations (mesure de réorganisation = 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 514, 531, 541 ou 544) d'un travailleur rémunéré par des titres-services, d’un travailleur de l’Horeca, d'un travailleur Flexi-Job, d'un contractuel dans le secteur public en congé pour prestations partielles temporaires, d'un travailleur occupé par une administration provinciale ou locale.
             -->
             <t t-if="service.nbr_hours != -1">
-                <ServiceNbrHours t-esc="service.nbr_hours"/>
+                <ServiceNbrHours t-esc="service.nbr_hours" />
             </t>
             <!-- 00065
                 DESCRIPTION:    Cette zone, destinée essentiellement aux compagnies aériennes, permet d’indiquer le nombre de minutes de vol qu’un travailleur, employé à bord d’un avion, a réellement presté pendant l'occupation déclarée.
@@ -1595,7 +1611,7 @@
                 PRESENCE:   Obligatoire si le travailleur fait partie du personnel volant d’une compagnie aérienne ou s'il est pilote militaire.
             -->
             <t t-if="service.flight_nbr_minutes != -1">
-                <FlightNbrMinutes t-esc="service.flight_nbr_minutes"/>
+                <FlightNbrMinutes t-esc="service.flight_nbr_minutes" />
             </t>
         </Service>
         </t>
@@ -1616,7 +1632,7 @@
 
                 PRESENCE:   Indispensable
              -->
-            <RemunSequenceNbr t-esc="remuneration.sequence"/>
+            <RemunSequenceNbr t-esc="remuneration.sequence" />
             <!-- 00067
                 DESCRIPTION:    Code permettant de déterminer le type de donnée salariale déclarée pour l'occupation du travailleur concerné.
 
@@ -1626,7 +1642,7 @@
                 LONGUEUR:   3
                 PRESENCE:   Indispensable
              -->
-            <RemunCode t-esc="remuneration.code"/>
+            <RemunCode t-esc="remuneration.code" />
             <!--
                 DESCRIPTION:    Fréquence utilisant le mois comme unité de mesure.
                 Exemples :
@@ -1643,7 +1659,7 @@
                 PRESENCE:   Obligatoire si il s’agit d’une prime (code rémunération 02 ou 23).
              -->
             <t t-if="remuneration.frequency != -1">
-                <BonusPaymentFrequency t-esc="remuneration.frequency"/>
+                <BonusPaymentFrequency t-esc="remuneration.frequency" />
             </t>
             <!-- 00069
                 DESCRIPTION:    Ce pourcentage doit être déclaré lorsque la réduction de la durée du travail est introduite au moyen de l’octroi d’une rémunération horaire majorée et d’un repos compensatoire non rémunéré.
@@ -1659,7 +1675,7 @@
                 PRESENCE:   Obligatoire si il s’agit d’une rémunération (code rémunération 01) et le travailleur bénéficie d’une réduction de la durée du travail introduite au moyen de l’octroi d’une rémunération horaire majorée et d’un repos compensatoire non rémunéré.
              -->
             <t t-if="remuneration.percentage_paid != -1">
-                <PercentagePaid t-esc="remuneration.percentage_paid"/>
+                <PercentagePaid t-esc="remuneration.percentage_paid" />
             </t>
             <!-- 00070
                 DESCRIPTION:    Total des rémunérations correspondant au type de rémunération (code rémunération éventuellement en combinaison avec la fréquence en mois de paiement de la prime ou le pourcentage de la rémunération sur base annuelle) pour l'occupation du travailleur.
@@ -1671,7 +1687,9 @@
                 LONGUEUR:   11
                 PRESENCE:   Indispensable
              -->
-            <RemunAmount t-esc="remuneration.amount if remuneration.code != '012' else '0' + remuneration.amount[1:]"/>
+            <RemunAmount
+          t-esc="remuneration.amount if remuneration.code != '012' else '0' + remuneration.amount[1:]"
+        />
         </Remun>
     </template>
 </data>

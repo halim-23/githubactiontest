@@ -4,15 +4,15 @@
 	<xsl:include href="utilerias.xslt"/>
 	<!-- Con el siguiente método se establece que la salida deberá ser en texto -->
 	<xsl:output method="text" version="1.0" encoding="UTF-8" indent="no"/>
-	
+
 		<!-- Aquí iniciamos el procesamiento de la cadena original con su | inicial y el terminador || -->
   <xsl:template match="/">|<xsl:apply-templates select="/BCE:Balanza"/>||</xsl:template>
-	
+
 
 	<xsl:template match="BCE:Balanza">
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@Version"/>
-		</xsl:call-template>		
+		</xsl:call-template>
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@RFC"/>
 		</xsl:call-template>
@@ -27,15 +27,15 @@
 		</xsl:call-template>
 		<xsl:call-template name="Opcional">
 			<xsl:with-param name="valor" select="./@FechaModBal"/>
-		</xsl:call-template>		
-		
+		</xsl:call-template>
+
 		<xsl:apply-templates select="./BCE:Ctas"/>
 	</xsl:template>
 	<xsl:template match="BCE:Ctas">
-		
+
 <xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@NumCta"/>
-		</xsl:call-template>		
+		</xsl:call-template>
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@SaldoIni"/>
 		</xsl:call-template>
@@ -47,8 +47,8 @@
 		</xsl:call-template>
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@SaldoFin"/>
-		</xsl:call-template>		
-		
+		</xsl:call-template>
+
 	</xsl:template>
-	
+
 </xsl:stylesheet>

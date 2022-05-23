@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
         <!-- Contribution Register -->
 
@@ -39,7 +39,9 @@
         </record>
 
         <record id="hr_group_term_insurance_register" model="res.partner">
-            <field name="name">Register for Company Provided Group Term Insurance Deduction</field>
+            <field
+      name="name"
+    >Register for Company Provided Group Term Insurance Deduction</field>
         </record>
 
         <record id="hr_leave_availed_register" model="res.partner">
@@ -47,7 +49,9 @@
         </record>
 
         <record id="hr_medical_insurance_register" model="res.partner">
-            <field name="name">Register for Company Provided Medical Insurance Deduction</field>
+            <field
+      name="name"
+    >Register for Company Provided Medical Insurance Deduction</field>
         </record>
 
         <record id="hr_other_deduction_register" model="res.partner">

@@ -6,7 +6,7 @@
 	<xsl:output method="text" version="1.0" encoding="UTF-8" indent="no"/>
   <!-- Aquí iniciamos el procesamiento de la cadena original con su | inicial y el terminador || -->
   <xsl:template match="/">|<xsl:apply-templates select="/catalogocuentas:Catalogo"/>||</xsl:template>
-  
+
 	<xsl:template match="catalogocuentas:Catalogo">
 		<xsl:call-template name="Requerido">
 			<xsl:with-param name="valor" select="./@Version"/>
@@ -42,5 +42,5 @@
 			<xsl:with-param name="valor" select="./@Natur"/>
 		</xsl:call-template>
 	</xsl:template>
-	
+
    </xsl:stylesheet>

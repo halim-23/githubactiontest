@@ -13,7 +13,7 @@
 		<xsl:param name="valor"/>
 		<xsl:if test="$valor">|<xsl:call-template name="ManejaEspacios"><xsl:with-param name="s" select="$valor"/></xsl:call-template></xsl:if>
 	</xsl:template>
-	
+
 	<!-- Normalizador de espacios en blanco -->
 	<xsl:template name="ManejaEspacios">
 		<xsl:param name="s"/>

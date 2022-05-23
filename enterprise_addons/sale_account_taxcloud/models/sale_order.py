@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 
-from odoo import api, fields, models, _, SUPERUSER_ID
+from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import float_compare, float_round, ormcache
 
@@ -10,13 +8,19 @@ from .taxcloud_request import TaxCloudRequest
 
 
 class SaleOrder(models.Model):
-    _inherit = 'sale.order'
+    _inherit = "sale.order"
 
-    is_taxcloud_configured = fields.Boolean(related='company_id.is_taxcloud_configured', help='Used to determine whether or not to warn the user to configure TaxCloud.')
-    is_taxcloud = fields.Boolean(related='fiscal_position_id.is_taxcloud', help='Technical field to determine whether to hide taxes in views or not.')
+    is_taxcloud_configured = fields.Boolean(
+        related="company_id.is_taxcloud_configured",
+        help="Used to determine whether or not to warn the user to configure TaxCloud.",
+    )
+    is_taxcloud = fields.Boolean(
+        related="fiscal_position_id.is_taxcloud",
+        help="Technical field to determine whether to hide taxes in views or not.",
+    )
 
     def action_confirm(self):
-        for order in self.filtered('fiscal_position_id.is_taxcloud'):
+        for order in self.filtered("fiscal_position_id.is_taxcloud"):
             order.validate_taxes_on_sales_order()
         return super(SaleOrder, self).action_confirm()
 
@@ -25,7 +29,7 @@ class SaleOrder(models.Model):
         return TaxCloudRequest(api_id, api_key)
 
     @api.model
-    @ormcache('request_hash')
+    @ormcache("request_hash")
     def _get_all_taxes_values(self, request, request_hash):
         return request.get_all_taxes_values()
 
@@ -42,35 +46,54 @@ class SaleOrder(models.Model):
         request.set_location_destination_detail(self.partner_shipping_id)
 
         request.set_order_items_detail(self)
-        request.taxcloud_date = fields.Datetime.context_timestamp(self, datetime.datetime.now())
+        request.taxcloud_date = fields.Datetime.context_timestamp(
+            self, datetime.datetime.now()
+        )
 
         response = self._get_all_taxes_values(request, request.hash)
 
-        if response.get('error_message'):
+        if response.get("error_message"):
             raise ValidationError(
-                _('Unable to retrieve taxes from TaxCloud: ') + '\n' +
-                response['error_message']
+                _("Unable to retrieve taxes from TaxCloud: ")
+                + "\n"
+                + response["error_message"]
             )
 
-        tax_values = response['values']
+        tax_values = response["values"]
 
         # warning: this is tightly coupled to TaxCloudRequest's _process_lines method
         # do not modify without syncing the other method
-        for index, line in enumerate(self.order_line.filtered(lambda l: not l.display_type)):
+        for index, line in enumerate(
+            self.order_line.filtered(lambda l: not l.display_type)
+        ):
             if line._get_taxcloud_price() >= 0.0 and line.product_uom_qty >= 0.0:
-                price = line.price_unit * (1 - (line.discount or 0.0) / 100.0) * line.product_uom_qty
+                price = (
+                    line.price_unit
+                    * (1 - (line.discount or 0.0) / 100.0)
+                    * line.product_uom_qty
+                )
                 if not price:
                     tax_rate = 0.0
                 else:
                     tax_rate = tax_values[index] / price * 100
-                if len(line.tax_id) != 1 or float_compare(line.tax_id.amount, tax_rate, precision_digits=3):
+                if len(line.tax_id) != 1 or float_compare(
+                    line.tax_id.amount, tax_rate, precision_digits=3
+                ):
                     tax_rate = float_round(tax_rate, precision_digits=3)
-                    tax = self.env['account.tax'].with_context(active_test=False).sudo().search([
-                        ('amount', '=', tax_rate),
-                        ('amount_type', '=', 'percent'),
-                        ('type_tax_use', '=', 'sale'),
-                        ('company_id', '=', company.id),
-                    ], limit=1)
+                    tax = (
+                        self.env["account.tax"]
+                        .with_context(active_test=False)
+                        .sudo()
+                        .search(
+                            [
+                                ("amount", "=", tax_rate),
+                                ("amount_type", "=", "percent"),
+                                ("type_tax_use", "=", "sale"),
+                                ("company_id", "=", company.id),
+                            ],
+                            limit=1,
+                        )
+                    )
                     if tax:
                         # Only set if not already set, otherwise it triggers a
                         # needless and potentially heavy recompute for
@@ -78,13 +101,20 @@ class SaleOrder(models.Model):
                         if not tax.active:
                             tax.active = True  # Needs to be active to be included in order total computation
                     else:
-                        tax = self.env['account.tax'].sudo().with_context(default_company_id=company.id).create({
-                            'name': 'Tax %.3f %%' % (tax_rate),
-                            'amount': tax_rate,
-                            'amount_type': 'percent',
-                            'type_tax_use': 'sale',
-                            'description': 'Sales Tax',
-                        })
+                        tax = (
+                            self.env["account.tax"]
+                            .sudo()
+                            .with_context(default_company_id=company.id)
+                            .create(
+                                {
+                                    "name": "Tax %.3f %%" % (tax_rate),
+                                    "amount": tax_rate,
+                                    "amount_type": "percent",
+                                    "type_tax_use": "sale",
+                                    "description": "Sales Tax",
+                                }
+                            )
+                        )
                     line.tax_id = tax
         return True
 
@@ -97,7 +127,8 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     """Defines getters to have a common facade for order and invoice lines in TaxCloud."""
-    _inherit = 'sale.order.line'
+
+    _inherit = "sale.order.line"
 
     def _get_taxcloud_price(self):
         self.ensure_one()

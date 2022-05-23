@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 from odoo.tools.float_utils import float_is_zero
 
 
 class ShowZeroHandler:
     @classmethod
-    def account_line_should_be_added(cls, line: dict, options: dict = None,
-                                     key: str = 'show_zero_balance_accounts') -> bool:
+    def account_line_should_be_added(
+        cls, line: dict, options: dict = None, key: str = "show_zero_balance_accounts"
+    ) -> bool:
         """
         Determine if a account line should be added or not to the list of report lines.
         A account should be shown no matter what if options key ("show_zero_balance_accounts" by default) is True,
@@ -24,8 +24,12 @@ class ShowZeroHandler:
             return cls._line_is_not_zero(line)
 
     @classmethod
-    def section_line_should_be_added(cls, section_lines: list, options: dict = None,
-                                     key: str = 'show_zero_balance_accounts') -> bool:
+    def section_line_should_be_added(
+        cls,
+        section_lines: list,
+        options: dict = None,
+        key: str = "show_zero_balance_accounts",
+    ) -> bool:
         """
         Determine if a section's lines should be added or not to the list of report lines.
         A section should be shown no matter what if options "show_zero_balance_accounts" is True, else it has to be
@@ -40,7 +44,9 @@ class ShowZeroHandler:
         """
         if options is None or options.get(key, False):
             return True
-        return cls._section_line_has_children(section_lines) or cls._section_line_is_not_zero(section_lines)
+        return cls._section_line_has_children(
+            section_lines
+        ) or cls._section_line_is_not_zero(section_lines)
 
     @staticmethod
     def _line_is_not_zero(line: dict) -> bool:
@@ -52,8 +58,8 @@ class ShowZeroHandler:
         False otherwise
         :rtype: bool
         """
-        cols = line.get('columns', [{}])
-        total = sum([col.get('no_format_name', 0) for col in cols])
+        cols = line.get("columns", [{}])
+        total = sum([col.get("no_format_name", 0) for col in cols])
         return not float_is_zero(total, 6)
 
     @staticmethod

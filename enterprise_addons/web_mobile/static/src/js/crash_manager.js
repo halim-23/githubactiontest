@@ -1,14 +1,14 @@
 /** @odoo-module */
 
-import { registry } from "@web/core/registry";
+import {registry} from "@web/core/registry";
 import mobile from "web_mobile.core";
 
 function mobileErrorHandler(env, error, originalError) {
-    if (mobile.methods.crashManager) {
-        error.originalError = originalError;
-        mobile.methods.crashManager(error);
-    }
+  if (mobile.methods.crashManager) {
+    error.originalError = originalError;
+    mobile.methods.crashManager(error);
+  }
 }
 registry
-    .category("error_handlers")
-    .add("web_mobile.errorHandler", mobileErrorHandler, { sequence: 3 });
+  .category("error_handlers")
+  .add("web_mobile.errorHandler", mobileErrorHandler, {sequence: 3});

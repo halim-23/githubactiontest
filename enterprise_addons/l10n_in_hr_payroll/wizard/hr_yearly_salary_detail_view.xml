@@ -1,20 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
         <record id="view_yearly_salary_detail" model="ir.ui.view">
             <field name="name">Employee Yearly Salary</field>
             <field name="model">yearly.salary.detail</field>
             <field name="arch" type="xml">
             <form string="Pay Head Employee Breakup">
-                <span class="o_form_label">This wizard will print report which display a pay head employee breakup for a specified dates.</span>
+                <span
+          class="o_form_label"
+        >This wizard will print report which display a pay head employee breakup for a specified dates.</span>
                 <footer>
-                    <button name="print_report" string="Print" type="object" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                    <button
+            name="print_report"
+            string="Print"
+            type="object"
+            class="btn-primary"
+          />
+                    <button
+            string="Cancel"
+            class="btn-secondary"
+            special="cancel"
+            data-hotkey="z"
+          />
                 </footer>
                 <group>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <field name="date_from" />
+                    <field name="date_to" />
                     <separator string="Employees" />
-                    <field name="employee_ids"  nolabel="1" colspan="4"/>
+                    <field name="employee_ids" nolabel="1" colspan="4" />
                 </group>
             </form>
             </field>
@@ -29,11 +41,11 @@
         </record>
 
         <menuitem
-            name="Yearly Salary by Employee"
-            parent="hr.hr_menu_hr_reports"
-            action="action_yearly_salary_detail"
-            sequence="250"
-            id="menu_yearly_salary_detail"
-            groups="hr_payroll.group_hr_payroll_manager,hr_payroll.group_hr_payroll_user"
-           />
+    name="Yearly Salary by Employee"
+    parent="hr.hr_menu_hr_reports"
+    action="action_yearly_salary_detail"
+    sequence="250"
+    id="menu_yearly_salary_detail"
+    groups="hr_payroll.group_hr_payroll_manager,hr_payroll.group_hr_payroll_user"
+  />
 </odoo>

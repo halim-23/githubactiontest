@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
@@ -7,10 +6,10 @@ from odoo import fields, models
 class HrContractEmployeeReport(models.Model):
     _inherit = "hr.contract.employee.report"
 
-    fuel_card = fields.Float('Fuel Card', group_operator="avg", readonly=True)
-    fte = fields.Float('Full Time Equivalent (Today)', readonly=True)
+    fuel_card = fields.Float("Fuel Card", group_operator="avg", readonly=True)
+    fte = fields.Float("Full Time Equivalent (Today)", readonly=True)
 
-    def _query(self, fields='', from_clause='', outer=''):
+    def _query(self, fields="", from_clause="", outer=""):
         fields += """
             , c.fuel_card AS fuel_card
             , cal.hours_per_week AS hours_per_week

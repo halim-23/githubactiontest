@@ -1,16 +1,20 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <AUTORIZACION>
 <CAF version="1.0">
 <DA>
 <RE>76201224-3</RE>
 <RS>Blanco Martin Asociados EIRL</RS>
-<TD></TD>
+<TD />
 <RNG><D>001</D><H>100</H></RNG>
 <FA>2019-10-22</FA>
-<RSAPK><M>xBcfZfii8tMuKkuuWIYxz68CZg55jaPsQQVkGjqDl1b7osuKzJEHtS0M3PrnSF6DxwUxg2XjS0IOregtLf+FwQ==</M><E>Aw==</E></RSAPK>
+<RSAPK><M
+        >xBcfZfii8tMuKkuuWIYxz68CZg55jaPsQQVkGjqDl1b7osuKzJEHtS0M3PrnSF6DxwUxg2XjS0IOregtLf+FwQ==</M><E
+        >Aw==</E></RSAPK>
 <IDK>100</IDK>
 </DA>
-<FRMA algoritmo="SHA1withRSA">UqQWYVsAzPzpaCNwGH67LuqE7sdjAJtX8s2vbI5PyB1s4ZCy+E237uZEt5BzMtUTvJdBTaFlx5jaXAV2pn2hkg==</FRMA>
+<FRMA
+      algoritmo="SHA1withRSA"
+    >UqQWYVsAzPzpaCNwGH67LuqE7sdjAJtX8s2vbI5PyB1s4ZCy+E237uZEt5BzMtUTvJdBTaFlx5jaXAV2pn2hkg==</FRMA>
 </CAF>
 <RSASK>-----BEGIN RSA PRIVATE KEY-----
 MIIBOAIBAAJAbRGTU5RcHmh+CE55s/swgQylOygCFDgxGj0CKpMuvlXEI+z3jy3e

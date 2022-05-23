@@ -4,24 +4,29 @@ from odoo import fields, models, tools
 
 
 class HrWorkEntryReport(models.Model):
-    _name = 'hr.work.entry.report'
-    _description = 'Work Entries Analysis Report'
+    _name = "hr.work.entry.report"
+    _description = "Work Entries Analysis Report"
     _auto = False
-    _order = 'date_start desc'
+    _order = "date_start desc"
 
-    number_of_days = fields.Float('Days', readonly=True)
+    number_of_days = fields.Float("Days", readonly=True)
 
-    date_start = fields.Datetime('Date Start', readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    department_id = fields.Many2one('hr.department', 'Department', readonly=True)
-    employee_id = fields.Many2one('hr.employee', 'Employee', readonly=True)
-    work_entry_type_id = fields.Many2one('hr.work.entry.type', 'Work Entry Type', readonly=True)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('validated', 'Validated'),
-        ('conflict', 'Conflict'),
-        ('cancelled', 'Cancelled')
-    ], readonly=True)
+    date_start = fields.Datetime("Date Start", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    department_id = fields.Many2one("hr.department", "Department", readonly=True)
+    employee_id = fields.Many2one("hr.employee", "Employee", readonly=True)
+    work_entry_type_id = fields.Many2one(
+        "hr.work.entry.type", "Work Entry Type", readonly=True
+    )
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("validated", "Validated"),
+            ("conflict", "Conflict"),
+            ("cancelled", "Cancelled"),
+        ],
+        readonly=True,
+    )
 
     def init(self):
         query = """
@@ -73,6 +78,6 @@ class HrWorkEntryReport(models.Model):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(
             sql.SQL("CREATE or REPLACE VIEW {} as ({})").format(
-                sql.Identifier(self._table),
-                sql.SQL(query)
-            ))
+                sql.Identifier(self._table), sql.SQL(query)
+            )
+        )

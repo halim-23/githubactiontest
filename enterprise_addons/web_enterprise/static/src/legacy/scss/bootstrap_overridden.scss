@@ -10,7 +10,6 @@
 $secondary: $o-gray-700;
 $dark: $o-gray-900;
 
-
 // Options
 
 // Disable predefined decorative box-shadow styles on various components.
@@ -29,7 +28,7 @@ $border-radius-sm: 0;
 //
 // Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif: o-add-unicode-support-font(('Roboto', sans-serif));
+$font-family-sans-serif: o-add-unicode-support-font(("Roboto", sans-serif));
 
 $font-weight-bold: 500;
 $font-weight-bolder: $font-weight-bold;
@@ -47,7 +46,6 @@ $headings-font-weight: $font-weight-bold;
 // Customizes the `.table` component with basic values, each used across all table variations.
 
 $table-head-color: $headings-color;
-
 
 // Buttons
 //
@@ -89,7 +87,7 @@ $custom-checkbox-indicator-border-radius: 1px; // Just a slight smoothing.
 // Navs
 
 $nav-tabs-border-color: transparent;
-$nav-tabs-link-hover-border-color:  $gray-200;
+$nav-tabs-link-hover-border-color: $gray-200;
 $nav-tabs-link-active-color: $o-brand-primary;
 $nav-tabs-link-active-bg: $gray-200;
 $nav-tabs-link-active-border-color: transparent;

@@ -1,14 +1,10 @@
 /** @odoo-module **/
 
-import { registry } from "@web/core/registry";
+import {registry} from "@web/core/registry";
 
-const servicesToRemove = [
-    'studio',
-    'studio_legacy',
-    'spreadsheet',
-];
+const servicesToRemove = ["studio", "studio_legacy", "spreadsheet"];
 
-const servicesRegistry = registry.category('services');
+const servicesRegistry = registry.category("services");
 
 /**
  * Remove services unsued in project sharing feature.
@@ -20,10 +16,10 @@ const servicesRegistry = registry.category('services');
  * Since this module has not web_studio module in this dependencies, this function will remove
  * the serivces that we don't want instead of create a new module just to remove the services in assets.
  */
-export function removeServices () {
-    for (const service of servicesToRemove) {
-        if (servicesRegistry.contains(service)) {
-            servicesRegistry.remove(service);
-        }
+export function removeServices() {
+  for (const service of servicesToRemove) {
+    if (servicesRegistry.contains(service)) {
+      servicesRegistry.remove(service);
     }
+  }
 }

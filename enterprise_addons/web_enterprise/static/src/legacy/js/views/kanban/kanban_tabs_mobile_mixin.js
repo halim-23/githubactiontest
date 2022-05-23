@@ -1,10 +1,10 @@
-odoo.define('web.KanbanTabsMobileMixin', function () {
-"use strict";
+odoo.define("web.KanbanTabsMobileMixin", function () {
+  "use strict";
 
-const KanbanTabsMobileMixin = {
-    //--------------------------------------------------------------------------
+  const KanbanTabsMobileMixin = {
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     /**
      * Update the tabs positions
      *
@@ -14,8 +14,8 @@ const KanbanTabsMobileMixin = {
      * @private
      */
     _computeTabPosition(tabs, moveToIndex, $tabsContainer) {
-        this._computeTabJustification(tabs, $tabsContainer);
-        this._computeTabScrollPosition(tabs, moveToIndex, $tabsContainer);
+      this._computeTabJustification(tabs, $tabsContainer);
+      this._computeTabScrollPosition(tabs, moveToIndex, $tabsContainer);
     },
     /**
      * Update the tabs positions
@@ -26,23 +26,23 @@ const KanbanTabsMobileMixin = {
      * @private
      */
     _computeTabScrollPosition(tabs, moveToIndex, $tabsContainer) {
-        if (tabs.length) {
-            const lastItemIndex = tabs.length - 1;
-            let scrollToLeft = 0;
-            for (let i = 0; i < moveToIndex; i++) {
-                const columnWidth = this._getTabWidth(tabs[i]);
-                // apply
-                if (moveToIndex !== lastItemIndex && i === moveToIndex - 1) {
-                    const partialWidth = 0.75;
-                    scrollToLeft += columnWidth * partialWidth;
-                } else {
-                    scrollToLeft += columnWidth;
-                }
-            }
-            // Apply the scroll x on the tabs
-            // XXX in case of RTL, should we use scrollRight?
-            $tabsContainer.scrollLeft(scrollToLeft);
+      if (tabs.length) {
+        const lastItemIndex = tabs.length - 1;
+        let scrollToLeft = 0;
+        for (let i = 0; i < moveToIndex; i++) {
+          const columnWidth = this._getTabWidth(tabs[i]);
+          // Apply
+          if (moveToIndex !== lastItemIndex && i === moveToIndex - 1) {
+            const partialWidth = 0.75;
+            scrollToLeft += columnWidth * partialWidth;
+          } else {
+            scrollToLeft += columnWidth;
+          }
         }
+        // Apply the scroll x on the tabs
+        // XXX in case of RTL, should we use scrollRight?
+        $tabsContainer.scrollLeft(scrollToLeft);
+      }
     },
 
     /**
@@ -52,12 +52,18 @@ const KanbanTabsMobileMixin = {
      * @private
      */
     _computeTabJustification(tabs, $tabsContainer) {
-        if (tabs.length) {
-            // Use to compute the sum of the width of all tab
-            const widthChilds = tabs.reduce((total, column) => total + this._getTabWidth(column), 0);
-            // Apply a space around between child if the parent length is higher then the sum of the child width
-            $tabsContainer.toggleClass('justify-content-between', $tabsContainer.outerWidth() >= widthChilds);
-        }
+      if (tabs.length) {
+        // Use to compute the sum of the width of all tab
+        const widthChilds = tabs.reduce(
+          (total, column) => total + this._getTabWidth(column),
+          0
+        );
+        // Apply a space around between child if the parent length is higher then the sum of the child width
+        $tabsContainer.toggleClass(
+          "justify-content-between",
+          $tabsContainer.outerWidth() >= widthChilds
+        );
+      }
     },
     /**
      * Retrieve the outerWidth of a given tab
@@ -66,8 +72,7 @@ const KanbanTabsMobileMixin = {
      * @returns {integer} outerWidth of the found column
      * @abstract
      */
-    _getTabWidth(tab) {
-    }
-};
-return KanbanTabsMobileMixin;
+    _getTabWidth(tab) {},
+  };
+  return KanbanTabsMobileMixin;
 });

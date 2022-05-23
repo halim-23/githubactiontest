@@ -1,28 +1,24 @@
-odoo.define('sale_stock_renting.RentalConfiguratorFormController', function (require) {
-"use strict";
+odoo.define("sale_stock_renting.RentalConfiguratorFormController", function (require) {
+  "use strict";
 
-var RentalConfiguratorFormController = require('sale_renting.RentalConfiguratorFormController');
+  var RentalConfiguratorFormController = require("sale_renting.RentalConfiguratorFormController");
 
-/**
- * This controller is overridden to allow configuring sale_order_lines through a popup
- * window when a product with 'rent_ok' is selected.
- *
- */
-RentalConfiguratorFormController.include({
-
+  /**
+   * This controller is overridden to allow configuring sale_order_lines through a popup
+   * window when a product with 'rent_ok' is selected.
+   *
+   */
+  RentalConfiguratorFormController.include({
     _getRentalInfo: function (state) {
-        var infos = this._super.apply(this, arguments);
-        var ids = this._convertFromMany2Many(state.lot_ids.data);
-        var lotCommands = [
-          {operation: 'DELETE_ALL'},
-          {operation: 'ADD_M2M', ids: ids}
-        ];
+      var infos = this._super.apply(this, arguments);
+      var ids = this._convertFromMany2Many(state.lot_ids.data);
+      var lotCommands = [{operation: "DELETE_ALL"}, {operation: "ADD_M2M", ids: ids}];
 
-        infos['reserved_lot_ids'] = {
-          operation: 'MULTI',
-          commands: lotCommands
-        };
-        return infos;
+      infos.reserved_lot_ids = {
+        operation: "MULTI",
+        commands: lotCommands,
+      };
+      return infos;
     },
 
     /**
@@ -34,19 +30,18 @@ RentalConfiguratorFormController.include({
      * @private
      */
     _convertFromMany2Many: function (recordData) {
-        if (recordData) {
-            var ids = [];
-            _.each(recordData, function (data) {
-                ids.push({id: parseInt(data.res_id)});
-            });
+      if (recordData) {
+        var ids = [];
+        _.each(recordData, function (data) {
+          ids.push({id: parseInt(data.res_id)});
+        });
 
-            return ids;
-        }
+        return ids;
+      }
 
-        return null;
-    }
-});
+      return null;
+    },
+  });
 
-return RentalConfiguratorFormController;
-
+  return RentalConfiguratorFormController;
 });

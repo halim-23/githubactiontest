@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -8,17 +8,23 @@
        linked to any account in l10n_es and defined here instead -->
 
         <record id="balance_sheet_11440_account" model="account.account.tag">
-            <field name="name">Inversiones en empresas del grupo y asociadas a largo plazo - Derivados</field>
+            <field
+        name="name"
+      >Inversiones en empresas del grupo y asociadas a largo plazo - Derivados</field>
             <field name="applicability">accounts</field>
         </record>
 
         <record id="balance_sheet_11450_account" model="account.account.tag">
-            <field name="name">Inversiones en empresas del grupo y asociadas a largo plazo - Otros activos financieros</field>
+            <field
+        name="name"
+      >Inversiones en empresas del grupo y asociadas a largo plazo - Otros activos financieros</field>
             <field name="applicability">accounts</field>
         </record>
 
         <record id="balance_sheet_11460_account" model="account.account.tag">
-            <field name="name">Inversiones en empresas del grupo y asociadas a largo plazo - Otras inversiones</field>
+            <field
+        name="name"
+      >Inversiones en empresas del grupo y asociadas a largo plazo - Otras inversiones</field>
             <field name="applicability">accounts</field>
         </record>
 
@@ -28,17 +34,23 @@
         </record>
 
         <record id="balance_sheet_12440_account" model="account.account.tag">
-            <field name="name">Inversiones en empresas del grupo y asociadas a corto plazo - Derivados</field>
+            <field
+        name="name"
+      >Inversiones en empresas del grupo y asociadas a corto plazo - Derivados</field>
             <field name="applicability">accounts</field>
         </record>
 
         <record id="balance_sheet_12460_account" model="account.account.tag">
-            <field name="name">Inversiones en empresas del grupo y asociadas a corto plazo - Otras inversiones</field>
+            <field
+        name="name"
+      >Inversiones en empresas del grupo y asociadas a corto plazo - Otras inversiones</field>
             <field name="applicability">accounts</field>
         </record>
 
         <record id="balance_sheet_12560_account" model="account.account.tag">
-            <field name="name">Inversiones financieras a corto plazo - Otras inversiones</field>
+            <field
+        name="name"
+      >Inversiones financieras a corto plazo - Otras inversiones</field>
             <field name="applicability">accounts</field>
         </record>
 

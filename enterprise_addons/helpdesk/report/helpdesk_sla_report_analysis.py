@@ -1,41 +1,68 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
+
 from odoo.addons.helpdesk.models.helpdesk_ticket import TICKET_PRIORITY
 
 
 class HelpdeskSLAReport(models.Model):
-    _name = 'helpdesk.sla.report.analysis'
+    _name = "helpdesk.sla.report.analysis"
     _description = "SLA Status Analysis"
     _auto = False
-    _order = 'create_date DESC'
+    _order = "create_date DESC"
 
-    ticket_id = fields.Many2one('helpdesk.ticket', string='Ticket', readonly=True)
+    ticket_id = fields.Many2one("helpdesk.ticket", string="Ticket", readonly=True)
     create_date = fields.Date("Ticket Create Date", readonly=True)
-    priority = fields.Selection(TICKET_PRIORITY, string='Minimum Priority', readonly=True)
-    user_id = fields.Many2one('res.users', string="Assigned To", readonly=True)
-    partner_id = fields.Many2one('res.partner', string="Customer", readonly=True)
-    ticket_type_id = fields.Many2one('helpdesk.ticket.type', string="Ticket Type", readonly=True)
-    ticket_stage_id = fields.Many2one('helpdesk.stage', string="Ticket Stage", readonly=True)
+    priority = fields.Selection(
+        TICKET_PRIORITY, string="Minimum Priority", readonly=True
+    )
+    user_id = fields.Many2one("res.users", string="Assigned To", readonly=True)
+    partner_id = fields.Many2one("res.partner", string="Customer", readonly=True)
+    ticket_type_id = fields.Many2one(
+        "helpdesk.ticket.type", string="Ticket Type", readonly=True
+    )
+    ticket_stage_id = fields.Many2one(
+        "helpdesk.stage", string="Ticket Stage", readonly=True
+    )
     ticket_deadline = fields.Datetime("Ticket Deadline", readonly=True)
-    ticket_failed = fields.Boolean("Ticket Failed", group_operator="bool_or", readonly=True)
+    ticket_failed = fields.Boolean(
+        "Ticket Failed", group_operator="bool_or", readonly=True
+    )
     ticket_closed = fields.Boolean("Ticket Closed", readonly=True)
-    ticket_close_hours = fields.Integer("Time to close (hours)", group_operator="avg", readonly=True)
-    ticket_open_hours = fields.Integer("Open Time (hours)", group_operator="avg", readonly=True)
-    ticket_assignation_hours = fields.Integer("Time to first assignment (hours)", group_operator="avg", readonly=True)
+    ticket_close_hours = fields.Integer(
+        "Time to close (hours)", group_operator="avg", readonly=True
+    )
+    ticket_open_hours = fields.Integer(
+        "Open Time (hours)", group_operator="avg", readonly=True
+    )
+    ticket_assignation_hours = fields.Integer(
+        "Time to first assignment (hours)", group_operator="avg", readonly=True
+    )
     close_date = fields.Datetime("Close date", readonly=True)
 
-    sla_id = fields.Many2one('helpdesk.sla', string="SLA", readonly=True)
-    sla_stage_id = fields.Many2one('helpdesk.stage', string="SLA Stage", readonly=True)
-    sla_deadline = fields.Datetime("SLA Deadline", group_operator='min', readonly=True)
-    sla_reached_datetime = fields.Datetime("SLA Reached Date", group_operator='min', readonly=True)
-    sla_status = fields.Selection([('failed', 'Failed'), ('reached', 'Reached'), ('ongoing', 'Ongoing')], string="Status", readonly=True)
-    sla_status_failed = fields.Boolean("SLA Status Failed", group_operator='bool_or', readonly=True)
-    sla_exceeded_days = fields.Integer("Days to Reach SLA", group_operator='avg', readonly=True, help="Day to reach the stage of the SLA, without taking the working calendar into account")
+    sla_id = fields.Many2one("helpdesk.sla", string="SLA", readonly=True)
+    sla_stage_id = fields.Many2one("helpdesk.stage", string="SLA Stage", readonly=True)
+    sla_deadline = fields.Datetime("SLA Deadline", group_operator="min", readonly=True)
+    sla_reached_datetime = fields.Datetime(
+        "SLA Reached Date", group_operator="min", readonly=True
+    )
+    sla_status = fields.Selection(
+        [("failed", "Failed"), ("reached", "Reached"), ("ongoing", "Ongoing")],
+        string="Status",
+        readonly=True,
+    )
+    sla_status_failed = fields.Boolean(
+        "SLA Status Failed", group_operator="bool_or", readonly=True
+    )
+    sla_exceeded_days = fields.Integer(
+        "Days to Reach SLA",
+        group_operator="avg",
+        readonly=True,
+        help="Day to reach the stage of the SLA, without taking the working calendar into account",
+    )
 
-    team_id = fields.Many2one('helpdesk.team', string='Team', readonly=True)
-    company_id = fields.Many2one('res.company', string='Company', readonly=True)
+    team_id = fields.Many2one("helpdesk.team", string="Team", readonly=True)
+    company_id = fields.Many2one("res.company", string="Company", readonly=True)
 
     def _select(self):
         select_str = """
@@ -82,7 +109,10 @@ class HelpdeskSLAReport(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
             %s
             FROM %s
-            )""" % (self._table, self._select(), self._from()))
+            )"""
+            % (self._table, self._select(), self._from())
+        )

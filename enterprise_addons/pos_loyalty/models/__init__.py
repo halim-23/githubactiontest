@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import pos_loyalty
 from . import pos_config
 from . import res_partner

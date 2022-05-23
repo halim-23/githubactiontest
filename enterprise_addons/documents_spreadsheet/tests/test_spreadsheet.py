@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from freezegun import freeze_time
 from psycopg2 import IntegrityError
 
-from .common import SpreadsheetTestCommon, TEXT, GIF
 from odoo.exceptions import AccessError
-from odoo.tools import mute_logger
 from odoo.tests import Form
 from odoo.tests.common import new_test_user
+from odoo.tools import mute_logger
+
+from .common import GIF, TEXT, SpreadsheetTestCommon
 
 
 class SpreadsheetDocuments(SpreadsheetTestCommon):
@@ -18,51 +18,66 @@ class SpreadsheetDocuments(SpreadsheetTestCommon):
 
     def archive_existing_spreadsheet(self):
         """Existing spreadsheet in the database can influence some test results"""
-        self.env["documents.document"].search([("handler", "=", "spreadsheet")]).active = False
+        self.env["documents.document"].search(
+            [("handler", "=", "spreadsheet")]
+        ).active = False
 
     def test_spreadsheet_default_folder(self):
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
         self.assertEqual(
             document.folder_id,
             self.env.company.documents_spreadsheet_folder_id,
-            "It should have been assigned the default Spreadsheet Folder"
+            "It should have been assigned the default Spreadsheet Folder",
         )
-        self.env.company.documents_spreadsheet_folder_id = self.env['documents.folder'].create({
-            'name': 'Spreadsheet - Test Folder',
-        })
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
+        self.env.company.documents_spreadsheet_folder_id = self.env[
+            "documents.folder"
+        ].create(
+            {
+                "name": "Spreadsheet - Test Folder",
+            }
+        )
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
         self.assertEqual(
             document.folder_id,
             self.env.company.documents_spreadsheet_folder_id,
-            "It should have been assigned the default Spreadsheet Folder"
+            "It should have been assigned the default Spreadsheet Folder",
         )
-
 
     def test_normal_doc_default_folder(self):
         """Default spreadsheet folder is not assigned to normal documents"""
-        with self.assertRaises(IntegrityError), mute_logger('odoo.sql_db'):
-            self.env["documents.document"].create({
-                "raw": r"{}",
-                "mimetype": "application/o-spreadsheet",
-            })
+        with self.assertRaises(IntegrityError), mute_logger("odoo.sql_db"):
+            self.env["documents.document"].create(
+                {
+                    "raw": r"{}",
+                    "mimetype": "application/o-spreadsheet",
+                }
+            )
 
     def test_spreadsheet_no_default_folder(self):
         """Folder is not overwritten by the default spreadsheet folder"""
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "folder_id": self.folder.id,
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
-        self.assertEqual(document.folder_id, self.folder, "It should be in the specified folder")
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "folder_id": self.folder.id,
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
+        self.assertEqual(
+            document.folder_id, self.folder, "It should be in the specified folder"
+        )
 
     def test_spreadsheet_to_display(self):
         self.archive_existing_spreadsheet()
@@ -276,32 +291,40 @@ class SpreadsheetDocuments(SpreadsheetTestCommon):
         )
 
     def test_document_replacement_with_handler(self):
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "folder_id": self.folder.id,
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "folder_id": self.folder.id,
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
         vals = {
             "name": "file",
             "folder_id": self.folder.id,
             "raw": r"{}",
-            "handler": "spreadsheet"
+            "handler": "spreadsheet",
         }
         document.write(vals)
-        self.assertEqual(document.handler, "spreadsheet", "The handler must contain the value of the handler mentioned in vals")
+        self.assertEqual(
+            document.handler,
+            "spreadsheet",
+            "The handler must contain the value of the handler mentioned in vals",
+        )
 
     def test_document_replacement_with_mimetype(self):
 
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "folder_id": self.folder.id,
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "folder_id": self.folder.id,
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
         vals = {
             "name": "test.txt",
-            "datas": b'aGVsbG8hCg==\n',
+            "datas": b"aGVsbG8hCg==\n",
             "folder_id": self.folder.id,
             "mimetype": "text/plain",
         }
@@ -309,18 +332,24 @@ class SpreadsheetDocuments(SpreadsheetTestCommon):
         self.assertEqual(document.handler, False, "The handler should have been reset")
 
     def test_document_replacement_with_mimetype_and_handler(self):
-        document = self.env["documents.document"].create({
-            "raw": r"{}",
-            "folder_id": self.folder.id,
-            "handler": "spreadsheet",
-            "mimetype": "application/o-spreadsheet",
-        })
+        document = self.env["documents.document"].create(
+            {
+                "raw": r"{}",
+                "folder_id": self.folder.id,
+                "handler": "spreadsheet",
+                "mimetype": "application/o-spreadsheet",
+            }
+        )
         vals = {
             "name": "spreadsheet_file",
             "folder_id": self.folder.id,
             "raw": r"{}",
             "mimetype": "application/octet-stream",
-            "handler": "spreadsheet"
+            "handler": "spreadsheet",
         }
         document.write(vals)
-        self.assertEqual(document.handler, "spreadsheet", "the handler must contain the value of the handler mentioned in vals")
+        self.assertEqual(
+            document.handler,
+            "spreadsheet",
+            "the handler must contain the value of the handler mentioned in vals",
+        )

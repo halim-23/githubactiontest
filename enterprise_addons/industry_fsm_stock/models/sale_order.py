@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields
+from odoo import fields, models
 
 
 class SaleOrderLine(models.Model):
-    _inherit = ['sale.order.line']
+    _inherit = ["sale.order.line"]
 
-    fsm_lot_id = fields.Many2one('stock.production.lot', domain="[('product_id', '=', product_id)]")
+    fsm_lot_id = fields.Many2one(
+        "stock.production.lot", domain="[('product_id', '=', product_id)]"
+    )

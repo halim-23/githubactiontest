@@ -1,16 +1,17 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, models, fields, _
+from odoo import fields, models
 
 
 class HrContract(models.Model):
-    _inherit = 'hr.contract.history'
+    _inherit = "hr.contract.history"
 
-    sign_request_ids = fields.Many2many('sign.request', string='Requested Signatures')
+    sign_request_ids = fields.Many2many("sign.request", string="Requested Signatures")
 
     def action_sign_contract_wizard(self):
         self.ensure_one()
-        action = self.env['ir.actions.actions']._for_xml_id('hr_contract_sign.sign_contract_wizard_action')
-        action['context'] = {'active_id': self.contract_id.id}
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "hr_contract_sign.sign_contract_wizard_action"
+        )
+        action["context"] = {"active_id": self.contract_id.id}
         return action

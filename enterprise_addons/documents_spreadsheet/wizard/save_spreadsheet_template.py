@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields, _
+from odoo import _, fields, models
+
 
 class SaveSpreadsheetTemplate(models.TransientModel):
-    _name = 'save.spreadsheet.template'
-    _description= "Spreadsheet Template Save Wizard"
+    _name = "save.spreadsheet.template"
+    _description = "Spreadsheet Template Save Wizard"
 
     template_name = fields.Char(required=True)
     data = fields.Binary()
@@ -13,17 +13,19 @@ class SaveSpreadsheetTemplate(models.TransientModel):
 
     def save_template(self):
         self.ensure_one()
-        self.env['spreadsheet.template'].create({
-            'name': self.template_name,
-            'data': self.data,
-            'thumbnail': self.thumbnail,
-        })
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'message': _('"%s" saved as template', self.template_name),
-                'sticky': False,
-                'type': 'info',
+        self.env["spreadsheet.template"].create(
+            {
+                "name": self.template_name,
+                "data": self.data,
+                "thumbnail": self.thumbnail,
             }
+        )
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "message": _('"%s" saved as template', self.template_name),
+                "sticky": False,
+                "type": "info",
+            },
         }

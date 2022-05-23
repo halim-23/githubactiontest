@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data noupdate="1">
-        <record id="calendar_event_type_data_online_appointment" model="calendar.event.type">
+        <record
+      id="calendar_event_type_data_online_appointment"
+      model="calendar.event.type"
+    >
             <field name="name">Online Appointment Portal</field>
         </record>
         <record id="module_category_calendar" model="ir.module.category">

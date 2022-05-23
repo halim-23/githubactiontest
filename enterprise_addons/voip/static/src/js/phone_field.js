@@ -1,57 +1,56 @@
-odoo.define('voip.PhoneField', function (require) {
-"use strict";
+odoo.define("voip.PhoneField", function (require) {
+  "use strict";
 
-const basicFields = require('web.basic_fields');
-const core = require('web.core');
+  const basicFields = require("web.basic_fields");
+  const core = require("web.core");
 
-const Phone = basicFields.FieldPhone;
-const _t = core._t;
+  const Phone = basicFields.FieldPhone;
+  const _t = core._t;
 
-/**
- * Override of FieldPhone to use the DialingPanel to perform calls on clicks.
- */
-Phone.include({
+  /**
+   * Override of FieldPhone to use the DialingPanel to perform calls on clicks.
+   */
+  Phone.include({
     events: Object.assign({}, Phone.prototype.events, {
-        'click': '_onClick',
+      click: "_onClick",
     }),
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Uses the DialingPanel to perform the call.
      *
      * @private
-     * @param {string} number
+     * @param {String} number
      */
     _call(number) {
-        this.trigger_up('voip_call', {
-            number,
-            resId: this.res_id,
-            resModel: this.model,
-        });
+      this.trigger_up("voip_call", {
+        number,
+        resId: this.res_id,
+        resModel: this.model,
+      });
     },
 
     async _hasPbxConfig() {
-
-        const pbxConfiguration = await new Promise(resolve => {
-            this.trigger_up('get_pbx_configuration', {
-                callback: output => resolve(output.pbxConfiguration),
-            });
+      const pbxConfiguration = await new Promise((resolve) => {
+        this.trigger_up("get_pbx_configuration", {
+          callback: (output) => resolve(output.pbxConfiguration),
         });
+      });
 
-        return pbxConfiguration.mode !== 'prod' ||
-        (
-            pbxConfiguration.pbx_ip &&
-            pbxConfiguration.wsServer &&
-            pbxConfiguration.login &&
-            pbxConfiguration.password
-        );
+      return (
+        pbxConfiguration.mode !== "prod" ||
+        (pbxConfiguration.pbx_ip &&
+          pbxConfiguration.wsServer &&
+          pbxConfiguration.login &&
+          pbxConfiguration.password)
+      );
     },
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Called when the phone number is clicked.
@@ -60,15 +59,19 @@ Phone.include({
      * @param {MouseEvent} ev
      */
     async _onClick(ev) {
-        if (this.mode !== 'readonly' || !window.RTCPeerConnection || !window.MediaStream || !navigator.mediaDevices) {
-            return;
-        }
-        const canMadeVoipCall = await this._hasPbxConfig();
-        if (canMadeVoipCall) {
-            ev.preventDefault();
-            this._call(this.value);
-        }
+      if (
+        this.mode !== "readonly" ||
+        !window.RTCPeerConnection ||
+        !window.MediaStream ||
+        !navigator.mediaDevices
+      ) {
+        return;
+      }
+      const canMadeVoipCall = await this._hasPbxConfig();
+      if (canMadeVoipCall) {
+        ev.preventDefault();
+        this._call(this.value);
+      }
     },
-});
-
+  });
 });

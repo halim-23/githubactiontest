@@ -1,43 +1,42 @@
-odoo.define('web_studio.SearchRenderer', function (require) {
-"use strict";
+odoo.define("web_studio.SearchRenderer", function (require) {
+  "use strict";
 
-var config = require('web.config');
-var core = require('web.core');
-var utils = require('web.utils');
-var Widget = require('web.Widget');
+  var config = require("web.config");
+  var core = require("web.core");
+  var utils = require("web.utils");
+  var Widget = require("web.Widget");
 
-var qweb = core.qweb;
+  var qweb = core.qweb;
 
-
-var SearchRenderer = Widget.extend({
+  var SearchRenderer = Widget.extend({
     className: "o_search_view",
 
     /**
-     * @constructor
+     * @class
      * @param {Object} fields_view
      * @param {Object} fields_view.arch
      * @param {Object} fields_view.fields
      * @param {String} fields_view.model
      */
     init: function (parent, fields_view) {
-        this._super.apply(this, arguments);
-        // see SearchView init
-        fields_view = this._processFieldsView(_.clone(fields_view));
-        this.arch = fields_view.arch;
-        this.fields = fields_view.fields;
-        this.model = fields_view.model;
+      this._super.apply(this, arguments);
+      // See SearchView init
+      fields_view = this._processFieldsView(_.clone(fields_view));
+      this.arch = fields_view.arch;
+      this.fields = fields_view.fields;
+      this.model = fields_view.model;
     },
     /**
      * @override
      */
     start: function () {
-        this.$el.addClass(this.arch.attrs.class);
-        return this._super.apply(this, arguments).then(this._render.bind(this));
+      this.$el.addClass(this.arch.attrs.class);
+      return this._super.apply(this, arguments).then(this._render.bind(this));
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Public
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * This is the reverse operation from getLocalState.  With this method, we
@@ -50,8 +49,7 @@ var SearchRenderer = Widget.extend({
      * @see getLocalState
      * @param {any} localState the result of a call to getLocalState
      */
-    setLocalState: function () {
-    },
+    setLocalState: function () {},
     /**
      * Returns any relevant state that the renderer might want to keep.
      *
@@ -67,12 +65,11 @@ var SearchRenderer = Widget.extend({
      * @see setLocalState
      * @returns {any}
      */
-    getLocalState: function () {
-    },
+    getLocalState: function () {},
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Return nodes which can be displayed in search view for Studio.
@@ -82,7 +79,7 @@ var SearchRenderer = Widget.extend({
      * @returns {Array} the list of elements to display
      */
     _getNodesToTreat() {
-        return this.arch.children.slice().filter(node => node.attrs.invisible !== "1");
+      return this.arch.children.slice().filter((node) => node.attrs.invisible !== "1");
     },
     /**
      * Processes a fieldsView in place. In particular, parses its arch.
@@ -91,13 +88,13 @@ var SearchRenderer = Widget.extend({
      * code duplication could be removed once the SearchView will be rewritten.
      * @private
      * @param {Object} fv
-     * @param {string} fv.arch
+     * @param {String} fv.arch
      * @returns {Object} the processed fieldsView
      */
     _processFieldsView: function (fv) {
-        var doc = $.parseXML(fv.arch).documentElement;
-        fv.arch = utils.xml_to_json(doc, true);
-        return fv;
+      var doc = $.parseXML(fv.arch).documentElement;
+      fv.arch = utils.xml_to_json(doc, true);
+      return fv;
     },
     /**
      * Parse the arch to render each node.
@@ -105,43 +102,43 @@ var SearchRenderer = Widget.extend({
      * @private
      */
     _render: function () {
-        var self = this;
-        this.defs = [];
-        this.$el.empty();
-        this.$el.html(qweb.render('web_studio.searchRenderer', this.widget));
-        this.first_field = undefined;
-        this.first_filter = undefined;
-        this.first_group_by = undefined;
-        let nodesToTreat = this._getNodesToTreat();
-        while (nodesToTreat.length) {
-            var node = nodesToTreat.shift();
-            if (node.tag === "field"){
-                if (!self.first_field){
-                    self.first_field = node;
-                }
-                self._renderField(node);
-            } else if (node.tag === "filter") {
-                if (/(['"])group_by\1\s*:/.test(node.attrs.context || '')) {
-                    if (!self.first_group_by) {
-                        self.first_group_by = node;
-                    }
-                    self._renderGroupBy(node);
-                } else {
-                    if (!self.first_filter) {
-                        self.first_filter = node;
-                    }
-                    self._renderFilter(node);
-                }
-            } else if (node.tag === "separator") {
-                if (!self.first_filter){
-                    self.first_filter = node;
-                }
-                self._renderSeparator(node);
-            } else if (node.tag === "group") {
-                nodesToTreat = nodesToTreat.concat(node.children);
+      var self = this;
+      this.defs = [];
+      this.$el.empty();
+      this.$el.html(qweb.render("web_studio.searchRenderer", this.widget));
+      this.first_field = undefined;
+      this.first_filter = undefined;
+      this.first_group_by = undefined;
+      let nodesToTreat = this._getNodesToTreat();
+      while (nodesToTreat.length) {
+        var node = nodesToTreat.shift();
+        if (node.tag === "field") {
+          if (!self.first_field) {
+            self.first_field = node;
+          }
+          self._renderField(node);
+        } else if (node.tag === "filter") {
+          if (/(['"])group_by\1\s*:/.test(node.attrs.context || "")) {
+            if (!self.first_group_by) {
+              self.first_group_by = node;
             }
+            self._renderGroupBy(node);
+          } else {
+            if (!self.first_filter) {
+              self.first_filter = node;
+            }
+            self._renderFilter(node);
+          }
+        } else if (node.tag === "separator") {
+          if (!self.first_filter) {
+            self.first_filter = node;
+          }
+          self._renderSeparator(node);
+        } else if (node.tag === "group") {
+          nodesToTreat = nodesToTreat.concat(node.children);
         }
-        return Promise.all(this.defs);
+      }
+      return Promise.all(this.defs);
     },
     /**
      * @private
@@ -150,18 +147,17 @@ var SearchRenderer = Widget.extend({
      * @returns {jQueryElement}
      */
     _renderField: function (node) {
-        var $tbody = this.$('.o_web_studio_search_autocompletion_fields tbody');
-        var field_string = this.fields[node.attrs.name].string;
-        var display_string = node.attrs.string || field_string;
-        if (config.isDebug()) {
-            display_string += ' (' + node.attrs.name +')';
-        }
-        var $new_row = $('<tr>').append(
-            $('<td>').append(
-            $('<span>').text(display_string)
-        ));
-        $tbody.append($new_row);
-        return $new_row;
+      var $tbody = this.$(".o_web_studio_search_autocompletion_fields tbody");
+      var field_string = this.fields[node.attrs.name].string;
+      var display_string = node.attrs.string || field_string;
+      if (config.isDebug()) {
+        display_string += " (" + node.attrs.name + ")";
+      }
+      var $new_row = $("<tr>").append(
+        $("<td>").append($("<span>").text(display_string))
+      );
+      $tbody.append($new_row);
+      return $new_row;
     },
     /**
      * @private
@@ -170,14 +166,13 @@ var SearchRenderer = Widget.extend({
      * @returns {jQueryElement}
      */
     _renderFilter: function (node) {
-        var $tbody = this.$('.o_web_studio_search_filters tbody');
-        var display_string = node.attrs.string || node.attrs.help;
-        var $new_row = $('<tr>').append(
-            $('<td>').append(
-            $('<span>').text(display_string)
-        ));
-        $tbody.append($new_row);
-        return $new_row;
+      var $tbody = this.$(".o_web_studio_search_filters tbody");
+      var display_string = node.attrs.string || node.attrs.help;
+      var $new_row = $("<tr>").append(
+        $("<td>").append($("<span>").text(display_string))
+      );
+      $tbody.append($new_row);
+      return $new_row;
     },
     /**
      * @private
@@ -186,21 +181,20 @@ var SearchRenderer = Widget.extend({
      * @returns {jQueryElement}
      */
     _renderGroupBy: function (node) {
-        var $tbody = this.$('.o_web_studio_search_group_by tbody');
-        // the domain is define like this:
-        // context="{'group_by': 'field'}"
-        // we use a regex to get the field string
-        var display_string = node.attrs.string;
-        var field_name = node.attrs.context.match(":.?'(.*)'")[1];
-        if (config.isDebug()) {
-            display_string += ' (' + field_name +')';
-        }
-        var $new_row = $('<tr>').append(
-            $('<td>').append(
-            $('<span>').text(display_string)
-        ));
-        $tbody.append($new_row);
-        return $new_row;
+      var $tbody = this.$(".o_web_studio_search_group_by tbody");
+      // The domain is define like this:
+      // context="{'group_by': 'field'}"
+      // we use a regex to get the field string
+      var display_string = node.attrs.string;
+      var field_name = node.attrs.context.match(":.?'(.*)'")[1];
+      if (config.isDebug()) {
+        display_string += " (" + field_name + ")";
+      }
+      var $new_row = $("<tr>").append(
+        $("<td>").append($("<span>").text(display_string))
+      );
+      $tbody.append($new_row);
+      return $new_row;
     },
     /**
      * @private
@@ -209,14 +203,13 @@ var SearchRenderer = Widget.extend({
      * @returns {jQueryElement}
      */
     _renderSeparator: function () {
-        var $tbody = this.$('.o_web_studio_search_filters tbody');
-        var $new_row = $('<tr class="o_web_studio_separator">').html('<td><hr/></td>');
+      var $tbody = this.$(".o_web_studio_search_filters tbody");
+      var $new_row = $('<tr class="o_web_studio_separator">').html("<td><hr/></td>");
 
-        $tbody.append($new_row);
-        return $new_row;
+      $tbody.append($new_row);
+      return $new_row;
     },
-});
+  });
 
-return SearchRenderer;
-
+  return SearchRenderer;
 });

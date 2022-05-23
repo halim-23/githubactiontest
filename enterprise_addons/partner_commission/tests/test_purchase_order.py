@@ -1,23 +1,23 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from unittest.mock import patch
 
 from odoo import fields
 from odoo.exceptions import AccessError
-from odoo.tools import format_date
 from odoo.tests.common import Form, tagged
+from odoo.tools import format_date
+
 from odoo.addons.partner_commission.tests.setup import Line, Spec, TestCommissionsSetup
 
 
-@tagged('commission_purchase')
+@tagged("commission_purchase")
 class TestPurchaseOrder(TestCommissionsSetup):
     def test_automatic_confirm(self):
         """Only purchase orders within the frequency date range and
         where the amount_total is greater than the limit configure on the company should be confirmed.
         Standard purchase orders should be untouched."""
         # Setup.
-        self.company.commission_automatic_po_frequency = 'weekly'
+        self.company.commission_automatic_po_frequency = "weekly"
         self.referrer.grade_id = self.learning
         self.referrer._onchange_grade_id()
 
@@ -32,45 +32,50 @@ class TestPurchaseOrder(TestCommissionsSetup):
 
         # Stub today's date.
         def today(*args, **kwargs):
-            return fields.Date.to_date('2020-01-06')
+            return fields.Date.to_date("2020-01-06")
 
         def _patched_send_mail(*args, **kwargs):
             nonlocal send_mail_count
             send_mail_count += 1
 
         # Case: OK.
-        with patch('odoo.fields.Date.today', today):
-            with patch('odoo.addons.mail.models.mail_template.MailTemplate.send_mail', _patched_send_mail):
+        with patch("odoo.fields.Date.today", today):
+            with patch(
+                "odoo.addons.mail.models.mail_template.MailTemplate.send_mail",
+                _patched_send_mail,
+            ):
                 po = make_po(days_offset=-1)
-                self.env['purchase.order']._cron_confirm_purchase_orders()
-                self.assertEqual(po.state, 'purchase')
+                self.env["purchase.order"]._cron_confirm_purchase_orders()
+                self.assertEqual(po.state, "purchase")
                 self.assertEqual(send_mail_count, 1)
 
         # Case: NOK: standard purchase order.
         # Should not be confirmed because it's not a commission purchase: commission_po_line_id is not set on the account.move.
-        with patch('odoo.fields.Date.today', today):
-            po = self.env['purchase.order'].create({
-                'partner_id': self.customer.id,
-                'company_id': self.company.id,
-                'currency_id': self.company.currency_id.id,
-                'date_order': fields.Date.subtract(fields.Date.today(), days=1),
-            })
-            self.env['purchase.order']._cron_confirm_purchase_orders()
-            self.assertEqual(po.state, 'draft')
+        with patch("odoo.fields.Date.today", today):
+            po = self.env["purchase.order"].create(
+                {
+                    "partner_id": self.customer.id,
+                    "company_id": self.company.id,
+                    "currency_id": self.company.currency_id.id,
+                    "date_order": fields.Date.subtract(fields.Date.today(), days=1),
+                }
+            )
+            self.env["purchase.order"]._cron_confirm_purchase_orders()
+            self.assertEqual(po.state, "draft")
 
         # Set a minimum amount_total to auto confirm the PO
         self.company.commission_po_minimum = 50
         # Case: OK. amount_total = 80 > 50
-        with patch('odoo.fields.Date.today', today):
+        with patch("odoo.fields.Date.today", today):
             po = make_po(days_offset=-1, qty=20)
-            self.env['purchase.order']._cron_confirm_purchase_orders()
-            self.assertEqual(po.state, 'purchase')
+            self.env["purchase.order"]._cron_confirm_purchase_orders()
+            self.assertEqual(po.state, "purchase")
 
         # Case: NOK: amount_total = 8 < 50
-        with patch('odoo.fields.Date.today', today):
+        with patch("odoo.fields.Date.today", today):
             po = make_po(days_offset=-1, qty=2)
-            self.env['purchase.order']._cron_confirm_purchase_orders()
-            self.assertEqual(po.state, 'draft')
+            self.env["purchase.order"]._cron_confirm_purchase_orders()
+            self.assertEqual(po.state, "draft")
 
     def test_vendor_bill_description_multi_line_format(self):
         """Description text on vendor bill should have the following format:
@@ -81,7 +86,11 @@ class TestPurchaseOrder(TestCommissionsSetup):
         self.referrer.commission_plan_id = self.gold_plan
         self.referrer.grade_id = self.gold
 
-        form = Form(self.env['sale.order'].with_user(self.salesman).with_context(tracking_disable=True))
+        form = Form(
+            self.env["sale.order"]
+            .with_user(self.salesman)
+            .with_context(tracking_disable=True)
+        )
         form.partner_id = self.customer
         form.partner_invoice_id = self.customer
         form.partner_shipping_id = self.customer
@@ -98,11 +107,11 @@ class TestPurchaseOrder(TestCommissionsSetup):
         so.action_confirm()
 
         inv = so._create_invoices()
-        inv.name = 'INV/12345/0001'
+        inv.name = "INV/12345/0001"
         inv.action_post()
         self._pay_invoice(inv)
 
-        sub = so.mapped('order_line.subscription_id')
+        sub = so.mapped("order_line.subscription_id")
         date_to = sub.recurring_next_date
         date_from = fields.Date.subtract(date_to, years=1)
 
@@ -115,7 +124,11 @@ class TestPurchaseOrder(TestCommissionsSetup):
         self.referrer.grade_id = self.gold
 
         def make_orders(product, so_sales_rep=None, sub_sales_rep=None):
-            form = Form(self.env['sale.order'].with_user(self.salesman).with_context(tracking_disable=True))
+            form = Form(
+                self.env["sale.order"]
+                .with_user(self.salesman)
+                .with_context(tracking_disable=True)
+            )
             form.partner_id = self.customer
             form.referrer_id = self.referrer
             if so_sales_rep:
@@ -132,7 +145,7 @@ class TestPurchaseOrder(TestCommissionsSetup):
             inv = so._create_invoices()
             inv.action_post()
 
-            sub = so.order_line.mapped('subscription_id')
+            sub = so.order_line.mapped("subscription_id")
             if sub and sub_sales_rep:
                 sub.sudo().user_id = sub_sales_rep
 
@@ -143,91 +156,127 @@ class TestPurchaseOrder(TestCommissionsSetup):
             return so, sub, po
 
         with self.subTest("SO's salesperson is assigned as Purchase Representative."):
-            foo = self.env['product.category'].create({
-                'name': 'foo',
-            })
-            bar = self.env['product.product'].create({
-                'name': 'bar',
-                'categ_id': foo.id,
-                'list_price': 100.0,
-                'purchase_ok': True,
-                'property_account_income_id': self.account_sale.id,
-                'invoice_policy': 'order',
-            })
-            rule = self.env['commission.rule'].create({
-                'plan_id': self.gold_plan.id,
-                'category_id': foo.id,
-                'product_id': bar.id,
-                'rate': 10.0,
-            })
-            self.gold_plan.write({'commission_rule_ids': [(4, rule.id)]})
+            foo = self.env["product.category"].create(
+                {
+                    "name": "foo",
+                }
+            )
+            bar = self.env["product.product"].create(
+                {
+                    "name": "bar",
+                    "categ_id": foo.id,
+                    "list_price": 100.0,
+                    "purchase_ok": True,
+                    "property_account_income_id": self.account_sale.id,
+                    "invoice_policy": "order",
+                }
+            )
+            rule = self.env["commission.rule"].create(
+                {
+                    "plan_id": self.gold_plan.id,
+                    "category_id": foo.id,
+                    "product_id": bar.id,
+                    "rate": 10.0,
+                }
+            )
+            self.gold_plan.write({"commission_rule_ids": [(4, rule.id)]})
 
             so, sub, po = make_orders(bar)
 
-            self.assertFalse(sub, 'This SO should not generate a subscription.')
+            self.assertFalse(sub, "This SO should not generate a subscription.")
             self.assertEqual(so.user_id, self.salesman)
             self.assertEqual(po.user_id, self.salesman)
 
         with self.subTest("Each sales representative has its own PO."):
-            sales_rep = self.env['res.users'].create({
-                'name': '...',
-                'login': 'sales_rep_1',
-                'email': 'sales_rep_1@odoo.com',
-                'company_id': self.company.id,
-                'groups_id': [(6, 0, [self.ref('sales_team.group_sale_salesman')])],
-            })
+            sales_rep = self.env["res.users"].create(
+                {
+                    "name": "...",
+                    "login": "sales_rep_1",
+                    "email": "sales_rep_1@odoo.com",
+                    "company_id": self.company.id,
+                    "groups_id": [(6, 0, [self.ref("sales_team.group_sale_salesman")])],
+                }
+            )
 
             so, sub, po = make_orders(bar, so_sales_rep=sales_rep)
 
             self.assertEqual(so.user_id, sales_rep)
             self.assertEqual(po.user_id, sales_rep)
 
-        with self.subTest("Subscription's salesperson takes precedence over SO's salesperson."):
-            sales_rep = self.env['res.users'].create({
-                'name': '...',
-                'login': 'sales_rep_2',
-                'email': 'sales_rep_2@odoo.com',
-                'company_id': self.company.id,
-                'groups_id': [(6, 0, [self.ref('sales_team.group_sale_salesman')])],
-            })
+        with self.subTest(
+            "Subscription's salesperson takes precedence over SO's salesperson."
+        ):
+            sales_rep = self.env["res.users"].create(
+                {
+                    "name": "...",
+                    "login": "sales_rep_2",
+                    "email": "sales_rep_2@odoo.com",
+                    "company_id": self.company.id,
+                    "groups_id": [(6, 0, [self.ref("sales_team.group_sale_salesman")])],
+                }
+            )
 
-            so, sub, po = make_orders(self.crm, so_sales_rep=sales_rep, sub_sales_rep=self.salesman)
+            so, sub, po = make_orders(
+                self.crm, so_sales_rep=sales_rep, sub_sales_rep=self.salesman
+            )
 
             self.assertEqual(so.user_id, sales_rep)
             self.assertEqual(sub.user_id, self.salesman)
             self.assertEqual(po.user_id, self.salesman)
 
     def test_access_rigths(self):
-
         def user(name, group):
-            return self.env['res.users'].create({
-                'name': name,
-                'login': name,
-                'email': f'{name}@example.com',
-                'company_id': self.company.id,
-                'groups_id': [(6, 0, [
-                    group,
-                ])],
-            })
+            return self.env["res.users"].create(
+                {
+                    "name": name,
+                    "login": name,
+                    "email": f"{name}@example.com",
+                    "company_id": self.company.id,
+                    "groups_id": [
+                        (
+                            6,
+                            0,
+                            [
+                                group,
+                            ],
+                        )
+                    ],
+                }
+            )
 
-        salesman_own_docs = user('salesman_own_docs', self.ref('sales_team.group_sale_salesman'))
-        salesman_all_docs = user('salesman_all_docs', self.ref('sales_team.group_sale_salesman_all_leads'))
-        commission_user_1 = user('commission_user_1', self.ref('partner_commission.group_commission_user'))
-        commission_user_2 = user('commission_user_2', self.ref('partner_commission.group_commission_user'))
-        commission_manager = user('commission_manager', self.ref('partner_commission.group_commission_manager'))
-        purchase_user = user('purchase_user', self.ref('purchase.group_purchase_user'))
+        salesman_own_docs = user(
+            "salesman_own_docs", self.ref("sales_team.group_sale_salesman")
+        )
+        salesman_all_docs = user(
+            "salesman_all_docs", self.ref("sales_team.group_sale_salesman_all_leads")
+        )
+        commission_user_1 = user(
+            "commission_user_1", self.ref("partner_commission.group_commission_user")
+        )
+        commission_user_2 = user(
+            "commission_user_2", self.ref("partner_commission.group_commission_user")
+        )
+        commission_manager = user(
+            "commission_manager",
+            self.ref("partner_commission.group_commission_manager"),
+        )
+        purchase_user = user("purchase_user", self.ref("purchase.group_purchase_user"))
 
-        po = self.env['purchase.order'].create({
-            'partner_id': self.customer.id,
-            'company_id': self.company.id,
-            'currency_id': self.company.currency_id.id,
-            'date_order': fields.Date.today(),
-            'user_id': commission_user_1.id,
-        })
+        po = self.env["purchase.order"].create(
+            {
+                "partner_id": self.customer.id,
+                "company_id": self.company.id,
+                "currency_id": self.company.currency_id.id,
+                "date_order": fields.Date.today(),
+                "user_id": commission_user_1.id,
+            }
+        )
 
         def assert_access_denied(users):
             for usr in users:
-                with self.assertRaises(AccessError, msg=f'{usr.name} should be denied access.'):
+                with self.assertRaises(
+                    AccessError, msg=f"{usr.name} should be denied access."
+                ):
                     Form(po.with_user(usr))
 
         def assert_access_allowed(users):
@@ -235,18 +284,27 @@ class TestPurchaseOrder(TestCommissionsSetup):
                 Form(po.with_user(usr))
 
         # commission_user should grant membership of group_sale_salesman
-        self.assertTrue(commission_user_1.has_group('sales_team.group_sale_salesman'))
+        self.assertTrue(commission_user_1.has_group("sales_team.group_sale_salesman"))
 
         # commission_manager should grant membership of group_commission_user:
-        self.assertTrue(commission_manager.has_group('partner_commission.group_commission_user'))
+        self.assertTrue(
+            commission_manager.has_group("partner_commission.group_commission_user")
+        )
 
         # group_purchase_user: can access procurement.
         assert_access_allowed([purchase_user])
         # other groups cannot.
-        assert_access_denied([salesman_own_docs, salesman_all_docs, commission_user_1, commission_manager])
+        assert_access_denied(
+            [
+                salesman_own_docs,
+                salesman_all_docs,
+                commission_user_1,
+                commission_manager,
+            ]
+        )
 
         # change PO from procurement to commission.
-        po.purchase_type = 'commission'
+        po.purchase_type = "commission"
 
         # group_purchase_user: can access commission.
         assert_access_allowed([purchase_user])

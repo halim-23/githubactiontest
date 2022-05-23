@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
-import { patch } from "@web/core/utils/patch";
-import { systrayItem } from "@web/webclient/switch_company_menu/switch_company_menu";
+import {patch} from "@web/core/utils/patch";
+import {systrayItem} from "@web/webclient/switch_company_menu/switch_company_menu";
 
 /**
  * The company menu in enterprise should be removed if the screen is small
@@ -9,7 +9,7 @@ import { systrayItem } from "@web/webclient/switch_company_menu/switch_company_m
  */
 
 patch(systrayItem, "web_enterprise.CompanyMenuItem", {
-    isDisplayed(env) {
-        return this._super(...arguments) && !env.isSmall;
-    },
+  isDisplayed(env) {
+    return this._super(...arguments) && !env.isSmall;
+  },
 });

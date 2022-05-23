@@ -1,49 +1,70 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, api, fields, _
-from odoo.exceptions import ValidationError, UserError
+import ast
+import logging
+from datetime import date, datetime
+
+import psycopg2
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 from odoo.models import MAGIC_COLUMNS
 from odoo.osv.expression import OR
 from odoo.tools import get_lang
-from odoo.tools.misc import format_datetime, format_date
+from odoo.tools.misc import format_date, format_datetime
 
-from datetime import datetime, date
-import psycopg2
-import ast
-import logging
 _logger = logging.getLogger(__name__)
 
 
 class DataMergeRecord(models.Model):
-    _name = 'data_merge.record'
-    _description = 'Deduplication Record'
-    _order = 'res_id desc'
+    _name = "data_merge.record"
+    _description = "Deduplication Record"
+    _order = "res_id desc"
 
-    active = fields.Boolean(compute='_compute_active', store=True)
-    group_id = fields.Many2one('data_merge.group', string='Record Group', ondelete='cascade', required=True, index=True)
-    model_id = fields.Many2one(related='group_id.model_id', store=True, readonly=True, index=True)
-    res_model_id = fields.Many2one(related='group_id.res_model_id', store=True, readonly=True)
-    res_model_name = fields.Char(related='group_id.res_model_name', store=True, readonly=True)
+    active = fields.Boolean(compute="_compute_active", store=True)
+    group_id = fields.Many2one(
+        "data_merge.group",
+        string="Record Group",
+        ondelete="cascade",
+        required=True,
+        index=True,
+    )
+    model_id = fields.Many2one(
+        related="group_id.model_id", store=True, readonly=True, index=True
+    )
+    res_model_id = fields.Many2one(
+        related="group_id.res_model_id", store=True, readonly=True
+    )
+    res_model_name = fields.Char(
+        related="group_id.res_model_name", store=True, readonly=True
+    )
     is_master = fields.Boolean(default=False)
-    is_deleted = fields.Boolean(compute='_compute_fields')
+    is_deleted = fields.Boolean(compute="_compute_fields")
     is_discarded = fields.Boolean(default=False)
 
     # Original Record
-    name = fields.Char(compute='_compute_fields')
-    res_id = fields.Integer(string='Record ID', readonly=False, group_operator=None, index=True)
-    record_create_date = fields.Datetime(string='Created On', compute='_compute_fields')
-    record_create_uid = fields.Char(string='Created By', compute='_compute_fields')
-    record_write_date = fields.Datetime(string='Updated On', compute='_compute_fields')
-    record_write_uid = fields.Char(string='Updated By', compute='_compute_fields')
+    name = fields.Char(compute="_compute_fields")
+    res_id = fields.Integer(
+        string="Record ID", readonly=False, group_operator=None, index=True
+    )
+    record_create_date = fields.Datetime(string="Created On", compute="_compute_fields")
+    record_create_uid = fields.Char(string="Created By", compute="_compute_fields")
+    record_write_date = fields.Datetime(string="Updated On", compute="_compute_fields")
+    record_write_uid = fields.Char(string="Updated By", compute="_compute_fields")
 
-    differences = fields.Char(string='Differences',
-        help='Differences with the master record', compute='_compute_differences', store=True)
-    field_values = fields.Char(string='Field Values',
-        compute='_compute_field_values')
-    used_in = fields.Char(string='Used In',
-        help='List of other models referencing this record', compute='_compute_usage', store=True)
-
+    differences = fields.Char(
+        string="Differences",
+        help="Differences with the master record",
+        compute="_compute_differences",
+        store=True,
+    )
+    field_values = fields.Char(string="Field Values", compute="_compute_field_values")
+    used_in = fields.Char(
+        string="Used In",
+        help="List of other models referencing this record",
+        compute="_compute_usage",
+        store=True,
+    )
 
     #############
     ### Computes
@@ -55,55 +76,69 @@ class DataMergeRecord(models.Model):
             if isinstance(value, tuple):
                 return value[1]
             if isinstance(value, datetime):
-                return format_datetime(env, value, dt_format='short')
+                return format_datetime(env, value, dt_format="short")
             if isinstance(value, date):
                 return format_date(env, value)
             return value
 
-        IrField = lambda key: self.env['ir.model.fields']._get(self.res_model_name, key)
-        field_description = lambda key: IrField(key)['field_description']
+        IrField = lambda key: self.env["ir.model.fields"]._get(self.res_model_name, key)
+        field_description = lambda key: IrField(key)["field_description"]
 
         # Hide fields with an attr 'groups' defined or from the blacklisted fields
-        hidden_field = lambda key: key in MAGIC_COLUMNS or \
-            self.env[self.res_model_name]._fields[key].groups or \
-            IrField(key)['ttype'] == 'binary'
+        hidden_field = (
+            lambda key: key in MAGIC_COLUMNS
+            or self.env[self.res_model_name]._fields[key].groups
+            or IrField(key)["ttype"] == "binary"
+        )
 
         record = self._original_records()
         if not record:
             return dict()
 
         record_data = record.read(to_read)[0]
-        return {str(field_description(key)):str(format_value(value, self.env)) for key, value in record_data.items() if value and not hidden_field(key)}
+        return {
+            str(field_description(key)): str(format_value(value, self.env))
+            for key, value in record_data.items()
+            if value and not hidden_field(key)
+        }
 
-
-    @api.depends('res_id')
+    @api.depends("res_id")
     def _compute_field_values(self):
         model_fields = {}
         for record in self:
             if record.model_id not in model_fields.keys():
-                model_fields[record.model_id] = record.model_id.rule_ids.mapped('field_id.name')
+                model_fields[record.model_id] = record.model_id.rule_ids.mapped(
+                    "field_id.name"
+                )
             to_read = model_fields[record.model_id]
 
             if not to_read:
-                record.field_values = ''
+                record.field_values = ""
             else:
-                record.field_values = ', '.join([v for k,v in record._render_values(to_read).items()])
+                record.field_values = ", ".join(
+                    [v for k, v in record._render_values(to_read).items()]
+                )
 
-    @api.depends('res_id')
+    @api.depends("res_id")
     def _compute_differences(self):
         model_list_fields = {}
-        for model in list(set(self.mapped('res_model_name'))):
-            view = self.env[model].load_views([(False, 'list')])
-            list_fields = view['fields_views']['list']['fields'].keys()
+        for model in list(set(self.mapped("res_model_name"))):
+            view = self.env[model].load_views([(False, "list")])
+            list_fields = view["fields_views"]["list"]["fields"].keys()
             model_list_fields[model] = list_fields
 
         for record in self:
             list_fields = model_list_fields[record.res_model_name]
-            read_fields = record.group_id.divergent_fields.split(',') & list_fields
-            if read_fields != {''}:
-                record.differences = ', '.join(['%s: %s' % (k, v) for k,v in record._render_values(read_fields).items()])
+            read_fields = record.group_id.divergent_fields.split(",") & list_fields
+            if read_fields != {""}:
+                record.differences = ", ".join(
+                    [
+                        "%s: %s" % (k, v)
+                        for k, v in record._render_values(read_fields).items()
+                    ]
+                )
             else:
-                record.differences = ''
+                record.differences = ""
 
     def _get_references(self):
         """
@@ -116,19 +151,27 @@ class DataMergeRecord(models.Model):
                 - `model name`: "human" name (Contact)
                 - `fields`: list of fields from the model referencing the record
         """
-        res_models = list(set(self.mapped('res_model_name')))
+        res_models = list(set(self.mapped("res_model_name")))
         # Get the relevant fields for each model
-        model_fields = dict.fromkeys(res_models, self.env['ir.model.fields'])
-        all_fields = self.env['ir.model.fields'].sudo().search([
-            ('store', '=', True),
-            ('ttype', 'in', ('one2many', 'many2one', 'many2many')),
-            ('relation', 'in', res_models),
-            ('index', '=', True),
-        ])
+        model_fields = dict.fromkeys(res_models, self.env["ir.model.fields"])
+        all_fields = (
+            self.env["ir.model.fields"]
+            .sudo()
+            .search(
+                [
+                    ("store", "=", True),
+                    ("ttype", "in", ("one2many", "many2one", "many2many")),
+                    ("relation", "in", res_models),
+                    ("index", "=", True),
+                ]
+            )
+        )
         for field in all_fields:
-            if not isinstance(self.env[field.model], models.BaseModel) or \
-                    not self.env[field.model]._auto or \
-                    self.env[field.model]._transient:
+            if (
+                not isinstance(self.env[field.model], models.BaseModel)
+                or not self.env[field.model]._auto
+                or self.env[field.model]._transient
+            ):
                 continue
             model_fields[field.relation] |= field
 
@@ -148,46 +191,55 @@ class DataMergeRecord(models.Model):
             for field in reference_fields:
                 group_model_fields[field.model].append(field.name)
 
-
             for model in group_model_fields:
                 ref_fields = group_model_fields[model]  # fields for the model
-                domain = OR([[(f, 'in', records.mapped('res_id'))] for f in ref_fields])
+                domain = OR([[(f, "in", records.mapped("res_id"))] for f in ref_fields])
                 groupby_field = ref_fields[0]
-                count_grouped = self.env[model].read_group(domain, [groupby_field], [groupby_field])
+                count_grouped = self.env[model].read_group(
+                    domain, [groupby_field], [groupby_field]
+                )
                 for count in count_grouped:
                     if not count[groupby_field]:
                         continue
                     record_id = records_mapped.get(count[groupby_field][0])
                     if not record_id:
                         continue
-                    references[record_id].append((count['%s_count' % groupby_field], model_name[model]))
+                    references[record_id].append(
+                        (count["%s_count" % groupby_field], model_name[model])
+                    )
         return references
 
-    @api.depends('res_id')
+    @api.depends("res_id")
     def _compute_usage(self):
-        if ast.literal_eval(self.env['ir.config_parameter'].sudo().get_param('data_merge.compute_references', 'True')):
+        if ast.literal_eval(
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("data_merge.compute_references", "True")
+        ):
             references = self._get_references()
             for record in self:
                 ref = references[record.id]
-                record.used_in = ', '.join(['%s %s' % (r[0], r[1]) for r in ref])
+                record.used_in = ", ".join(["%s %s" % (r[0], r[1]) for r in ref])
         else:
-            self.used_in = ''
+            self.used_in = ""
 
-    @api.depends('res_id')
+    @api.depends("res_id")
     def _compute_fields(self):
-        existing_records = {r.id:r for r in self._original_records().exists()}
+        existing_records = {r.id: r for r in self._original_records().exists()}
         for record in self:
-            original_record = existing_records.get(record.res_id) or self.env[record.res_model_name]
+            original_record = (
+                existing_records.get(record.res_id) or self.env[record.res_model_name]
+            )
             name = original_record.display_name
 
             record.is_deleted = record.res_id not in existing_records.keys()
-            record.name = name if name else '*Record Deleted*'
+            record.name = name if name else "*Record Deleted*"
             record.record_create_date = original_record.create_date
-            record.record_create_uid = original_record.create_uid.name or '*Deleted*'
+            record.record_create_uid = original_record.create_uid.name or "*Deleted*"
             record.record_write_date = original_record.write_date
-            record.record_write_uid = original_record.write_uid.name or '*Deleted*'
+            record.record_write_uid = original_record.write_uid.name or "*Deleted*"
 
-    @api.depends('is_deleted', 'is_discarded')
+    @api.depends("is_deleted", "is_discarded")
     def _compute_active(self):
         for record in self:
             record.active = not (record.is_deleted or record.is_discarded)
@@ -196,17 +248,19 @@ class DataMergeRecord(models.Model):
         if not self:
             return
 
-        model_name = set(self.mapped('res_model_name')) or {}
+        model_name = set(self.mapped("res_model_name")) or {}
 
         if len(model_name) != 1:
-            raise ValidationError('Records must be of the same model')
+            raise ValidationError("Records must be of the same model")
 
         model = model_name.pop()
-        ids = self.mapped('res_id')
-        return self.env[model].with_context(active_test=False).sudo().browse(ids).exists()
+        ids = self.mapped("res_id")
+        return (
+            self.env[model].with_context(active_test=False).sudo().browse(ids).exists()
+        )
 
     def _record_snapshot(self):
-        """ Snapshot of the original record, to be logged in the chatter when merged """
+        """Snapshot of the original record, to be logged in the chatter when merged"""
         self.ensure_one()
         return self._render_values([])
 
@@ -241,8 +295,8 @@ class DataMergeRecord(models.Model):
             GROUP BY cl1.relname"""
 
         self.flush()
-        self._cr.execute(query, (table, ))
-        return {r[0]:r[1] for r in self._cr.fetchall()}
+        self._cr.execute(query, (table,))
+        return {r[0]: r[1] for r in self._cr.fetchall()}
 
     @api.model
     def _update_foreign_keys(self, destination, source):
@@ -261,13 +315,13 @@ class DataMergeRecord(models.Model):
         for table, columns in references.items():
             for column in columns:
                 query_dict = {
-                    'table': table,
-                    'column': column,
+                    "table": table,
+                    "column": column,
                 }
 
                 # Query to check the number of columns in the referencing table
                 query = """SELECT COUNT(column_name) FROM information_schema.columns WHERE table_name ILIKE %s"""
-                self._cr.execute(query, (table, ))
+                self._cr.execute(query, (table,))
                 column_count = self._cr.fetchone()[0]
 
                 ## Relation table for M2M
@@ -278,16 +332,20 @@ class DataMergeRecord(models.Model):
                         FROM information_schema.columns
                         WHERE
                             table_name LIKE '%s'
-                        AND column_name <> '%s'""" % (table, column)
+                        AND column_name <> '%s'""" % (
+                        table,
+                        column,
+                    )
                     self._cr.execute(query, ())
                     othercol = self._cr.fetchone()[0]
-                    query_dict.update({'othercol': othercol})
+                    query_dict.update({"othercol": othercol})
 
                     for rec_id in source_ids:
                         # This query will filter out existing records
                         # e.g. if the record to merge has tags A, B, C and the master record has tags C, D, E
                         #      we only need to add tags A, B
-                        query = """
+                        query = (
+                            """
                             UPDATE %(table)s o
                             SET %(column)s = %%(destination_id)s            --- master record
                             WHERE %(column)s = %%(record_id)s         --- record to merge
@@ -296,40 +354,50 @@ class DataMergeRecord(models.Model):
                                 FROM %(table)s i
                                 WHERE %(column)s = %%(destination_id)s
                                 AND i.%(othercol)s = o.%(othercol)s
-                            )""" % query_dict
+                            )"""
+                            % query_dict
+                        )
 
                         params = {
-                            'destination_id': destination.id,
-                            'record_id': rec_id,
-                            'othercol': othercol
+                            "destination_id": destination.id,
+                            "record_id": rec_id,
+                            "othercol": othercol,
                         }
                         self._cr.execute(query, params)
                 else:
-                    query = """
+                    query = (
+                        """
                         UPDATE %(table)s o
                         SET %(column)s = %%(destination_id)s            --- master record
                         WHERE %(column)s = %%(record_id)s          --- record to merge
-                    """ % query_dict
+                    """
+                        % query_dict
+                    )
                     for rec_id in source_ids:
                         try:
                             with self._cr.savepoint():
                                 params = {
-                                    'destination_id': destination.id,
-                                    'record_id': rec_id
+                                    "destination_id": destination.id,
+                                    "record_id": rec_id,
                                 }
                                 self._cr.execute(query, params)
                         except psycopg2.IntegrityError as e:
                             # Failed update, probably due to a unique constraint
                             # updating fails, most likely due to a violated unique constraint
                             if psycopg2.errorcodes.UNIQUE_VIOLATION == e.pgcode:
-                                _logger.warning('Query %s failed, due to an unique constraint', query)
+                                _logger.warning(
+                                    "Query %s failed, due to an unique constraint",
+                                    query,
+                                )
                             else:
-                                _logger.warning('Query %s failed', query)
+                                _logger.warning("Query %s failed", query)
                         except psycopg2.Error:
-                            raise ValidationError('Query Failed.')
+                            raise ValidationError("Query Failed.")
 
         self._merge_additional_models(destination, source_ids)
-        fields_to_recompute = [f.name for f in destination._fields.values() if f.compute and f.store]
+        fields_to_recompute = [
+            f.name for f in destination._fields.values() if f.compute and f.store
+        ]
         destination.modified(fields_to_recompute)
         destination.recompute()
         self.invalidate_cache()
@@ -339,26 +407,30 @@ class DataMergeRecord(models.Model):
     def _merge_additional_models(self, destination, source_ids):
         models_to_adapt = [
             {
-                'table': 'ir_attachment',
-                'id_field': 'res_id',
-                'model_field': 'res_model',
-            }, {
-                'table': 'mail_activity',
-                'id_field': 'res_id',
-                'model_field': 'res_model',
-            }, {
-                'table': 'ir_model_data',
-                'id_field': 'res_id',
-                'model_field': 'model',
-            }, {
-                'table': 'mail_message',
-                'id_field': 'res_id',
-                'model_field': 'model',
-            }, {
-                'table': 'mail_followers',
-                'id_field': 'res_id',
-                'model_field': 'res_model',
-            }
+                "table": "ir_attachment",
+                "id_field": "res_id",
+                "model_field": "res_model",
+            },
+            {
+                "table": "mail_activity",
+                "id_field": "res_id",
+                "model_field": "res_model",
+            },
+            {
+                "table": "ir_model_data",
+                "id_field": "res_id",
+                "model_field": "model",
+            },
+            {
+                "table": "mail_message",
+                "id_field": "res_id",
+                "model_field": "model",
+            },
+            {
+                "table": "mail_followers",
+                "id_field": "res_id",
+                "model_field": "res_model",
+            },
         ]
         query = """
             UPDATE %(table)s
@@ -371,38 +443,41 @@ class DataMergeRecord(models.Model):
                 try:
                     with self._cr.savepoint():
                         params = {
-                            'destination_id': destination.id,
-                            'record_id': rec_id,
-                            'model': destination._name
+                            "destination_id": destination.id,
+                            "record_id": rec_id,
+                            "model": destination._name,
                         }
                         self._cr.execute(q, params)
                 except psycopg2.IntegrityError as e:
                     # Failed update, probably due to a unique constraint
                     # updating fails, most likely due to a violated unique constraint
                     if psycopg2.errorcodes.UNIQUE_VIOLATION == e.pgcode:
-                        _logger.warning('Query %s failed, due to an unique constraint', query)
+                        _logger.warning(
+                            "Query %s failed, due to an unique constraint", query
+                        )
                     else:
-                        _logger.warning('Query %s failed', query)
+                        _logger.warning("Query %s failed", query)
                 except psycopg2.Error:
-                    raise ValidationError('Query Failed.')
+                    raise ValidationError("Query Failed.")
 
     #############
     ### Override
     #############
     @api.model
     def create(self, vals):
-        group = self.env['data_merge.group'].browse(vals.get('group_id', 0))
-        record = self.env[group.res_model_name].browse(vals.get('res_id', 0))
+        group = self.env["data_merge.group"].browse(vals.get("group_id", 0))
+        record = self.env[group.res_model_name].browse(vals.get("res_id", 0))
 
         if not record.exists():
-            raise ValidationError('The referenced record does not exist')
+            raise ValidationError("The referenced record does not exist")
         return super(DataMergeRecord, self).create(vals)
 
-
     def write(self, vals):
-        if 'is_master' in vals and vals['is_master']:
-            master = self.with_context(active_test=False).group_id.record_ids.filtered('is_master')
-            master.write({'is_master': False})
+        if "is_master" in vals and vals["is_master"]:
+            master = self.with_context(active_test=False).group_id.record_ids.filtered(
+                "is_master"
+            )
+            master.write({"is_master": False})
 
         return super(DataMergeRecord, self).write(vals)
 
@@ -411,18 +486,15 @@ class DataMergeRecord(models.Model):
     ############
     def open_record(self):
         return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': self.res_model_name,
-            'res_id': self.res_id,
-            'context': {
-                'create': False,
-                'edit': False
-            }
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": self.res_model_name,
+            "res_id": self.res_id,
+            "context": {"create": False, "edit": False},
         }
 
     def action_deduplicates(self, records):
-        """ This action is called when hitting the contextual merge action
+        """This action is called when hitting the contextual merge action
         and redirects the user to the 'Deduplication' view of the data_merge
         module, using the selected contextual data.
         In order to be able to merge the selected records via the existing
@@ -433,72 +505,91 @@ class DataMergeRecord(models.Model):
         :param records: contextual active (or selected) records.
         :return: ir.actions.act_window that redirects to the deduplicate view.
         """
-        MergeRecord = self.env['data_merge.record']
-        MergeModel = self.env['data_merge.model']
-        MergeGroup = self.env['data_merge.group']
+        MergeRecord = self.env["data_merge.record"]
+        MergeModel = self.env["data_merge.model"]
+        MergeGroup = self.env["data_merge.group"]
 
         active_ids = records.ids
         active_model = records._name
 
         if len(active_ids) < 2:
-            translated_desc = records.with_context(lang=get_lang(self.env).code)._description
-            raise UserError(_("You must select at least two %s in order to merge them.") % translated_desc)
+            translated_desc = records.with_context(
+                lang=get_lang(self.env).code
+            )._description
+            raise UserError(
+                _("You must select at least two %s in order to merge them.")
+                % translated_desc
+            )
         if active_model not in self.env:
-            raise ValidationError(_('The target model does not exists.'))
+            raise ValidationError(_("The target model does not exists."))
 
         # prepare action to return
-        view = self.env.ref('data_merge.data_merge_record_view_search_merge_action')
+        view = self.env.ref("data_merge.data_merge_record_view_search_merge_action")
         action = {
-            'name': _('Deduplicate'),
-            'view_mode': 'tree',
-            'res_model': 'data_merge.record',
-            'type': 'ir.actions.act_window',
-            'search_view_id': [view.id, 'search'],
-            'domain': [('res_id', 'in', active_ids), ('res_model_name', '=', active_model)],
-            'context': {'group_by': ['group_id']},
-            'help': '<p class="o_view_nocontent_smiling_face">%s</p>' % _('No duplicates found')
+            "name": _("Deduplicate"),
+            "view_mode": "tree",
+            "res_model": "data_merge.record",
+            "type": "ir.actions.act_window",
+            "search_view_id": [view.id, "search"],
+            "domain": [
+                ("res_id", "in", active_ids),
+                ("res_model_name", "=", active_model),
+            ],
+            "context": {"group_by": ["group_id"]},
+            "help": '<p class="o_view_nocontent_smiling_face">%s</p>'
+            % _("No duplicates found"),
         }
 
         # ensure merge action specific record is created in data_merge.model
-        merge_model = MergeModel.with_context(active_test=False).search([
-            ('res_model_name', '=', active_model),
-            ('is_contextual_merge_action', '=', True)
-        ])
+        merge_model = MergeModel.with_context(active_test=False).search(
+            [
+                ("res_model_name", "=", active_model),
+                ("is_contextual_merge_action", "=", True),
+            ]
+        )
         if not merge_model:
-            model_name = self.env['ir.model']._get(active_model).with_context(lang=self.env.user.lang).display_name
-            merge_model = MergeModel.create({
-                'name': _("Manual Selection - %s", model_name),
-                'res_model_id': self.env['ir.model']._get(active_model).id,
-                'active': False,
-                'is_contextual_merge_action': True,
-            })
+            model_name = (
+                self.env["ir.model"]
+                ._get(active_model)
+                .with_context(lang=self.env.user.lang)
+                .display_name
+            )
+            merge_model = MergeModel.create(
+                {
+                    "name": _("Manual Selection - %s", model_name),
+                    "res_model_id": self.env["ir.model"]._get(active_model).id,
+                    "active": False,
+                    "is_contextual_merge_action": True,
+                }
+            )
 
         # creates a new group to put every selected records inside it.
-        merge_group = MergeGroup.create({'model_id': merge_model.id})
+        merge_group = MergeGroup.create({"model_id": merge_model.id})
 
         # get records from data_merge.records model related to active records
-        results = MergeRecord.search_read([
-            ('res_id', 'in', active_ids),
-            ('res_model_name', '=', active_model)
-        ], fields=['res_id'])
-        existing_records = {result['res_id']: result['id'] for result in results}
+        results = MergeRecord.search_read(
+            [("res_id", "in", active_ids), ("res_model_name", "=", active_model)],
+            fields=["res_id"],
+        )
+        existing_records = {result["res_id"]: result["id"] for result in results}
 
         records_to_create = []
         records_to_update = []
         for record in records:
             if record.id not in existing_records.keys():
-                records_to_create.append({
-                    'res_id': record.id,
-                    'model_id': merge_model.id,
-                    'group_id': merge_group.id
-                })
+                records_to_create.append(
+                    {
+                        "res_id": record.id,
+                        "model_id": merge_model.id,
+                        "group_id": merge_group.id,
+                    }
+                )
             else:
                 records_to_update.append(existing_records[record.id])
 
-        MergeRecord.browse(records_to_update).write({
-            'group_id': merge_group.id,
-            'is_master': False
-        })
+        MergeRecord.browse(records_to_update).write(
+            {"group_id": merge_group.id, "is_master": False}
+        )
         MergeRecord.create(records_to_create)
 
         return action

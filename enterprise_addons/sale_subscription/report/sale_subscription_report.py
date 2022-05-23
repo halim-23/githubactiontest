@@ -1,5 +1,4 @@
-from odoo import tools
-from odoo import api, fields, models
+from odoo import fields, models, tools
 
 
 class sale_subscription_report(models.Model):
@@ -8,37 +7,49 @@ class sale_subscription_report(models.Model):
     _auto = False
 
     name = fields.Char()
-    date_start = fields.Date('Start Date', readonly=True)
-    date_end = fields.Date('End Date', readonly=True)
-    product_id = fields.Many2one('product.product', 'Product', readonly=True)
-    product_uom = fields.Many2one('uom.uom', 'Unit of Measure', readonly=True)
-    recurring_monthly = fields.Float('Monthly Recurring Revenue', readonly=True)
-    recurring_yearly = fields.Float('Yearly Recurring Revenue', readonly=True)
-    recurring_total = fields.Float('Recurring Price', readonly=True)
-    quantity = fields.Float('Quantity', readonly=True)
-    partner_id = fields.Many2one('res.partner', 'Customer', readonly=True)
-    user_id = fields.Many2one('res.users', 'Salesperson', readonly=True)
-    team_id = fields.Many2one('crm.team', 'Sales Team', readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    categ_id = fields.Many2one('product.category', 'Product Category', readonly=True)
-    pricelist_id = fields.Many2one('product.pricelist', 'Pricelist', readonly=True)
-    template_id = fields.Many2one('sale.subscription.template', 'Subscription Template', readonly=True)
-    product_tmpl_id = fields.Many2one('product.template', 'Product Template', readonly=True)
-    country_id = fields.Many2one('res.country', 'Country', readonly=True)
-    commercial_partner_id = fields.Many2one('res.partner', 'Customer Company', readonly=True)
-    industry_id = fields.Many2one('res.partner.industry', 'Industry', readonly=True)
-    analytic_account_id = fields.Many2one('account.analytic.account', 'Analytic Account', readonly=True)
-    close_reason_id = fields.Many2one('sale.subscription.close.reason', 'Close Reason', readonly=True)
-    to_renew = fields.Boolean('To Renew', readonly=True)
-    stage_category = fields.Selection([
-        ('draft', 'Draft'),
-        ('progress', 'In Progress'),
-        ('closed', 'Closed')], readonly=True, help="Category of the stage")
-    health = fields.Selection([
-        ('normal', 'Neutral'),
-        ('done', 'Good'),
-        ('bad', 'Bad')], string="Health", readonly=True)
-    stage_id = fields.Many2one('sale.subscription.stage', string='Stage', readonly=True)
+    date_start = fields.Date("Start Date", readonly=True)
+    date_end = fields.Date("End Date", readonly=True)
+    product_id = fields.Many2one("product.product", "Product", readonly=True)
+    product_uom = fields.Many2one("uom.uom", "Unit of Measure", readonly=True)
+    recurring_monthly = fields.Float("Monthly Recurring Revenue", readonly=True)
+    recurring_yearly = fields.Float("Yearly Recurring Revenue", readonly=True)
+    recurring_total = fields.Float("Recurring Price", readonly=True)
+    quantity = fields.Float("Quantity", readonly=True)
+    partner_id = fields.Many2one("res.partner", "Customer", readonly=True)
+    user_id = fields.Many2one("res.users", "Salesperson", readonly=True)
+    team_id = fields.Many2one("crm.team", "Sales Team", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    categ_id = fields.Many2one("product.category", "Product Category", readonly=True)
+    pricelist_id = fields.Many2one("product.pricelist", "Pricelist", readonly=True)
+    template_id = fields.Many2one(
+        "sale.subscription.template", "Subscription Template", readonly=True
+    )
+    product_tmpl_id = fields.Many2one(
+        "product.template", "Product Template", readonly=True
+    )
+    country_id = fields.Many2one("res.country", "Country", readonly=True)
+    commercial_partner_id = fields.Many2one(
+        "res.partner", "Customer Company", readonly=True
+    )
+    industry_id = fields.Many2one("res.partner.industry", "Industry", readonly=True)
+    analytic_account_id = fields.Many2one(
+        "account.analytic.account", "Analytic Account", readonly=True
+    )
+    close_reason_id = fields.Many2one(
+        "sale.subscription.close.reason", "Close Reason", readonly=True
+    )
+    to_renew = fields.Boolean("To Renew", readonly=True)
+    stage_category = fields.Selection(
+        [("draft", "Draft"), ("progress", "In Progress"), ("closed", "Closed")],
+        readonly=True,
+        help="Category of the stage",
+    )
+    health = fields.Selection(
+        [("normal", "Neutral"), ("done", "Good"), ("bad", "Bad")],
+        string="Health",
+        readonly=True,
+    )
+    stage_id = fields.Many2one("sale.subscription.stage", string="Stage", readonly=True)
 
     def _select(self):
         select_str = """
@@ -123,8 +134,11 @@ class sale_subscription_report(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
             %s
             FROM ( %s )
             %s
-            )""" % (self._table, self._select(), self._from(), self._group_by()))
+            )"""
+            % (self._table, self._select(), self._from(), self._group_by())
+        )

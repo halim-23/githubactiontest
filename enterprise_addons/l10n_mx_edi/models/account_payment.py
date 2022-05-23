@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-from odoo import models, fields
+from odoo import fields, models
 
 
 class AccountPayment(models.Model):
-    _inherit = 'account.payment'
+    _inherit = "account.payment"
 
-    l10n_mx_edi_force_generate_cfdi = fields.Boolean(string='Generate CFDI')
+    l10n_mx_edi_force_generate_cfdi = fields.Boolean(string="Generate CFDI")
 
     def l10n_mx_edi_update_sat_status(self):
         return self.move_id.l10n_mx_edi_update_sat_status()

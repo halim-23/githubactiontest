@@ -1,20 +1,23 @@
-# -*- coding: utf-8 -*-
+from odoo.tests import tagged
 
 from .common import TestMXDeliveryGuideCommon
 
-from odoo.tests import tagged
 
-@tagged('external_l10n', 'post_install', '-at_install', '-standard', 'external')
+@tagged("external_l10n", "post_install", "-at_install", "-standard", "external")
 class TestSendMXDeliveryGuide(TestMXDeliveryGuideCommon):
     def test_send_delivery_guide(self):
         self.picking.l10n_mx_edi_action_send_delivery_guide()
         self.assertFalse(self.picking.l10n_mx_edi_error)
-        self.assertEqual(self.picking.l10n_mx_edi_status, 'sent')
+        self.assertEqual(self.picking.l10n_mx_edi_status, "sent")
 
         # Test a portion of the PDF content here since the report is only available once the XML is sent
-        delivery_report = self.env['ir.actions.report'].search([('report_name','=','stock.report_deliveryslip')], limit=1)
-        pdf_content = self.get_xml_tree_from_string(delivery_report._render_qweb_pdf(self.picking.id)[0])
-        expected_table_in_pdf = '''
+        delivery_report = self.env["ir.actions.report"].search(
+            [("report_name", "=", "stock.report_deliveryslip")], limit=1
+        )
+        pdf_content = self.get_xml_tree_from_string(
+            delivery_report._render_qweb_pdf(self.picking.id)[0]
+        )
+        expected_table_in_pdf = """
             <table class="table table-sm mt48" name="stock_move_line_table">
                 <thead>
                     <tr>
@@ -52,11 +55,12 @@ class TestSendMXDeliveryGuide(TestMXDeliveryGuideCommon):
                     </tr>
                 </tbody>
             </table>
-        '''
+        """
         expected_etree = self.get_xml_tree_from_string(expected_table_in_pdf)
-        self.assertXmlTreeEqual(pdf_content.xpath('//table')[0], expected_etree)
+        self.assertXmlTreeEqual(pdf_content.xpath("//table")[0], expected_etree)
 
-@tagged('external_l10n', 'post_install', '-at_install', '-standard', 'external')
+
+@tagged("external_l10n", "post_install", "-at_install", "-standard", "external")
 class TestMXDeliveryGuideXSD(TestMXDeliveryGuideCommon):
     def test_xsd_delivery_guide(self):
         cfdi = self.picking._l10n_mx_edi_create_delivery_guide()

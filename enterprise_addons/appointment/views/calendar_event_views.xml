@@ -1,13 +1,13 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
 
     <record id="calendar_event_view_form_inherit_appointment" model="ir.ui.view">
         <field name="name">calendar.event.form</field>
         <field name="model">calendar.event</field>
-        <field name="inherit_id" ref="calendar.view_calendar_event_form"/>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-                <field name="appointment_type_id" groups="base.group_no_one"/>
+                <field name="appointment_type_id" groups="base.group_no_one" />
             </xpath>
         </field>
     </record>
@@ -15,13 +15,17 @@
     <record id="calendar_event_view_search_inherit_appointment" model="ir.ui.view">
         <field name="name">calendar.event.search.inherit.appointment</field>
         <field name="model">calendar.event</field>
-        <field name="inherit_id" ref="calendar.view_calendar_event_search"/>
+        <field name="inherit_id" ref="calendar.view_calendar_event_search" />
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='inactive']" position="before">
-                <separator/>
-                <filter string="Online Appointments" domain="[('appointment_type_id', '!=', False)]" name="online"/>
-                <separator/>
-                <field name="appointment_type_id"/>
+                <separator />
+                <filter
+          string="Online Appointments"
+          domain="[('appointment_type_id', '!=', False)]"
+          name="online"
+        />
+                <separator />
+                <field name="appointment_type_id" />
             </xpath>
         </field>
     </record>
@@ -32,8 +36,8 @@
         <field name="model">calendar.event</field>
         <field name="arch" type="xml">
             <graph string="Appointments" sample="1">
-                <field name="start"/>
-                <field name="res_id" invisible="1"/>
+                <field name="start" />
+                <field name="res_id" invisible="1" />
             </graph>
         </field>
     </record>
@@ -43,8 +47,8 @@
         <field name="model">calendar.event</field>
         <field name="arch" type="xml">
             <pivot string="Appointments" display_quantity="1" sample="1">
-                <field name="start" type="row"/>
-                <field name="res_id"/>
+                <field name="start" type="row" />
+                <field name="res_id" />
             </pivot>
         </field>
     </record>

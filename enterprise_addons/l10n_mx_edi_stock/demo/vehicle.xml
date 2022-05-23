@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="mx_edi_trailer" model="l10n_mx_edi.trailer">
         <field name="name">T12314</field>
@@ -7,7 +7,7 @@
 
     <record id="mx_edi_figure_1" model="l10n_mx_edi.figure">
         <field name="type">01</field>
-        <field name="operator_id" ref="partner_mx_transporte_operador"/>
+        <field name="operator_id" ref="partner_mx_transporte_operador" />
     </record>
 
     <record id="mx_edi_vehicle" model="l10n_mx_edi.vehicle">
@@ -18,7 +18,7 @@
         <field name="vehicle_model">2020</field>
         <field name="vehicle_config">VL</field>
         <field name="vehicle_licence">ABC123</field>
-        <field name="figure_ids" eval="[(6,0,[ref('mx_edi_figure_1')])]"/>
-        <field name="trailer_ids" eval="[(6,0,[ref('mx_edi_trailer')])]"/>
+        <field name="figure_ids" eval="[(6,0,[ref('mx_edi_figure_1')])]" />
+        <field name="trailer_ids" eval="[(6,0,[ref('mx_edi_trailer')])]" />
     </record>
 </odoo>

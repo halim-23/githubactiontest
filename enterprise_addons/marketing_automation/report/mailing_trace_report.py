@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, tools
+from odoo import models
 
 
 class MailingTraceReport(models.Model):
-    _inherit = 'mailing.trace.report'
+    _inherit = "mailing.trace.report"
 
     def _report_get_request_where_items(self):
         res = super(MailingTraceReport, self)._report_get_request_where_items()

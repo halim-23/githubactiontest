@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 # Copyright (c) 2015 WT-IO-IT GmbH (https://www.wt-io-it.at)
@@ -6,14 +5,14 @@
 
 {
     "name": "Austria - Accounting Reports",
-    'icon': '/l10n_at/static/description/icon.png',
+    "icon": "/l10n_at/static/description/icon.png",
     "version": "2.0",
     "author": "WT-IO-IT GmbH, Wolfgang Taferner",
     "website": "https://www.wt-io-it.at",
-    "license": 'OEEL-1',
+    "license": "OEEL-1",
     "category": "Accounting/Localizations/Reporting",
-    'summary': "Austrian Financial Reports",
-    'description': """
+    "summary": "Austrian Financial Reports",
+    "description": """
 
 Accounting reports for Austria.
 ================================
@@ -24,14 +23,14 @@ Accounting reports for Austria.
 
     """,
     "depends": [
-        'l10n_at',
-        'account_reports',
-        'account_accountant',
+        "l10n_at",
+        "account_reports",
+        "account_accountant",
     ],
     "data": [
-        'data/account_financial_html_report_balance.xml',
-        'data/account_financial_html_report_profit_loss.xml',
+        "data/account_financial_html_report_balance.xml",
+        "data/account_financial_html_report_profit_loss.xml",
     ],
-    'installable': True,
-    'auto_install': True,
+    "installable": True,
+    "auto_install": True,
 }

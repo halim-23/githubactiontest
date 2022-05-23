@@ -1,32 +1,42 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-import requests
 from urllib.parse import quote
+
+import requests
 from werkzeug.urls import url_join
 
-from odoo import models, fields, tools, _
+from odoo import _, fields, models, tools
 from odoo.exceptions import UserError
 
 
 class SocialLivePostLinkedin(models.Model):
-    _inherit = 'social.live.post'
+    _inherit = "social.live.post"
 
-    linkedin_post_id = fields.Char('Actual LinkedIn ID of the post')
+    linkedin_post_id = fields.Char("Actual LinkedIn ID of the post")
 
     def _refresh_statistics(self):
         super(SocialLivePostLinkedin, self)._refresh_statistics()
-        accounts = self.env['social.account'].search([('media_type', '=', 'linkedin')])
+        accounts = self.env["social.account"].search([("media_type", "=", "linkedin")])
 
         for account in accounts:
-            linkedin_post_ids = self.env['social.live.post'].sudo().search(
-                [('account_id', '=', account.id), ('linkedin_post_id', '!=', False)],
-                order='create_date DESC', limit=1000
+            linkedin_post_ids = (
+                self.env["social.live.post"]
+                .sudo()
+                .search(
+                    [
+                        ("account_id", "=", account.id),
+                        ("linkedin_post_id", "!=", False),
+                    ],
+                    order="create_date DESC",
+                    limit=1000,
+                )
             )
             if not linkedin_post_ids:
                 continue
 
-            linkedin_post_ids = {post.linkedin_post_id: post for post in linkedin_post_ids}
+            linkedin_post_ids = {
+                post.linkedin_post_id: post for post in linkedin_post_ids
+            }
 
             session = requests.Session()
 
@@ -35,43 +45,58 @@ class SocialLivePostLinkedin(models.Model):
             # So we keep a big margin and we split over 50 LinkedIn posts
             for batch_linkedin_post_ids in tools.split_every(50, linkedin_post_ids):
                 endpoint = url_join(
-                    self.env['social.media']._LINKEDIN_ENDPOINT,
-                    'organizationalEntityShareStatistics?shares=List(%s)' % ','.join(map(quote, batch_linkedin_post_ids)))
+                    self.env["social.media"]._LINKEDIN_ENDPOINT,
+                    "organizationalEntityShareStatistics?shares=List(%s)"
+                    % ",".join(map(quote, batch_linkedin_post_ids)),
+                )
 
                 response = session.get(
-                    endpoint, params={'q': 'organizationalEntity', 'organizationalEntity': account.linkedin_account_urn, 'count': 50},
-                    headers=account._linkedin_bearer_headers(), timeout=10)
+                    endpoint,
+                    params={
+                        "q": "organizationalEntity",
+                        "organizationalEntity": account.linkedin_account_urn,
+                        "count": 50,
+                    },
+                    headers=account._linkedin_bearer_headers(),
+                    timeout=10,
+                )
 
-                if response.status_code != 200 or 'elements' not in response.json():
+                if response.status_code != 200 or "elements" not in response.json():
                     account.sudo().is_media_disconnected = True
                     break
 
-                for stats in response.json()['elements']:
-                    urn = stats.get('share')
-                    stats = stats.get('totalShareStatistics')
+                for stats in response.json()["elements"]:
+                    urn = stats.get("share")
+                    stats = stats.get("totalShareStatistics")
 
                     if not urn or not stats or urn not in batch_linkedin_post_ids:
                         continue
 
-                    linkedin_post_ids[urn].update({
-                        'engagement': stats.get('likeCount', 0) + stats.get('commentCount', 0) + stats.get('shareCount', 0)
-                    })
+                    linkedin_post_ids[urn].update(
+                        {
+                            "engagement": stats.get("likeCount", 0)
+                            + stats.get("commentCount", 0)
+                            + stats.get("shareCount", 0)
+                        }
+                    )
 
     def _post(self):
-        linkedin_live_posts = self.filtered(lambda post: post.account_id.media_type == 'linkedin')
+        linkedin_live_posts = self.filtered(
+            lambda post: post.account_id.media_type == "linkedin"
+        )
         super(SocialLivePostLinkedin, (self - linkedin_live_posts))._post()
 
         linkedin_live_posts._post_linkedin()
 
     def _post_linkedin(self):
         for live_post in self:
-            url_in_message = self.env['social.post']._extract_url_from_message(live_post.message)
+            url_in_message = self.env["social.post"]._extract_url_from_message(
+                live_post.message
+            )
 
             share_content = {
-                "shareCommentary": {
-                    "text": live_post.message
-                },
-                "shareMediaCategory": "NONE"
+                "shareCommentary": {"text": live_post.message},
+                "shareMediaCategory": "NONE",
             }
 
             if live_post.post_id.image_ids:
@@ -81,57 +106,53 @@ class SocialLivePostLinkedin(models.Model):
                         for image_id in live_post.post_id.image_ids
                     ]
                 except UserError as e:
-                    live_post.write({
-                        'state': 'failed',
-                        'failure_reason': e.name
-                    })
+                    live_post.write({"state": "failed", "failure_reason": e.name})
                     continue
 
-                share_content.update({
-                    "shareMediaCategory": "IMAGE",
-                    "media": [{
-                        "status": "READY",
-                        "media": image_urn
-                    } for image_urn in images_urn]
-                })
+                share_content.update(
+                    {
+                        "shareMediaCategory": "IMAGE",
+                        "media": [
+                            {"status": "READY", "media": image_urn}
+                            for image_urn in images_urn
+                        ],
+                    }
+                )
             elif url_in_message:
-                share_content.update({
-                    "shareMediaCategory": "ARTICLE",
-                    "media": [{
-                        "status": "READY",
-                        "originalUrl": url_in_message
-                    }]
-                })
+                share_content.update(
+                    {
+                        "shareMediaCategory": "ARTICLE",
+                        "media": [{"status": "READY", "originalUrl": url_in_message}],
+                    }
+                )
 
             data = {
                 "author": live_post.account_id.linkedin_account_urn,
                 "lifecycleState": "PUBLISHED",
-                "specificContent": {
-                    "com.linkedin.ugc.ShareContent": share_content
-                },
-                "visibility": {
-                    "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
-                }
+                "specificContent": {"com.linkedin.ugc.ShareContent": share_content},
+                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
             }
 
             response = requests.post(
-                url_join(self.env['social.media']._LINKEDIN_ENDPOINT, 'ugcPosts'),
+                url_join(self.env["social.media"]._LINKEDIN_ENDPOINT, "ugcPosts"),
                 headers=live_post.account_id._linkedin_bearer_headers(),
-                json=data, timeout=5).json()
+                json=data,
+                timeout=5,
+            ).json()
 
-            response_id = response.get('id')
+            response_id = response.get("id")
             values = {
-                'state': 'posted' if response_id else 'failed',
-                'failure_reason': False
+                "state": "posted" if response_id else "failed",
+                "failure_reason": False,
             }
             if response_id:
-                values['linkedin_post_id'] = response_id
+                values["linkedin_post_id"] = response_id
             else:
-                values['failure_reason'] = response.get('message', 'unknown')
+                values["failure_reason"] = response.get("message", "unknown")
 
-            if response.get('serviceErrorCode') == 65600:
+            if response.get("serviceErrorCode") == 65600:
                 # Invalid access token
-                self.account_id.write({'is_media_disconnected': True})
+                self.account_id.write({"is_media_disconnected": True})
 
             live_post.write(values)
 
@@ -139,39 +160,54 @@ class SocialLivePostLinkedin(models.Model):
         # 1 - Register your image to be uploaded
         data = {
             "registerUploadRequest": {
-                "recipes": [
-                    "urn:li:digitalmediaRecipe:feedshare-image"
-                ],
+                "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
                 "owner": account_id.linkedin_account_urn,
                 "serviceRelationships": [
                     {
                         "relationshipType": "OWNER",
-                        "identifier": "urn:li:userGeneratedContent"
+                        "identifier": "urn:li:userGeneratedContent",
                     }
-                ]
+                ],
             }
         }
 
         response = requests.post(
-                url_join(self.env['social.media']._LINKEDIN_ENDPOINT, 'assets?action=registerUpload'),
-                headers=account_id._linkedin_bearer_headers(),
-                json=data, timeout=5).json()
+            url_join(
+                self.env["social.media"]._LINKEDIN_ENDPOINT,
+                "assets?action=registerUpload",
+            ),
+            headers=account_id._linkedin_bearer_headers(),
+            json=data,
+            timeout=5,
+        ).json()
 
-        if 'value' not in response or 'asset' not in response['value']:
-            raise UserError(_("We could not upload your image, try reducing its size and posting it again (error: Failed during upload registering)."))
+        if "value" not in response or "asset" not in response["value"]:
+            raise UserError(
+                _(
+                    "We could not upload your image, try reducing its size and posting it again (error: Failed during upload registering)."
+                )
+            )
 
         # 2 - Upload image binary file
-        upload_url = response['value']['uploadMechanism']['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest']['uploadUrl']
-        image_urn = response['value']['asset']
+        upload_url = response["value"]["uploadMechanism"][
+            "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"
+        ]["uploadUrl"]
+        image_urn = response["value"]["asset"]
 
         data = image_id.with_context(bin_size=False).raw
 
         headers = account_id._linkedin_bearer_headers()
-        headers['Content-Type'] = 'application/octet-stream'
+        headers["Content-Type"] = "application/octet-stream"
 
-        response = requests.request('POST', upload_url, data=data, headers=headers, timeout=15)
+        response = requests.request(
+            "POST", upload_url, data=data, headers=headers, timeout=15
+        )
 
         if response.status_code != 201:
-            raise UserError(_("We could not upload your image, try reducing its size and posting it again."))
+            raise UserError(
+                _(
+                    "We could not upload your image, try reducing its size and posting it again."
+                )
+            )
 
         return image_urn

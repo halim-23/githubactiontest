@@ -1,9 +1,9 @@
 /** @odoo-module */
 
 import FavoriteMenu from "web.FavoriteMenu";
-import { useModel } from "web.Model";
+import {useModel} from "web.Model";
 
-const { Component } = owl;
+const {Component} = owl;
 
 /**
  * Insert list view in spreadsheet menu
@@ -11,38 +11,38 @@ const { Component } = owl;
  * This component is used to insert a list view in a spreadsheet
  */
 export class InsertListSpreadsheetMenu extends Component {
-    constructor() {
-        super(...arguments);
-        this.model = useModel("searchModel");
-    }
+  constructor() {
+    super(...arguments);
+    this.model = useModel("searchModel");
+  }
 
-    //---------------------------------------------------------------------
-    // Handlers
-    //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  // Handlers
+  //---------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    _onClick() {
-        this.model.trigger("insert-list-spreadsheet");
-    }
+  /**
+   * @private
+   */
+  _onClick() {
+    this.model.trigger("insert-list-spreadsheet");
+  }
 
-    //---------------------------------------------------------------------
-    // Static
-    //---------------------------------------------------------------------
+  //---------------------------------------------------------------------
+  // Static
+  //---------------------------------------------------------------------
 
-    /**
-     * @param {Object} env
-     * @returns {boolean}
-     */
-    static shouldBeDisplayed(env) {
-        return (
-            env.view &&
-            env.view.type === "list" &&
-            env.action.type === "ir.actions.act_window" &&
-            !env.device.isMobile
-        );
-    }
+  /**
+   * @param {Object} env
+   * @returns {boolean}
+   */
+  static shouldBeDisplayed(env) {
+    return (
+      env.view &&
+      env.view.type === "list" &&
+      env.action.type === "ir.actions.act_window" &&
+      !env.device.isMobile
+    );
+  }
 }
 
 InsertListSpreadsheetMenu.props = {};

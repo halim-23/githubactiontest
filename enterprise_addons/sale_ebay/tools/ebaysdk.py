@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 # This file override the method/class coming from the ebaysdk package that
@@ -6,12 +5,13 @@
 # In order to make it work, we need to override the problematic function and
 # class that uses `basestring` and sometimes encode a dict
 
-import uuid
 import sys
+import uuid
 
-from ebaysdk.trading import Connection
 from ebaysdk import UserAgent
+from ebaysdk.trading import Connection
 from requests import Request
+
 
 def smart_encode_request_data(value):
     try:
@@ -19,8 +19,8 @@ def smart_encode_request_data(value):
             return value
 
         # Odoo: This line got fixed
-        if isinstance(value,str):
-            return value.encode('utf-8')
+        if isinstance(value, str):
+            return value.encode("utf-8")
         else:
             return value
 
@@ -37,8 +37,9 @@ class Trading(Connection):
         url = self.build_request_url(verb)
 
         headers = self.build_request_headers(verb)
-        headers.update({'User-Agent': UserAgent,
-                        'X-EBAY-SDK-REQUEST-ID': str(self._request_id)})
+        headers.update(
+            {"User-Agent": UserAgent, "X-EBAY-SDK-REQUEST-ID": str(self._request_id)}
+        )
 
         # if we are adding files, we ensure there is no Content-Type header already defined
         # otherwise Request will use the existing one which is likely not to be multipart/form-data
@@ -46,16 +47,17 @@ class Trading(Connection):
 
         requestData = self.build_request_data(verb, data, verb_attrs)
         if files:
-            del(headers['Content-Type'])
+            del headers["Content-Type"]
             # Odoo: This line got fixed
             if isinstance(requestData, str):  # pylint: disable-msg=E0602
-                requestData = {'XMLPayload': requestData}
+                requestData = {"XMLPayload": requestData}
 
-        request = Request(self.method,
-                          url,
-                          data=smart_encode_request_data(requestData),
-                          headers=headers,
-                          files=files,
-                          )
+        request = Request(
+            self.method,
+            url,
+            data=smart_encode_request_data(requestData),
+            headers=headers,
+            files=files,
+        )
 
         self.request = request.prepare()

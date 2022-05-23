@@ -1,13 +1,15 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import os
 from unittest import skipIf
 
-from odoo.tests.common import tagged, TransactionCase
+from odoo.tests.common import TransactionCase, tagged
 
 
 @tagged("external")
-@skipIf(not os.getenv("TAXCLOUD_LOGIN_ID" or not os.getenv("TAXCLOUD_API_KEY")), "no taxcloud credentials")
+@skipIf(
+    not os.getenv("TAXCLOUD_LOGIN_ID" or not os.getenv("TAXCLOUD_API_KEY")),
+    "no taxcloud credentials",
+)
 class TestAccountTaxcloudCommon(TransactionCase):
     @classmethod
     def setUpClass(cls):
@@ -82,7 +84,7 @@ class TestAccountTaxcloudCommon(TransactionCase):
         )
 
         # Set invoice policies to ordered, so the products can be invoiced without having to deal with the delivery
-        cls.product.product_tmpl_id.invoice_policy = 'order'
-        cls.product_1.product_tmpl_id.invoice_policy = 'order'
+        cls.product.product_tmpl_id.invoice_policy = "order"
+        cls.product_1.product_tmpl_id.invoice_policy = "order"
 
         return res

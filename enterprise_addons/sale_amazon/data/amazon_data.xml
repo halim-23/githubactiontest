@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo noupdate="1">
 
     <!-- Supported Amazon marketplaces -->
@@ -82,7 +82,9 @@
         <field name="purchase_ok">False</field>
     </record>
     <function model="product.product" name="_configure_for_amazon">
-        <value eval="[ref('sale_amazon.default_product'), ref('sale_amazon.shipping_product')]"/>
+        <value
+      eval="[ref('sale_amazon.default_product'), ref('sale_amazon.shipping_product')]"
+    />
     </function>
 
     <!-- IAP Proxy Endpoint -->

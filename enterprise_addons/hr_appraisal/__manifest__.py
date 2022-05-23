@@ -1,15 +1,14 @@
-# -*- encoding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'Appraisals',
-    'version': '1.1',
-    'category': 'Human Resources/Appraisals',
-    'sequence': 180,
-    'summary': 'Assess your employees',
-    'website': 'https://www.odoo.com/app/appraisal',
-    'depends': ['hr', 'calendar', 'web_gantt'],
-    'description': """
+    "name": "Appraisals",
+    "version": "1.1",
+    "category": "Human Resources/Appraisals",
+    "sequence": 180,
+    "summary": "Assess your employees",
+    "website": "https://www.odoo.com/app/appraisal",
+    "depends": ["hr", "calendar", "web_gantt"],
+    "description": """
 Periodical Employees appraisal
 ==============================
 
@@ -27,32 +26,32 @@ Key Features
 * Meeting Requests are created manually according to employees appraisals.
 """,
     "data": [
-        'security/hr_appraisal_security.xml',
-        'security/ir.model.access.csv',
-        'wizard/request_appraisal_views.xml',
-        'views/hr_appraisal_views.xml',
-        'views/hr_appraisal_goal_views.xml',
-        'views/hr_appraisal_note_views.xml',
-        'report/hr_appraisal_report_views.xml',
-        'views/hr_department_views.xml',
-        'views/res_config_settings_view.xml',
-        'views/res_users_views.xml',
-        'views/hr_employee_views.xml',
-        'views/hr_employee_public_views.xml',
-        'data/hr_appraisal_data.xml',
-        'data/mail_template_data.xml',
-        'wizard/hr_departure_wizard_views.xml',
+        "security/hr_appraisal_security.xml",
+        "security/ir.model.access.csv",
+        "wizard/request_appraisal_views.xml",
+        "views/hr_appraisal_views.xml",
+        "views/hr_appraisal_goal_views.xml",
+        "views/hr_appraisal_note_views.xml",
+        "report/hr_appraisal_report_views.xml",
+        "views/hr_department_views.xml",
+        "views/res_config_settings_view.xml",
+        "views/res_users_views.xml",
+        "views/hr_employee_views.xml",
+        "views/hr_employee_public_views.xml",
+        "data/hr_appraisal_data.xml",
+        "data/mail_template_data.xml",
+        "wizard/hr_departure_wizard_views.xml",
     ],
     "demo": [
         "data/hr_appraisal_demo.xml",
     ],
-    'installable': True,
-    'application': True,
-    'license': 'OEEL-1',
-    'post_init_hook': '_generate_assessment_note_ids',
-    'assets': {
-        'web.assets_backend': [
-            'hr_appraisal/static/src/**/*',
+    "installable": True,
+    "application": True,
+    "license": "OEEL-1",
+    "post_init_hook": "_generate_assessment_note_ids",
+    "assets": {
+        "web.assets_backend": [
+            "hr_appraisal/static/src/**/*",
         ],
-    }
+    },
 }

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
@@ -12,5 +11,5 @@ class DepartureReason(models.Model):
     def _get_default_departure_reasons(self):
         return {
             **super()._get_default_departure_reasons(),
-            'freelance': self.env.ref('l10n_be_hr_payroll.departure_freelance', False),
+            "freelance": self.env.ref("l10n_be_hr_payroll.departure_freelance", False),
         }

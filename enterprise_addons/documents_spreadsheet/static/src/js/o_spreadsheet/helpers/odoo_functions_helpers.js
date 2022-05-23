@@ -2,7 +2,7 @@
 
 import spreadsheet from "../o_spreadsheet_loader";
 
-const { parse } = spreadsheet;
+const {parse} = spreadsheet;
 
 /**
  * @typedef {Object} OdooFunctionDescription
@@ -20,7 +20,7 @@ const { parse } = spreadsheet;
  * @returns {OdooFunctionDescription|undefined}
  */
 export function getFirstPivotFunction(formula) {
-    return _getOdooFunctions(formula).find((fn) => fn.isPivot);
+  return _getOdooFunctions(formula).find((fn) => fn.isPivot);
 }
 
 /**
@@ -31,7 +31,7 @@ export function getFirstPivotFunction(formula) {
  * @returns {OdooFunctionDescription|undefined}
  */
 export function getFirstListFunction(formula) {
-    return _getOdooFunctions(formula).find((fn) => fn.isList);
+  return _getOdooFunctions(formula).find((fn) => fn.isList);
 }
 
 /**
@@ -43,7 +43,7 @@ export function getFirstListFunction(formula) {
  * @returns {number}
  */
 export function getNumberOfPivotFormulas(formula) {
-    return _getOdooFunctions(formula).filter((fn) => fn.isPivot).length;
+  return _getOdooFunctions(formula).filter((fn) => fn.isPivot).length;
 }
 
 /**
@@ -55,7 +55,7 @@ export function getNumberOfPivotFormulas(formula) {
  * @returns {number}
  */
 export function getNumberOfListFormulas(formula) {
-    return _getOdooFunctions(formula).filter((fn) => fn.isList).length;
+  return _getOdooFunctions(formula).filter((fn) => fn.isList).length;
 }
 
 /**
@@ -68,13 +68,13 @@ export function getNumberOfListFormulas(formula) {
  * @returns {Array<OdooFunctionDescription>}
  */
 function _getOdooFunctions(formula) {
-    let ast;
-    try {
-        ast = parse(formula);
-    } catch (_) {
-        return [];
-    }
-    return _getOdooFunctionsFromAST(ast);
+  let ast;
+  try {
+    ast = parse(formula);
+  } catch (_) {
+    return [];
+  }
+  return _getOdooFunctionsFromAST(ast);
 }
 
 /**
@@ -86,23 +86,25 @@ function _getOdooFunctions(formula) {
  * @returns {Array<OdooFunctionDescription>}
  */
 function _getOdooFunctionsFromAST(ast) {
-    switch (ast.type) {
-        case "UNARY_OPERATION":
-            return _getOdooFunctionsFromAST(ast.right);
-        case "BIN_OPERATION": {
-            return _getOdooFunctionsFromAST(ast.left).concat(_getOdooFunctionsFromAST(ast.right));
-        }
-        case "FUNCALL": {
-            const functionName = ast.value;
-            if (["PIVOT", "PIVOT.HEADER", "PIVOT.POSITION"].includes(functionName)) {
-                return [{ functionName, args: ast.args, isPivot: true }];
-            } else if (["LIST", "LIST.HEADER"].includes(functionName)) {
-                return [{ functionName, args: ast.args, isList: true }];
-            } else {
-                return ast.args.map((arg) => _getOdooFunctionsFromAST(arg)).flat();
-            }
-        }
-        default:
-            return [];
+  switch (ast.type) {
+    case "UNARY_OPERATION":
+      return _getOdooFunctionsFromAST(ast.right);
+    case "BIN_OPERATION": {
+      return _getOdooFunctionsFromAST(ast.left).concat(
+        _getOdooFunctionsFromAST(ast.right)
+      );
     }
+    case "FUNCALL": {
+      const functionName = ast.value;
+      if (["PIVOT", "PIVOT.HEADER", "PIVOT.POSITION"].includes(functionName)) {
+        return [{functionName, args: ast.args, isPivot: true}];
+      } else if (["LIST", "LIST.HEADER"].includes(functionName)) {
+        return [{functionName, args: ast.args, isList: true}];
+      } else {
+        return ast.args.map((arg) => _getOdooFunctionsFromAST(arg)).flat();
+      }
+    }
+    default:
+      return [];
+  }
 }

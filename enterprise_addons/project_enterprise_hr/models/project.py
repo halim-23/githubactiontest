@@ -1,11 +1,11 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
-from pytz import utc, timezone
-from dateutil.relativedelta import relativedelta
 
-from odoo import models, fields
+from dateutil.relativedelta import relativedelta
+from pytz import timezone, utc
+
+from odoo import fields, models
 
 
 class Task(models.Model):
@@ -33,7 +33,10 @@ class Task(models.Model):
         """
         self.ensure_one()
 
-        if len(self.user_ids) != 1 or not self.user_ids.employee_id.resource_calendar_id:
+        if (
+            len(self.user_ids) != 1
+            or not self.user_ids.employee_id.resource_calendar_id
+        ):
             return super(Task, self)._get_calendars_and_resources(date_start, date_end)
 
         key = self._get_calendars_and_resources_key()
@@ -42,30 +45,47 @@ class Task(models.Model):
         creation_date = employee.create_date.replace(tzinfo=utc)
         employee_company_tz = employee.company_id.resource_calendar_id.tz
         # Use company's resource calendar prior to employee creation.
-        dict_entry = super(Task, self)._get_calendars_and_resources(date_start, date_end)[key]
-        dict_entry[-1].update({
-            'date_end': creation_date,
-        })
+        dict_entry = super(Task, self)._get_calendars_and_resources(
+            date_start, date_end
+        )[key]
+        dict_entry[-1].update(
+            {
+                "date_end": creation_date,
+            }
+        )
         calendar_by_task_dict[key] += dict_entry
         # Use employee's resource calendar from employee creation.
-        dict_entry = super(Task, self)._get_calendars_and_resources(date_start, date_end)[key]
-        dict_entry[-1].update({
-            'date_start': creation_date,
-            'calendar_id': employee.resource_calendar_id,
-            'resource_id': employee.resource_id,
-        })
+        dict_entry = super(Task, self)._get_calendars_and_resources(
+            date_start, date_end
+        )[key]
+        dict_entry[-1].update(
+            {
+                "date_start": creation_date,
+                "calendar_id": employee.resource_calendar_id,
+                "resource_id": employee.resource_id,
+            }
+        )
         calendar_by_task_dict[key] += dict_entry
         # If employee has left, use its resource calendar only up to the date he left and use the company's calendar after that date.
         departure_date = employee.departure_date
         if departure_date:
-            departure_date = fields.Datetime.to_datetime(employee.departure_date).replace(tzinfo=timezone(employee_company_tz)) + \
-                             relativedelta(days=1, microseconds=-1)
-            calendar_by_task_dict[key][-1].update({
-                'date_end': departure_date,
-            })
-            dict_entry = super(Task, self)._get_calendars_and_resources(date_start, date_end)[key]
-            dict_entry[-1].update({
-                'date_start': departure_date,
-            })
+            departure_date = fields.Datetime.to_datetime(
+                employee.departure_date
+            ).replace(tzinfo=timezone(employee_company_tz)) + relativedelta(
+                days=1, microseconds=-1
+            )
+            calendar_by_task_dict[key][-1].update(
+                {
+                    "date_end": departure_date,
+                }
+            )
+            dict_entry = super(Task, self)._get_calendars_and_resources(
+                date_start, date_end
+            )[key]
+            dict_entry[-1].update(
+                {
+                    "date_start": departure_date,
+                }
+            )
             calendar_by_task_dict[key] += dict_entry
         return calendar_by_task_dict

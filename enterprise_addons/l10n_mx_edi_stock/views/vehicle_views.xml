@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="vehicle_list_action" model="ir.actions.act_window">
         <field name="name">vehicles</field>
@@ -17,29 +17,37 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="vehicle_licence"/>
-                            <field name="vehicle_model"/>
-                            <field name="vehicle_config"/>
+                            <field name="vehicle_licence" />
+                            <field name="vehicle_model" />
+                            <field name="vehicle_config" />
                         </group>
                         <group>
-                            <field name="transport_perm_sct"/>
-                            <field name="name"/>
-                            <field name="transport_insurer"/>
-                            <field name="transport_insurance_policy"/>
+                            <field name="transport_perm_sct" />
+                            <field name="name" />
+                            <field name="transport_insurer" />
+                            <field name="transport_insurance_policy" />
                         </group>
                     </group>
                     <group col="2">
                         <field name="figure_ids">
                             <tree editable="bottom">
-                                <field name="type"/>
-                                <field name="operator_id"/>
-                                <field name="part_ids" widget="many2many_tags" options="{'no_create': True}" attrs="{'invisible': [('type', '=', '01')]}"/>
+                                <field name="type" />
+                                <field name="operator_id" />
+                                <field
+                  name="part_ids"
+                  widget="many2many_tags"
+                  options="{'no_create': True}"
+                  attrs="{'invisible': [('type', '=', '01')]}"
+                />
                             </tree>
                         </field>
-                        <field name="trailer_ids" attrs="{'invisible': [('vehicle_config', 'in', ('C2', 'C3', 'OTROSG', 'GPLUTA', 'GPLUTB', 'GPLUTC', 'GPLUTD', 'GPLATA', 'GPLATB', 'GPLATC', 'GPLATD'))]}">
+                        <field
+              name="trailer_ids"
+              attrs="{'invisible': [('vehicle_config', 'in', ('C2', 'C3', 'OTROSG', 'GPLUTA', 'GPLUTB', 'GPLUTC', 'GPLUTD', 'GPLATA', 'GPLATB', 'GPLATC', 'GPLATD'))]}"
+            >
                             <tree editable="bottom">
-                                <field name="name"/>
-                                <field name="sub_type"/>
+                                <field name="name" />
+                                <field name="sub_type" />
                             </tree>
                         </field>
                     </group>
@@ -53,14 +61,18 @@
         <field name="model">l10n_mx_edi.vehicle</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="transport_insurer"/>
-                <field name="transport_insurance_policy"/>
-                <field name="transport_perm_sct"/>
-                <field name="vehicle_model"/>
-                <field name="vehicle_config"/>
-                <field name="vehicle_licence"/>
-                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <field name="name" />
+                <field name="transport_insurer" />
+                <field name="transport_insurance_policy" />
+                <field name="transport_perm_sct" />
+                <field name="vehicle_model" />
+                <field name="vehicle_config" />
+                <field name="vehicle_licence" />
+                <filter
+          string="Archived"
+          name="inactive"
+          domain="[('active', '=', False)]"
+        />
             </search>
         </field>
     </record>
@@ -70,13 +82,13 @@
         <field name="model">l10n_mx_edi.vehicle</field>
         <field name="arch" type="xml">
             <tree string="vehicle Tree">
-                <field name="vehicle_licence"/>
-                <field name="name"/>
-                <field name="transport_insurer"/>
-                <field name="transport_insurance_policy"/>
-                <field name="transport_perm_sct"/>
-                <field name="vehicle_model"/>
-                <field name="vehicle_config"/>
+                <field name="vehicle_licence" />
+                <field name="name" />
+                <field name="transport_insurer" />
+                <field name="transport_insurance_policy" />
+                <field name="transport_perm_sct" />
+                <field name="vehicle_model" />
+                <field name="vehicle_config" />
             </tree>
         </field>
     </record>
@@ -85,8 +97,8 @@
         <field name="name">Vehicle Setups (MX)</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">l10n_mx_edi.vehicle</field>
-        <field name="view_id" ref="vehicle_tree_view"/>
-        <field name="search_view_id" ref="vehicle_search_view"/>
+        <field name="view_id" ref="vehicle_tree_view" />
+        <field name="search_view_id" ref="vehicle_search_view" />
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
             Add a new vehicle setup for MX delivery guide
@@ -99,8 +111,18 @@
         </field>
     </record>
 
-    <menuitem id="menu_stock_config_settings_mx" name="Mexico" parent="stock.menu_stock_config_settings"
-        sequence="100" groups="stock.group_stock_manager"/>
-    <menuitem action="l10n_mx_edi_vehicle_actions" id="menu_stock_mx_vehicles" name="Vehicle Setups" parent="menu_stock_config_settings_mx"
-        groups="stock.group_stock_manager"/>
+    <menuitem
+    id="menu_stock_config_settings_mx"
+    name="Mexico"
+    parent="stock.menu_stock_config_settings"
+    sequence="100"
+    groups="stock.group_stock_manager"
+  />
+    <menuitem
+    action="l10n_mx_edi_vehicle_actions"
+    id="menu_stock_mx_vehicles"
+    name="Vehicle Setups"
+    parent="menu_stock_config_settings_mx"
+    groups="stock.group_stock_manager"
+  />
 </odoo>

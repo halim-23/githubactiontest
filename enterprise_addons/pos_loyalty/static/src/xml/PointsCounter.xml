@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <templates id="template" xml:space="preserve">
 
     <t t-name="PointsCounter" owl="1">
@@ -9,12 +9,12 @@
                 </div>
                 <t t-if='get_points_won()'>
                     <div class="loyalty-points-won">
-                        <span class='value'>+<t t-esc='get_points_won()'/></span>
+                        <span class='value'>+<t t-esc='get_points_won()' /></span>
                     </div>
                 </t>
                 <t t-if='get_points_spent()'>
                     <div class="loyalty-points-spent">
-                        <span class='value'>-<t t-esc='get_points_spent()'/></span>
+                        <span class='value'>-<t t-esc='get_points_spent()' /></span>
                     </div>
                 </t>
                 <div class='loyalty-points-total'>
@@ -23,7 +23,7 @@
             </div>
         </t>
         <t t-else="">
-            <div></div>
+            <div />
         </t>
     </t>
 

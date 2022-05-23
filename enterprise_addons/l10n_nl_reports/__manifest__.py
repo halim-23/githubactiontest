@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 # Copyright (c) 2009 Veritos - Jan Verlaan - www.veritos.nl
@@ -65,23 +64,23 @@
 
 
 {
-    'name': 'Netherlands - Accounting Reports',
-    'icon': '/l10n_nl/static/description/icon.png',
-    'version': '1.5',
-    'category': 'Accounting/Localizations/Reporting',
-    'description': """
+    "name": "Netherlands - Accounting Reports",
+    "icon": "/l10n_nl/static/description/icon.png",
+    "version": "1.5",
+    "category": "Accounting/Localizations/Reporting",
+    "description": """
         Accounting reports for Netherlands
     """,
-    'author': 'Veritos - Jan Verlaan',
-    'website': 'http://www.veritos.nl',
-    'depends': ['l10n_nl', 'account_reports'],
-    'data': [
-        'data/account_financial_report_profit_loss.xml',
-        'data/account_financial_report_balance_sheet.xml',
-        'data/account_financial_report_intrastat.xml',
-        'data/xml_audit_file_3_2.xml',
+    "author": "Veritos - Jan Verlaan",
+    "website": "http://www.veritos.nl",
+    "depends": ["l10n_nl", "account_reports"],
+    "data": [
+        "data/account_financial_report_profit_loss.xml",
+        "data/account_financial_report_balance_sheet.xml",
+        "data/account_financial_report_intrastat.xml",
+        "data/xml_audit_file_3_2.xml",
     ],
-    'installable': True,
-    'auto_install': True,
-    'license': 'OEEL-1',
+    "installable": True,
+    "auto_install": True,
+    "license": "OEEL-1",
 }

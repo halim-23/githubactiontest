@@ -12,24 +12,31 @@ _logger = logging.getLogger(__name__)
 
 
 class StockPicking(models.Model):
-    _inherit = 'stock.picking'
+    _inherit = "stock.picking"
 
     amazon_sync_pending = fields.Boolean(
-        help="Is True if the picking must be notified to Amazon", default=False)
+        help="Is True if the picking must be notified to Amazon", default=False
+    )
 
     def write(self, vals):
         pickings = self
-        if 'date_done' in vals:
-            amazon_pickings = self.sudo().filtered(lambda p: p.sale_id and p.sale_id.amazon_order_ref)
+        if "date_done" in vals:
+            amazon_pickings = self.sudo().filtered(
+                lambda p: p.sale_id and p.sale_id.amazon_order_ref
+            )
             amazon_pickings._check_sales_order_line_completion()
             # Flag as pending sync the pickings linked to Amazon that are the last step of a (multi-step) delivery route
-            last_step_amazon_pickings = amazon_pickings.filtered(lambda p: p.location_dest_id.usage == 'customer')
-            super(StockPicking, last_step_amazon_pickings).write(dict(amazon_sync_pending=True, **vals))
+            last_step_amazon_pickings = amazon_pickings.filtered(
+                lambda p: p.location_dest_id.usage == "customer"
+            )
+            super(StockPicking, last_step_amazon_pickings).write(
+                dict(amazon_sync_pending=True, **vals)
+            )
             pickings -= last_step_amazon_pickings
         return super(StockPicking, pickings).write(vals)
 
     def _check_sales_order_line_completion(self):
-        """ Check that all stock moves related to a sales order line are set done at the same time.
+        """Check that all stock moves related to a sales order line are set done at the same time.
 
         This allows to block a confirmation of a stock picking linked to an Amazon sales order if a
         product's components are not all shipped together. This is necessary because Amazon does not
@@ -44,8 +51,10 @@ class StockPicking(models.Model):
             # To assess the completion of a sales order line, we group related moves together and
             # sum the total demand and done quantities.
             sales_order_lines_completion = {}
-            for move in picking.move_lines.filtered('sale_line_id.amazon_item_ref'):
-                completion = sales_order_lines_completion.setdefault(move.sale_line_id, [0, 0])
+            for move in picking.move_lines.filtered("sale_line_id.amazon_item_ref"):
+                completion = sales_order_lines_completion.setdefault(
+                    move.sale_line_id, [0, 0]
+                )
                 completion[0] += move.product_uom_qty
                 completion[1] += move.quantity_done
 
@@ -53,15 +62,20 @@ class StockPicking(models.Model):
             for sales_order_line, completion in sales_order_lines_completion.items():
                 demand_qty, done_qty = completion
                 completion_ratio = done_qty / demand_qty if demand_qty else 0
-                if 0 < completion_ratio < 1:  # The completion ratio must be either 0% or 100%
+                if (
+                    0 < completion_ratio < 1
+                ):  # The completion ratio must be either 0% or 100%
                     raise UserError(
-                        _("Products delivered to Amazon customers must have their respective parts "
-                          "in the same package. Operations related to the product %s were not all "
-                          "confirmed at once.") % sales_order_line.product_id.display_name
+                        _(
+                            "Products delivered to Amazon customers must have their respective parts "
+                            "in the same package. Operations related to the product %s were not all "
+                            "confirmed at once."
+                        )
+                        % sales_order_line.product_id.display_name
                     )
 
     def _check_carrier_details_compliance(self):
-        """ Check that a picking has a `carrier_tracking_ref`.
+        """Check that a picking has a `carrier_tracking_ref`.
 
         This allows to block a picking to be validated as done if the `carrier_tracking_ref` is
         missing. This is necessary because Amazon requires a tracking reference based on the
@@ -72,20 +86,24 @@ class StockPicking(models.Model):
         amazon_pickings_sudo = self.sudo().filtered(
             lambda p: p.sale_id
             and p.sale_id.amazon_order_ref
-            and p.location_dest_id.usage == 'customer'
+            and p.location_dest_id.usage == "customer"
         )  # In sudo mode to read the field on sale.order
         for picking_sudo in amazon_pickings_sudo:
             if not picking_sudo.carrier_id.name:
-                raise UserError(_(
-                    "Amazon requires that a tracking reference is provided with each delivery. You "
-                    "need to assign a carrier to this delivery."
-                ))
+                raise UserError(
+                    _(
+                        "Amazon requires that a tracking reference is provided with each delivery. You "
+                        "need to assign a carrier to this delivery."
+                    )
+                )
             if not picking_sudo.carrier_tracking_ref:
-                raise UserError(_(
-                    "Amazon requires that a tracking reference is provided with each delivery. "
-                    "Since the current carrier doesn't automatically provide a tracking reference, "
-                    "you need to set one manually."
-                ))
+                raise UserError(
+                    _(
+                        "Amazon requires that a tracking reference is provided with each delivery. "
+                        "Since the current carrier doesn't automatically provide a tracking reference, "
+                        "you need to set one manually."
+                    )
+                )
         return super()._check_carrier_details_compliance()
 
     @api.model
@@ -99,28 +117,33 @@ class StockPicking(models.Model):
         :param account_ids: the ids of accounts whose pickings should be synchronized
         """
         pickings_by_account = {}
-        for picking in self.search([('amazon_sync_pending', '=', True)]):
+        for picking in self.search([("amazon_sync_pending", "=", True)]):
             if picking.sale_id.order_line:
                 offer = picking.sale_id.order_line[0].amazon_offer_id
-                account = offer and offer.account_id  # Offer can be deleted before the cron update
+                account = (
+                    offer and offer.account_id
+                )  # Offer can be deleted before the cron update
                 if not account or (account_ids and account.id not in account_ids):
                     continue
-                pickings_by_account.setdefault(account, self.env['stock.picking'])
+                pickings_by_account.setdefault(account, self.env["stock.picking"])
                 pickings_by_account[account] += picking
         for account, pickings in pickings_by_account.items():
             pickings._confirm_shipment(account)
 
     def _confirm_shipment(self, account):
-        """ Send the order confirmation feed to Amazon for a batch of orders. """
-        error_message = _("An error was encountered when preparing the connection to Amazon.")
+        """Send the order confirmation feed to Amazon for a batch of orders."""
+        error_message = _(
+            "An error was encountered when preparing the connection to Amazon."
+        )
         feeds_api = mwsc.get_api_connector(
             mws.Feeds,
             account.seller_key,
             account.auth_token,
             account.base_marketplace_id.code,
             error_message,
-            **account._build_get_api_connector_kwargs())
-        picking_done = self.env['stock.picking']
+            **account._build_get_api_connector_kwargs()
+        )
+        picking_done = self.env["stock.picking"]
         for picking in self:
             amazon_order_ref = picking.sale_id.amazon_order_ref
             confirmed_order_lines = picking._get_confirmed_order_lines()
@@ -134,21 +157,31 @@ class StockPicking(models.Model):
                 picking.carrier_tracking_ref,
                 items_data,
             )
-            error_message = _("An error was encountered when confirming shipping of the order with "
-                              "amazon id %s.") % amazon_order_ref
+            error_message = (
+                _(
+                    "An error was encountered when confirming shipping of the order with "
+                    "amazon id %s."
+                )
+                % amazon_order_ref
+            )
             feed_submission_id, rate_limit_reached = mwsc.submit_feed(
-                feeds_api, xml_feed, '_POST_ORDER_FULFILLMENT_DATA_', error_message)
+                feeds_api, xml_feed, "_POST_ORDER_FULFILLMENT_DATA_", error_message
+            )
             if rate_limit_reached:
-                _logger.warning("rate limit reached when confirming picking with id %s for order "
-                                "with id %s" % (picking.id, picking.sale_id.id))
+                _logger.warning(
+                    "rate limit reached when confirming picking with id %s for order "
+                    "with id %s" % (picking.id, picking.sale_id.id)
+                )
                 break
-            _logger.info("sent shipment confirmation (feed id %s) to amazon for order with "
-                         "amazon_order_ref %s" % (feed_submission_id, amazon_order_ref))
+            _logger.info(
+                "sent shipment confirmation (feed id %s) to amazon for order with "
+                "amazon_order_ref %s" % (feed_submission_id, amazon_order_ref)
+            )
             picking_done |= picking
-        picking_done.write({'amazon_sync_pending': False})
+        picking_done.write({"amazon_sync_pending": False})
 
     def _get_confirmed_order_lines(self):
-        """ Return the sales order lines linked to this picking that are confirmed.
+        """Return the sales order lines linked to this picking that are confirmed.
 
         A sales order line is confirmed when the shipment of the linked product can be notified to
         Amazon.
@@ -160,5 +193,6 @@ class StockPicking(models.Model):
         return self.move_lines.filtered(
             lambda m: m.sale_line_id.amazon_item_ref  # Only consider moves for Amazon products
             and m.quantity_done > 0  # Only notify Amazon for shipped products
-            and m.quantity_done == m.product_uom_qty  # Only consider fully shipped products
+            and m.quantity_done
+            == m.product_uom_qty  # Only consider fully shipped products
         ).sale_line_id

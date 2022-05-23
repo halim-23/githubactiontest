@@ -1,9 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
         <record id="demo_certificate" model="l10n_mx_edi.certificate">
-            <field name="content" type="base64" file="l10n_mx_edi/demo/pac_credentials/certificate.cer"/>
-            <field name="key" type="base64" file="l10n_mx_edi/demo/pac_credentials/certificate.key"/>
+            <field
+        name="content"
+        type="base64"
+        file="l10n_mx_edi/demo/pac_credentials/certificate.cer"
+      />
+            <field
+        name="key"
+        type="base64"
+        file="l10n_mx_edi/demo/pac_credentials/certificate.key"
+      />
             <field name="password">12345678a</field>
         </record>
 
@@ -15,7 +23,10 @@
             <field name="l10n_mx_edi_pac">finkok</field>
             <field name="l10n_mx_edi_pac_test_env">True</field>
             <field name="l10n_mx_edi_fiscal_regime">601</field>
-            <field name="l10n_mx_edi_certificate_ids" eval="[(6, 0, [ref('demo_certificate')])]"/>
+            <field
+        name="l10n_mx_edi_certificate_ids"
+        eval="[(6, 0, [ref('demo_certificate')])]"
+      />
         </record>
     </data>
 </odoo>

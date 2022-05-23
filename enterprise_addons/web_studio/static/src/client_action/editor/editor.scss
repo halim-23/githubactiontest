@@ -23,7 +23,7 @@
 
       > .o_content {
         flex: 1 1 auto;
-        position: relative;  // Allow to redistribute the 100% height to its child
+        position: relative; // Allow to redistribute the 100% height to its child
         overflow: auto;
         height: 100%;
       }

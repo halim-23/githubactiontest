@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, api
+from odoo import api, models
 from odoo.exceptions import AccessError
 
-ALLOWED_FIELDS = set(["id", "name", "model"])
+ALLOWED_FIELDS = {"id", "name", "model"}
+
 
 class IrModel(models.Model):
     _inherit = "ir.model"
@@ -31,13 +31,17 @@ class IrModel(models.Model):
     @api.model
     def _check_documents_access(self):
         # Make sure to reject portal users
-        return self.env["documents.document"].check_access_rights("read", raise_exception=False)\
-            and self.env.user.has_group('base.group_user')
+        return self.env["documents.document"].check_access_rights(
+            "read", raise_exception=False
+        ) and self.env.user.has_group("base.group_user")
 
     @api.model
     def _check_comodel_access(self, models):
-        return all(model in self.env
-                    and self.env[model].check_access_rights("read", raise_exception=False) for model in models)
+        return all(
+            model in self.env
+            and self.env[model].check_access_rights("read", raise_exception=False)
+            for model in models
+        )
 
     def name_get(self):
         try:
@@ -45,18 +49,22 @@ class IrModel(models.Model):
         except AccessError:
             if self._check_documents_access():
                 res = self.sudo().name_get()
-                if self._check_comodel_access(self.sudo().mapped('model')):
+                if self._check_comodel_access(self.sudo().mapped("model")):
                     return res
             raise
 
     @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+    def _name_search(
+        self, name="", args=None, operator="ilike", limit=100, name_get_uid=None
+    ):
         try:
             return super()._name_search(name, args, operator, limit)
         except AccessError:
             if self._check_documents_access():
-                res = self.sudo()._name_search(name, args, operator, limit, name_get_uid)
-                if self._check_comodel_access(self.sudo().browse(res).mapped('model')):
+                res = self.sudo()._name_search(
+                    name, args, operator, limit, name_get_uid
+                )
+                if self._check_comodel_access(self.sudo().browse(res).mapped("model")):
                     return res
             raise
 
@@ -68,7 +76,9 @@ class IrModel(models.Model):
             are_fields_allowed = fields and ALLOWED_FIELDS.issuperset(fields)
             if are_fields_allowed and self._check_documents_access():
                 res = self.sudo().search_read(domain, fields, offset, limit, order)
-                models = self.sudo().browse([record["id"] for record in res]).mapped('model')
+                models = (
+                    self.sudo().browse([record["id"] for record in res]).mapped("model")
+                )
                 if self._check_comodel_access(models):
                     return res
             raise

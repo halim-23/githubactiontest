@@ -1,8 +1,8 @@
-odoo.define('social.social_instagram_stream_post_kanban_renderer', function (require) {
-"use strict";
+odoo.define("social.social_instagram_stream_post_kanban_renderer", function (require) {
+  "use strict";
 
-var StreamPostKanbanRenderer = require('social.social_stream_post_kanban_renderer');
-StreamPostKanbanRenderer.include({
+  var StreamPostKanbanRenderer = require("social.social_stream_post_kanban_renderer");
+  StreamPostKanbanRenderer.include({
     /**
      * Instagram does not provide any information for stories.
      *
@@ -11,10 +11,11 @@ StreamPostKanbanRenderer.include({
      * @override
      */
     _hasStories: function (socialAccount) {
-        return this._super.apply(this, arguments) && socialAccount.media_type !== 'instagram';
-    }
-});
+      return (
+        this._super.apply(this, arguments) && socialAccount.media_type !== "instagram"
+      );
+    },
+  });
 
-return StreamPostKanbanRenderer;
-
+  return StreamPostKanbanRenderer;
 });

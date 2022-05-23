@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from . import models
@@ -18,16 +17,20 @@ def _account_accountant_post_init(cr, registry):
         module_list = []
 
         # SEPA zone countries will be using SEPA
-        sepa_zone = env.ref('base.sepa_zone', raise_if_not_found=False)
-        sepa_zone_country_codes = sepa_zone and sepa_zone.mapped('country_ids.code') or []
+        sepa_zone = env.ref("base.sepa_zone", raise_if_not_found=False)
+        sepa_zone_country_codes = (
+            sepa_zone and sepa_zone.mapped("country_ids.code") or []
+        )
 
         if country_code in sepa_zone_country_codes:
-            module_list.append('account_sepa')
-            module_list.append('account_bank_statement_import_camt')
-        if country_code in ('AU', 'CA', 'US'):
-            module_list.append('account_reports_cash_basis')
+            module_list.append("account_sepa")
+            module_list.append("account_bank_statement_import_camt")
+        if country_code in ("AU", "CA", "US"):
+            module_list.append("account_reports_cash_basis")
 
-        module_ids = env['ir.module.module'].search([('name', 'in', module_list), ('state', '=', 'uninstalled')])
+        module_ids = env["ir.module.module"].search(
+            [("name", "in", module_list), ("state", "=", "uninstalled")]
+        )
         if module_ids:
             module_ids.sudo().button_install()
 
@@ -37,31 +40,41 @@ def uninstall_hook(cr, registry):
 
     try:
         group_user = env.ref("account.group_account_user")
-        group_user.write({
-            'name': "Show Full Accounting Features",
-            'implied_ids': [(3, env.ref('account.group_account_invoice').id)],
-            'category_id': env.ref("base.module_category_hidden").id,
-        })
+        group_user.write(
+            {
+                "name": "Show Full Accounting Features",
+                "implied_ids": [(3, env.ref("account.group_account_invoice").id)],
+                "category_id": env.ref("base.module_category_hidden").id,
+            }
+        )
         group_readonly = env.ref("account.group_account_readonly")
-        group_readonly.write({
-            'name': "Show Full Accounting Features - Readonly",
-            'category_id': env.ref("base.module_category_hidden").id,
-        })
+        group_readonly.write(
+            {
+                "name": "Show Full Accounting Features - Readonly",
+                "category_id": env.ref("base.module_category_hidden").id,
+            }
+        )
     except ValueError as e:
-            _logger.warning(e)
+        _logger.warning(e)
 
     try:
         group_manager = env.ref("account.group_account_manager")
-        group_manager.write({'name': "Billing Manager",
-                             'implied_ids': [(4, env.ref("account.group_account_invoice").id),
-                                             (3, env.ref("account.group_account_readonly").id),
-                                             (3, env.ref("account.group_account_user").id)]})
+        group_manager.write(
+            {
+                "name": "Billing Manager",
+                "implied_ids": [
+                    (4, env.ref("account.group_account_invoice").id),
+                    (3, env.ref("account.group_account_readonly").id),
+                    (3, env.ref("account.group_account_user").id),
+                ],
+            }
+        )
     except ValueError as e:
-            _logger.warning(e)
+        _logger.warning(e)
 
     # make the account_accountant features disappear (magic)
-    env.ref("account.group_account_user").write({'users': [(5, False, False)]})
-    env.ref("account.group_account_readonly").write({'users': [(5, False, False)]})
+    env.ref("account.group_account_user").write({"users": [(5, False, False)]})
+    env.ref("account.group_account_readonly").write({"users": [(5, False, False)]})
 
     # this menu should always be there, as the module depends on account.
     # if it's not, there is something wrong with the db that should be investigated.

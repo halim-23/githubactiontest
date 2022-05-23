@@ -1,23 +1,23 @@
-odoo.define('mrp_workorder.pdf_viewer_no_reload', function (require) {
-"use strict";
+odoo.define("mrp_workorder.pdf_viewer_no_reload", function (require) {
+  "use strict";
 
-var fieldRegistry = require('web.field_registry');
-var basicFields = require('web.basic_fields');
-var mrpViewerCommon = require('mrp.viewer_common');
+  var fieldRegistry = require("web.field_registry");
+  var basicFields = require("web.basic_fields");
+  var mrpViewerCommon = require("mrp.viewer_common");
 
-var FieldPdfViewer = basicFields.FieldPdfViewer;
+  var FieldPdfViewer = basicFields.FieldPdfViewer;
 
-/**
- * /!\/!\/!\ WARNING /!\/!\/!\
- * Do not use this widget else where
- * Due to limitation of the framework, a lot of hacks have been used
- *
- * Override of the default PDF Viewer Widget to prevent reload of the iFrame content
- * on any action (typically, click on a button)
- */
+  /**
+   * /!\/!\/!\ WARNING /!\/!\/!\
+   * Do not use this widget else where
+   * Due to limitation of the framework, a lot of hacks have been used
+   *
+   * Override of the default PDF Viewer Widget to prevent reload of the iFrame content
+   * on any action (typically, click on a button)
+   */
 
-var FieldPdfViewerNoReload = FieldPdfViewer.extend(mrpViewerCommon, {
-    template: 'FieldPdfViewer',
+  var FieldPdfViewerNoReload = FieldPdfViewer.extend(mrpViewerCommon, {
+    template: "FieldPdfViewer",
 
     /**
      * Do not start the widget in the normal lifecycle
@@ -27,22 +27,21 @@ var FieldPdfViewerNoReload = FieldPdfViewer.extend(mrpViewerCommon, {
      * @override
      */
     start: function () {
-        this._superStart = this._super;
-        var $existing = $('#' + this.iFrameId);
+      this._superStart = this._super;
+      var $existing = $("#" + this.iFrameId);
 
-        if ($existing.length) {
-            if (!this.invisible){
-                let pdfViewerApplication = $existing.data('PDFViewerApplication');
-                if (pdfViewerApplication)
-                    this.pdfViewer = pdfViewerApplication.pdfViewer;
-                this._goToPage(this.page);
-            }
-            $existing.toggleClass('o_invisible_modifier', this.invisible);
+      if ($existing.length) {
+        if (!this.invisible) {
+          const pdfViewerApplication = $existing.data("PDFViewerApplication");
+          if (pdfViewerApplication) this.pdfViewer = pdfViewerApplication.pdfViewer;
+          this._goToPage(this.page);
         }
+        $existing.toggleClass("o_invisible_modifier", this.invisible);
+      }
 
-        this._fixFormHeight();
+      this._fixFormHeight();
 
-        return Promise.resolve();
+      return Promise.resolve();
     },
 
     /**
@@ -53,19 +52,19 @@ var FieldPdfViewerNoReload = FieldPdfViewer.extend(mrpViewerCommon, {
      *
      * TODO: Find a better way to do this ...
      *
-     * @param {string} page
+     * @param {String} page
      * @private
      */
-    _goToPage: function (page){
-        var self = this;
-        if (self.pdfViewer && page !== self.pdfViewer.currentPageNumber){
-            setTimeout(function (){
-                self.pdfViewer.currentPageNumber = page;
-                self._goToPage(page);
-            }, 200);
-        } else {
-            this._checkCorrectPage(page);
-        }
+    _goToPage: function (page) {
+      var self = this;
+      if (self.pdfViewer && page !== self.pdfViewer.currentPageNumber) {
+        setTimeout(function () {
+          self.pdfViewer.currentPageNumber = page;
+          self._goToPage(page);
+        }, 200);
+      } else {
+        this._checkCorrectPage(page);
+      }
     },
 
     /**
@@ -74,20 +73,20 @@ var FieldPdfViewerNoReload = FieldPdfViewer.extend(mrpViewerCommon, {
      * check after a longer time if the page is still set to what
      * we want.
      *
-     * @param {string} page
+     * @param {String} page
      * @private
      */
     _checkCorrectPage: function (page) {
-        var self = this;
-        setTimeout(function () {
-            if (self.pdfViewer && page !== self.pdfViewer.currentPageNumber) {
-                self._goToPage(page);
-            }
-        }, 500);
+      var self = this;
+      setTimeout(function () {
+        if (self.pdfViewer && page !== self.pdfViewer.currentPageNumber) {
+          self._goToPage(page);
+        }
+      }, 500);
     },
-});
+  });
 
-fieldRegistry.add('mrp_pdf_viewer_no_reload', FieldPdfViewerNoReload);
+  fieldRegistry.add("mrp_pdf_viewer_no_reload", FieldPdfViewerNoReload);
 
-return FieldPdfViewerNoReload;
+  return FieldPdfViewerNoReload;
 });

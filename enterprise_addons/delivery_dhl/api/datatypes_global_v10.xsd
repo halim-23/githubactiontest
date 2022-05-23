@@ -82,22 +82,22 @@
 		<xsd:element name="ShipperAccountNumber" type="AccountNumber">
 			<xsd:annotation>
 				<xsd:documentation>The ShipperAccountNumber element contains the DHL account number. This element must be declared once in the Bill element</xsd:documentation>
-			</xsd:annotation>				
-		</xsd:element>		
+			</xsd:annotation>
+		</xsd:element>
 		<xsd:element name="ShippingPaymentType" type="ShipmentPaymentType">
 			<xsd:annotation>
 				<xsd:documentation>The ShippingPaymentType element defines the method of payment. It is a mandatory field. The valid values are S:Shipper, R:Recipient and T:Third Party</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="BillingAccountNumber" type="AccountNumber" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>The BillingAccountNumber element contains billing account number.This element is required even if the payment method is third party or consignee</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="DutyAccountNumber" type="AccountNumber" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>The DutyAccountNumber element contains the account number which is used in duty and tax payment</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 	</xsd:sequence>
 </xsd:complexType>
@@ -238,7 +238,7 @@
 			<xsd:annotation>
 				<xsd:documentation>The CountryName element contains Country/Region name of the consignee. Its value should be a valid DHL Country/Region name. This element must be declared once in the Consignee element. Please refer to the Reference Data (DHL Country/Region) for a list of valid Country/Region names</xsd:documentation>
 			</xsd:annotation>
-		</xsd:element>		
+		</xsd:element>
 		<xsd:element name="Contact" type="Contact">
 			<xsd:annotation>
 				<xsd:documentation>The Contact element contains the receiver’s contact information. It must be declared in the consignee element</xsd:documentation>
@@ -660,13 +660,13 @@
 		<xsd:element name="IsPartiesRelation" type="YesNo" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>The IsPartiesRelation element indicates the relation of parties to the transaction</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="ECCN" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>This element contains ECCN info</xsd:documentation>
-			</xsd:annotation>	
-			<xsd:simpleType>			
+			</xsd:annotation>
+			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
 					<xsd:minLength value="0" />
 					<xsd:maxLength value="30" />
@@ -976,12 +976,12 @@
 		<xsd:element name="InvoiceTotalNetWeight" type="Invoice_Weight" minOccurs="0">
 		<xsd:annotation>
 			<xsd:documentation>The gross weight consists of the net weight and the weight of the packaging (tare weight)</xsd:documentation>
-		</xsd:annotation>		
+		</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="InvoiceTotalGrossWeight" type="Invoice_Weight" minOccurs="0">
 		<xsd:annotation>
 			<xsd:documentation>The net weight is calculated as follows: gross weight minus weight of packaging (tare weight)</xsd:documentation>
-			</xsd:annotation>		
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="InvoiceReferences" type="InvoiceReferences" minOccurs="0">
 			<xsd:annotation>
@@ -1327,7 +1327,7 @@
 	</xsd:complexType>
 	<xsd:simpleType name="ItemReferenceType">
 		<xsd:annotation>
-			<xsd:documentation>Item Reference Type(AFE: Export Control Classification Number (ECCN), AAJ:Delivery Order number, ABW: Stock Keeping Unit, 
+			<xsd:documentation>Item Reference Type(AFE: Export Control Classification Number (ECCN), AAJ:Delivery Order number, ABW: Stock Keeping Unit,
 			ALX: Model, BRD: Brand,DGC: Dangerous Goods Content Identifier, DTC: DDTC Eligibility indicator, DTM: DDTC UOM, DTQ: DDTC Quantity, DTR: DDTC Registraton No,
 			ITR: DDTC ITAR Exemption No. MAK: Make, MID: Manufacturers IDentification code, OED: Original Export Date, OET: Original Export OB Tracking ID,
 			OID: Order ID, OOR: Original Outbound Carrier, PAN: Part No, PON: Purchase Order Number, SON: Sales order No, SE:Serial number, SME: DDTC SME Indicator,
@@ -1341,7 +1341,7 @@
 			<xsd:maxLength value="3"/>
 				<xsd:enumeration value="AAJ"/>
 				<xsd:enumeration value="ABW"/>
-				<xsd:enumeration value="AFE"/> 
+				<xsd:enumeration value="AFE"/>
 				<xsd:enumeration value="ALX"/>
 				<xsd:enumeration value="BRD"/>
 				<xsd:enumeration value="DGC"/>
@@ -1499,9 +1499,9 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 <xsd:simpleType name="GlobalProductCode">
-	<xsd:annotation> 
-		<xsd:documentation>The GlobalProductCode Element is global product code for the shipment. It is the optional field in the Shipment Details segment. It is an optional field. Please refer to Reference Data (Global Product Codes)</xsd:documentation> 
-	</xsd:annotation> 
+	<xsd:annotation>
+		<xsd:documentation>The GlobalProductCode Element is global product code for the shipment. It is the optional field in the Shipment Details segment. It is an optional field. Please refer to Reference Data (Global Product Codes)</xsd:documentation>
+	</xsd:annotation>
 	<xsd:restriction base="xsd:string">
 		<xsd:minLength value="1" />
 		<xsd:maxLength value="4" />
@@ -1604,9 +1604,9 @@
 	</xsd:restriction>
 </xsd:simpleType>
 <xsd:simpleType name="LocalProductCode">
-	<xsd:annotation> 
-		<xsd:documentation>The LocalProductCode Element is local product code for the shipment. It is the optional field in the Shipment Details segment</xsd:documentation> 
-	</xsd:annotation> 
+	<xsd:annotation>
+		<xsd:documentation>The LocalProductCode Element is local product code for the shipment. It is the optional field in the Shipment Details segment</xsd:documentation>
+	</xsd:annotation>
 	<xsd:restriction base="xsd:string">
 		<xsd:minLength value="1" />
 		<xsd:maxLength value="4" />
@@ -2273,7 +2273,7 @@
 	<xsd:annotation>
 		<xsd:documentation>The ShipmentDetails element contains the details of the shipment. It must be declared once in the request message</xsd:documentation>
 	</xsd:annotation>
-	<xsd:sequence>		
+	<xsd:sequence>
 		<xsd:element name="Pieces" type="Pieces">
 			<xsd:annotation>
 				<xsd:documentation>The Pieces element contains the pieces information of the shipment. It must be declared in the Shipment validation element. It could store maximum 999 pieces information</xsd:documentation>
@@ -2772,12 +2772,12 @@
 		<xsd:element name="ServiceHeader" type="ServiceHeader">
 			<xsd:annotation>
 				<xsd:documentation>The Service Header element contains the header information about the request message. This element must be declared only once in the Request element</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="MetaData" type="MetaData" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>The Metadata element is used to identify the software name and software version used by customer or third party vendor. It is an optional field</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 	</xsd:sequence>
 </xsd:complexType>
@@ -2837,7 +2837,7 @@
 					<xsd:maxLength value="10" />
 				</xsd:restriction>
 			</xsd:simpleType>
-		</xsd:element>			
+		</xsd:element>
 	</xsd:sequence>
 </xsd:complexType>
 <xsd:simpleType name="SiteID">
@@ -3284,17 +3284,17 @@
 		<xsd:element name="Type" type="Type">
 			<xsd:annotation>
 				<xsd:documentation>The Type element indicates supporting document image type</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="Image" type="Image">
 			<xsd:annotation>
 				<xsd:documentation>The Image element contains the supporting document image in base64</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 		<xsd:element name="ImageFormat" type="ImageFormat">
 			<xsd:annotation>
 				<xsd:documentation>The ImageFormat element indicates the supporting document image format</xsd:documentation>
-			</xsd:annotation>				
+			</xsd:annotation>
 		</xsd:element>
 	</xsd:sequence>
 </xsd:complexType>
@@ -3802,8 +3802,8 @@
 		<xsd:element name="DocumentTypeName" minOccurs="0">
 			<xsd:annotation>
 				<xsd:documentation>This element contains export declaration’s shipment document type name value.It is an optional field</xsd:documentation>
-			</xsd:annotation>	
-			<xsd:simpleType>				
+			</xsd:annotation>
+			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
 					<xsd:minLength value="0" />
 					<xsd:maxLength value="3" />
@@ -3939,7 +3939,7 @@
 			TCS:Transportation Charges Statement),ELP:Export Licenses and Permits</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
-			<xsd:maxLength value="3"/>			
+			<xsd:maxLength value="3"/>
 			<xsd:enumeration value="972"/>
 			<xsd:enumeration value="AHC"/>
 			<xsd:enumeration value="ATA"/>
@@ -4027,9 +4027,9 @@
 	</xsd:complexType>
 	<xsd:simpleType name="InvoiceReferenceType">
 		<xsd:annotation>
-			<xsd:documentation>Invoice Reference Type (ACL: Parent Shipment ID for BBX, 
+			<xsd:documentation>Invoice Reference Type (ACL: Parent Shipment ID for BBX,
 				CID: Customer Identifier, CN:Contract Number,CU:Consignor reference number, ITN: US Export declaration reference ID,
-				UCN:Movement Reference number,MRN:Movement Reference number,OID: Order ID, PON: Purchase Order ID, 
+				UCN:Movement Reference number,MRN:Movement Reference number,OID: Order ID, PON: Purchase Order ID,
 				RMA: Return Materials Authorization (RMA) Number, AAM: AWB Ref #,
 				ABT:Goods Declaration number, ACL: Parent shipment ID for bulk shipment identification,ADA: Buyer Reference number,AES:AES Post Clearance,
 				AFD:1496 Item number, ANT:Consignee Reference number,BKN:Booking Number,BOL:Bill of Lading Number,CDN:Customs Declaration number,
@@ -4039,7 +4039,7 @@
 				PRN: Pickup request number, RMA: RMA Number, RTL: Return Leg waybill number, SID: Shipment ID 15 Digit CODA, SS:Seller Reference number,
 				SWN:Original Waybill number (Return))
 			</xsd:documentation>
-		</xsd:annotation>			
+		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
 			<xsd:minLength value="2"/>
 			<xsd:maxLength value="3"/>

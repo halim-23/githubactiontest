@@ -8,26 +8,28 @@
                         <div class="page">
                             <div class="row border">
                                 <div class="col-4 border-right">
-                                    <strong>Nr.</strong> <span t-esc="wizard.id"/>
+                                    <strong>Nr.</strong> <span t-esc="wizard.id" />
                                 </div>
                                 <div class="col-4 border-right">
-                                    <strong>Du:</strong> <span t-esc="date_start"/>
+                                    <strong>Du:</strong> <span t-esc="date_start" />
                                 </div>
                                 <div class="col-4">
-                                    <strong>Au:</strong> <span t-esc="date_end"/>
+                                    <strong>Au:</strong> <span t-esc="date_end" />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
                                 <div class="col-4 border-right">
-                                    <strong>Société:</strong> <br/>
-                                    <span t-esc="company_name"/> <br/>
-                                    <span t-esc="company_address"/><br/>
-                                    <span t-esc="company_zip"/>,
-                                    <span t-esc="company_city"/> <br/>
+                                    <strong>Société:</strong> <br />
+                                    <span t-esc="company_name" /> <br />
+                                    <span t-esc="company_address" /><br />
+                                    <span t-esc="company_zip" />,
+                                    <span t-esc="company_city" /> <br />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
-                                <div class="col-12 text-center text-uppercase font-weight-bold">
+                                <div
+                  class="col-12 text-center text-uppercase font-weight-bold"
+                >
                                     Fiche 274.10: Précompte professionnel versé.
                                 </div>
                             </div>
@@ -35,15 +37,19 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Revenus imposables</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Revenus imposables</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
                                         </div>
                                     </div>
                                     <div class="row border-bottom">
-                                        <div class="col-7 font-weight-bold offset-1"></div>
-                                        <div class="col-4 text-right"><span t-esc="round(wizard.taxable_amount, 2)"/> €</div>
+                                        <div class="col-7 font-weight-bold offset-1" />
+                                        <div class="col-4 text-right"><span
+                        t-esc="round(wizard.taxable_amount, 2)"
+                      /> €</div>
                                     </div>
                                 </div>
                             </div>
@@ -51,14 +57,18 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-12">
-                                            <span class="text-left text-uppercase font-weight-bold">Précompte Professionnel Retenu</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Précompte Professionnel Retenu</span>
                                         </div>
                                     </div>
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="round(wizard.pp_amount, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="round(wizard.pp_amount, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -68,26 +78,28 @@
                         <div class="page" style="page-break-before: always">
                             <div class="row border">
                                 <div class="col-4 border-right">
-                                    <strong>Nr.</strong> <span t-esc="wizard.id"/>
+                                    <strong>Nr.</strong> <span t-esc="wizard.id" />
                                 </div>
                                 <div class="col-4 border-right">
-                                    <strong>Du:</strong> <span t-esc="date_start"/>
+                                    <strong>Du:</strong> <span t-esc="date_start" />
                                 </div>
                                 <div class="col-4">
-                                    <strong>Au:</strong> <span t-esc="date_end"/>
+                                    <strong>Au:</strong> <span t-esc="date_end" />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
                                 <div class="col-4 border-right">
-                                    <strong>Société:</strong> <br/>
-                                    <span t-esc="company_name"/> <br/>
-                                    <span t-esc="company_address"/><br/>
-                                    <span t-esc="company_zip"/>,
-                                    <span t-esc="company_city"/> <br/>
+                                    <strong>Société:</strong> <br />
+                                    <span t-esc="company_name" /> <br />
+                                    <span t-esc="company_address" /><br />
+                                    <span t-esc="company_zip" />,
+                                    <span t-esc="company_city" /> <br />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
-                                <div class="col-12 text-center text-uppercase font-weight-bold">
+                                <div
+                  class="col-12 text-center text-uppercase font-weight-bold"
+                >
                                     Fiche 274.32: Dispense de précompte professionnel pour doctorants/ingénieurs civils.
                                 </div>
                             </div>
@@ -95,14 +107,16 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Nature des revenus</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Nature des revenus</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Code</strong>
                                         </div>
                                     </div>
                                     <div class="row border-bottom">
-                                        <div class="col-7 font-weight-bold offset-1"></div>
+                                        <div class="col-7 font-weight-bold offset-1" />
                                         <div class="col-4 text-right">32</div>
                                     </div>
                                 </div>
@@ -111,7 +125,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Revenus imposables répondant aux conditions d’application de la dispense</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Revenus imposables répondant aux conditions d’application de la dispense</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -120,8 +136,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="round(wizard.pp_amount_32, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="round(wizard.pp_amount_32, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -131,7 +149,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Précompte professionnel dû</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Précompte professionnel dû</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -140,8 +160,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="-round(wizard.pp_amount_32 - wizard.deducted_amount_32, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="-round(wizard.pp_amount_32 - wizard.deducted_amount_32, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -151,26 +173,28 @@
                         <div class="page" style="page-break-before: always">
                             <div class="row border">
                                 <div class="col-4 border-right">
-                                    <strong>Nr.</strong> <span t-esc="wizard.id"/>
+                                    <strong>Nr.</strong> <span t-esc="wizard.id" />
                                 </div>
                                 <div class="col-4 border-right">
-                                    <strong>Du:</strong> <span t-esc="date_start"/>
+                                    <strong>Du:</strong> <span t-esc="date_start" />
                                 </div>
                                 <div class="col-4">
-                                    <strong>Au:</strong> <span t-esc="date_end"/>
+                                    <strong>Au:</strong> <span t-esc="date_end" />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
                                 <div class="col-4 border-right">
-                                    <strong>Société:</strong> <br/>
-                                    <span t-esc="company_name"/> <br/>
-                                    <span t-esc="company_address"/><br/>
-                                    <span t-esc="company_zip"/>,
-                                    <span t-esc="company_city"/> <br/>
+                                    <strong>Société:</strong> <br />
+                                    <span t-esc="company_name" /> <br />
+                                    <span t-esc="company_address" /><br />
+                                    <span t-esc="company_zip" />,
+                                    <span t-esc="company_city" /> <br />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
-                                <div class="col-12 text-center text-uppercase font-weight-bold">
+                                <div
+                  class="col-12 text-center text-uppercase font-weight-bold"
+                >
                                     Fiche 274.33: Dispense de précompte professionnel pour master.
                                 </div>
                             </div>
@@ -178,14 +202,16 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Nature des revenus</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Nature des revenus</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Code</strong>
                                         </div>
                                     </div>
                                     <div class="row border-bottom">
-                                        <div class="col-7 font-weight-bold offset-1"></div>
+                                        <div class="col-7 font-weight-bold offset-1" />
                                         <div class="col-4 text-right">33</div>
                                     </div>
                                 </div>
@@ -194,7 +220,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Revenus imposables répondant aux conditions d’application de la dispense</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Revenus imposables répondant aux conditions d’application de la dispense</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -203,8 +231,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="round(wizard.pp_amount_33, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="round(wizard.pp_amount_33, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -214,7 +244,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Précompte professionnel dû</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Précompte professionnel dû</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -223,8 +255,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="-round(wizard.pp_amount_33 - wizard.deducted_amount_33, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="-round(wizard.pp_amount_33 - wizard.deducted_amount_33, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -234,26 +268,28 @@
                         <div class="page" style="page-break-before: always">
                             <div class="row border">
                                 <div class="col-4 border-right">
-                                    <strong>Nr.</strong> <span t-esc="wizard.id"/>
+                                    <strong>Nr.</strong> <span t-esc="wizard.id" />
                                 </div>
                                 <div class="col-4 border-right">
-                                    <strong>Du:</strong> <span t-esc="date_start"/>
+                                    <strong>Du:</strong> <span t-esc="date_start" />
                                 </div>
                                 <div class="col-4">
-                                    <strong>Au:</strong> <span t-esc="date_end"/>
+                                    <strong>Au:</strong> <span t-esc="date_end" />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
                                 <div class="col-4 border-right">
-                                    <strong>Société:</strong> <br/>
-                                    <span t-esc="company_name"/> <br/>
-                                    <span t-esc="company_address"/><br/>
-                                    <span t-esc="company_zip"/>,
-                                    <span t-esc="company_city"/> <br/>
+                                    <strong>Société:</strong> <br />
+                                    <span t-esc="company_name" /> <br />
+                                    <span t-esc="company_address" /><br />
+                                    <span t-esc="company_zip" />,
+                                    <span t-esc="company_city" /> <br />
                                 </div>
                             </div>
                             <div class="row border border-top-0">
-                                <div class="col-12 text-center text-uppercase font-weight-bold">
+                                <div
+                  class="col-12 text-center text-uppercase font-weight-bold"
+                >
                                     Fiche 274.34: Dispense de précompte professionnel pour bacheliers.
                                 </div>
                             </div>
@@ -261,14 +297,16 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Nature des revenus</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Nature des revenus</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Code</strong>
                                         </div>
                                     </div>
                                     <div class="row border-bottom">
-                                        <div class="col-7 font-weight-bold offset-1"></div>
+                                        <div class="col-7 font-weight-bold offset-1" />
                                         <div class="col-4 text-right">34</div>
                                     </div>
                                 </div>
@@ -277,7 +315,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Revenus imposables répondant aux conditions d’application de la dispense</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Revenus imposables répondant aux conditions d’application de la dispense</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -286,8 +326,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="round(wizard.pp_amount_34, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="round(wizard.pp_amount_34, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>
@@ -297,7 +339,9 @@
                                 <div class="col-12">
                                     <div class="row border-bottom">
                                         <div class="col-8">
-                                            <span class="text-left text-uppercase font-weight-bold">Précompte professionnel dû</span>
+                                            <span
+                        class="text-left text-uppercase font-weight-bold"
+                      >Précompte professionnel dû</span>
                                         </div>
                                         <div class="col-4 text-right">
                                             <strong>Montant</strong>
@@ -306,8 +350,10 @@
                                     <div class="row border-bottom">
                                         <div class="col-11 offset-1">
                                             <div class="row">
-                                                <div class="col-8 font-weight-bold"></div>
-                                                <div class="col-4 text-right"><span t-esc="-round(wizard.pp_amount_34 - wizard.capped_amount_34, 2)"/></div>
+                                                <div class="col-8 font-weight-bold" />
+                                                <div class="col-4 text-right"><span
+                            t-esc="-round(wizard.pp_amount_34 - wizard.capped_amount_34, 2)"
+                          /></div>
                                             </div>
                                         </div>
                                     </div>

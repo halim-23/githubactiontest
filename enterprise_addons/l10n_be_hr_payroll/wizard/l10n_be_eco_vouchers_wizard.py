@@ -1,40 +1,49 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import math
-
 from collections import defaultdict
 from datetime import date
+
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
 class L10nBeEcoVouchersWizard(models.TransientModel):
-    _name = 'l10n.be.eco.vouchers.wizard'
-    _description = 'Eco-Vouchers Wizard'
+    _name = "l10n.be.eco.vouchers.wizard"
+    _description = "Eco-Vouchers Wizard"
 
     @api.model
     def default_get(self, field_list=None):
         if self.env.company.country_id.code != "BE":
-            raise UserError(_('You must be logged in a Belgian company to use this feature'))
+            raise UserError(
+                _("You must be logged in a Belgian company to use this feature")
+            )
         return super().default_get(field_list)
 
     reference_year = fields.Integer(default=lambda self: fields.Date.today().year)
-    reference_period = fields.Char(compute='_compute_reference_period')
+    reference_period = fields.Char(compute="_compute_reference_period")
     line_ids = fields.One2many(
-        'l10n.be.eco.vouchers.line.wizard', 'wizard_id',
-        compute='_compute_line_ids', store=True, readonly=False)
-    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
-    currency_id = fields.Many2one(related='company_id.currency_id')
+        "l10n.be.eco.vouchers.line.wizard",
+        "wizard_id",
+        compute="_compute_line_ids",
+        store=True,
+        readonly=False,
+    )
+    company_id = fields.Many2one("res.company", default=lambda self: self.env.company)
+    currency_id = fields.Many2one(related="company_id.currency_id")
 
-    @api.depends('reference_year')
+    @api.depends("reference_year")
     def _compute_reference_period(self):
         for wizard in self:
-            wizard.reference_period = _('The reference period is from the 1st of June %s to the 31th of May %s', wizard.reference_year -1, wizard.reference_year)
+            wizard.reference_period = _(
+                "The reference period is from the 1st of June %s to the 31th of May %s",
+                wizard.reference_year - 1,
+                wizard.reference_year,
+            )
 
-    @api.depends('reference_year')
+    @api.depends("reference_year")
     def _compute_line_ids(self):
         # The following maximum amounts, determined on the basis of the weekly working time, are
         # granted to workers with a full reference period:
@@ -59,26 +68,33 @@ class L10nBeEcoVouchersWizard(models.TransientModel):
         # The total amount to be granted is calculated as follows:
         # € 125 x 7/12 + € 250 x 5/12 = € 177.07
         unpaid_work_entry_types = self.env.ref(
-            'l10n_be_hr_payroll.hr_payroll_structure_cp200_employee_salary'
-        ).unpaid_work_entry_type_ids.filtered(lambda wet: wet.code not in ['LEAVE210', 'LEAVE230'])
-
+            "l10n_be_hr_payroll.hr_payroll_structure_cp200_employee_salary"
+        ).unpaid_work_entry_type_ids.filtered(
+            lambda wet: wet.code not in ["LEAVE210", "LEAVE230"]
+        )
 
         for wizard in self:
             date_from = date(wizard.reference_year - 1, 6, 1)
             date_to = date(wizard.reference_year, 5, 31)
             # Get all the employee contracts, even people who doesn't work in the company anymore
             # as it's their right to get the eco-vouchers for the given period
-            all_contracts = self.env['hr.employee']._get_all_contracts(date_from, date_to, ['open', 'close'])
-            all_employees = all_contracts.mapped('employee_id')
-            all_payslips = self.env['hr.payslip'].search([
-                ('employee_id', 'in', all_employees.ids),
-                ('company_id', '=', wizard.company_id.id),
-                ('date_from', '>=', date_from),
-                ('date_to', '<=', date_to),
-                ('state', 'in', ['done', 'paid'])
-            ])
-            employee_contracts = defaultdict(lambda: self.env['hr.contract'])
-            for contract in all_contracts.filtered(lambda c: c.active and c.company_id == wizard.company_id):
+            all_contracts = self.env["hr.employee"]._get_all_contracts(
+                date_from, date_to, ["open", "close"]
+            )
+            all_employees = all_contracts.mapped("employee_id")
+            all_payslips = self.env["hr.payslip"].search(
+                [
+                    ("employee_id", "in", all_employees.ids),
+                    ("company_id", "=", wizard.company_id.id),
+                    ("date_from", ">=", date_from),
+                    ("date_to", "<=", date_to),
+                    ("state", "in", ["done", "paid"]),
+                ]
+            )
+            employee_contracts = defaultdict(lambda: self.env["hr.contract"])
+            for contract in all_contracts.filtered(
+                lambda c: c.active and c.company_id == wizard.company_id
+            ):
                 employee_contracts[contract.employee_id] |= contract
 
             result = [(5, 0, 0)]
@@ -91,7 +107,9 @@ class L10nBeEcoVouchersWizard(models.TransientModel):
                 for contracts, occupation_from, occupation_to in occupations:
                     contract = contracts[0]
                     occupation_from = max(date_from, occupation_from)
-                    occupation_to = min(date_to, occupation_to if occupation_to else date_to)
+                    occupation_to = min(
+                        date_to, occupation_to if occupation_to else date_to
+                    )
                     # So that 1/1/2020 to 28/02/2020 -> 2 months
                     occupation_to = occupation_to + relativedelta(days=1)
                     # Retrieve non assimilated absences
@@ -102,12 +120,20 @@ class L10nBeEcoVouchersWizard(models.TransientModel):
                     # ‐ The first month of incapacity covered by a guaranteed salary as provided
                     #   for by the law of 03/07/1978 on employment contracts.
                     employee_payslips = all_payslips.filtered(
-                        lambda p: p.employee_id == employee and p.date_from >= occupation_from and p.date_to <= occupation_to)
-                    employee_worked_days = employee_payslips.mapped('worked_days_line_ids').filtered(
-                        lambda wd: wd.work_entry_type_id in unpaid_work_entry_types)
-                    invalid_hours = sum(employee_worked_days.mapped('number_of_hours'))
+                        lambda p: p.employee_id == employee
+                        and p.date_from >= occupation_from
+                        and p.date_to <= occupation_to
+                    )
+                    employee_worked_days = employee_payslips.mapped(
+                        "worked_days_line_ids"
+                    ).filtered(
+                        lambda wd: wd.work_entry_type_id in unpaid_work_entry_types
+                    )
+                    invalid_hours = sum(employee_worked_days.mapped("number_of_hours"))
                     hours_per_day = contract.resource_calendar_id.hours_per_day
-                    invalid_days = math.ceil(invalid_hours / hours_per_day) if hours_per_day else 0
+                    invalid_days = (
+                        math.ceil(invalid_hours / hours_per_day) if hours_per_day else 0
+                    )
                     # Compute complete months
                     days = (occupation_to - occupation_from).days - invalid_days
                     work_time_rate = contract.resource_calendar_id.work_time_rate
@@ -115,65 +141,101 @@ class L10nBeEcoVouchersWizard(models.TransientModel):
                         if work_time_rate < rate:
                             total_amount += max(0, (days / 365.0) * amount)
                             break
-                result.append((0, 0, {
-                    'employee_id': employee.id,
-                    'amount': min(250, total_amount),
-                    'wizard_id': wizard.id,
-                }))
+                result.append(
+                    (
+                        0,
+                        0,
+                        {
+                            "employee_id": employee.id,
+                            "amount": min(250, total_amount),
+                            "wizard_id": wizard.id,
+                        },
+                    )
+                )
             wizard.line_ids = result
 
     def action_export_xls(self):
         self.ensure_one()
         return {
-            'name': 'Export Eco-Vouchers',
-            'type': 'ir.actions.act_url',
-            'url': '/export/ecovouchers/%s' % (self.id),
+            "name": "Export Eco-Vouchers",
+            "type": "ir.actions.act_url",
+            "url": "/export/ecovouchers/%s" % (self.id),
         }
 
     def generate_payslips(self):
         self.ensure_one()
-        eco_voucher_type = self.env.ref('l10n_be_hr_payroll.cp200_employee_eco_vouchers')
-        monthly_pay = self.env.ref('l10n_be_hr_payroll.hr_payroll_structure_cp200_employee_salary')
-        payslips = self.env['hr.payslip']
+        eco_voucher_type = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employee_eco_vouchers"
+        )
+        monthly_pay = self.env.ref(
+            "l10n_be_hr_payroll.hr_payroll_structure_cp200_employee_salary"
+        )
+        payslips = self.env["hr.payslip"]
         for line in self.line_ids:
-            payslip = self.env['hr.payslip'].search([
-                ('employee_id', '=', line.employee_id.id),
-                ('state', '=', 'verify'),
-                ('struct_id', '=', monthly_pay.id),
-            ], limit=1)
+            payslip = self.env["hr.payslip"].search(
+                [
+                    ("employee_id", "=", line.employee_id.id),
+                    ("state", "=", "verify"),
+                    ("struct_id", "=", monthly_pay.id),
+                ],
+                limit=1,
+            )
             if payslip:
                 payslips |= payslip
-                voucher_line = payslip.input_line_ids.filtered(lambda line: line.code == "ECOVOUCHERS")
+                voucher_line = payslip.input_line_ids.filtered(
+                    lambda line: line.code == "ECOVOUCHERS"
+                )
                 if voucher_line:
                     voucher_line[0].amount = line.amount
                 else:
-                    payslip.write({'input_line_ids': [(0, 0, {
-                        'input_type_id': eco_voucher_type.id,
-                        'amount': line.amount,
-                    })]})
+                    payslip.write(
+                        {
+                            "input_line_ids": [
+                                (
+                                    0,
+                                    0,
+                                    {
+                                        "input_type_id": eco_voucher_type.id,
+                                        "amount": line.amount,
+                                    },
+                                )
+                            ]
+                        }
+                    )
             else:
-                payslip = self.env['hr.payslip'].create({
-                    'name': _('Eco-Vouchers'),
-                    'employee_id': line.employee_id.id,
-                    'contract_id': line.employee_id.contract_id.id,
-                    'struct_id': monthly_pay.id,
-                    'input_line_ids': [(0, 0, {
-                        'input_type_id': eco_voucher_type.id,
-                        'amount': line.amount,
-                    })],
-                })
+                payslip = self.env["hr.payslip"].create(
+                    {
+                        "name": _("Eco-Vouchers"),
+                        "employee_id": line.employee_id.id,
+                        "contract_id": line.employee_id.contract_id.id,
+                        "struct_id": monthly_pay.id,
+                        "input_line_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "input_type_id": eco_voucher_type.id,
+                                    "amount": line.amount,
+                                },
+                            )
+                        ],
+                    }
+                )
                 payslips |= payslip
                 payslip.compute_sheet()
-        action = self.env["ir.actions.actions"]._for_xml_id("hr_payroll.action_view_hr_payslip_month_form")
-        action.update({'domain': [('id', 'in', payslips.ids)]})
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "hr_payroll.action_view_hr_payslip_month_form"
+        )
+        action.update({"domain": [("id", "in", payslips.ids)]})
         return action
 
-class L10nBeEcoVouchersLineWizard(models.TransientModel):
-    _name = 'l10n.be.eco.vouchers.line.wizard'
-    _description = 'Eco-Vouchers Wizard'
 
-    wizard_id = fields.Many2one('l10n.be.eco.vouchers.wizard')
-    employee_id = fields.Many2one('hr.employee', required=True)
-    niss = fields.Char(string="NISS", related='employee_id.niss')
+class L10nBeEcoVouchersLineWizard(models.TransientModel):
+    _name = "l10n.be.eco.vouchers.line.wizard"
+    _description = "Eco-Vouchers Wizard"
+
+    wizard_id = fields.Many2one("l10n.be.eco.vouchers.wizard")
+    employee_id = fields.Many2one("hr.employee", required=True)
+    niss = fields.Char(string="NISS", related="employee_id.niss")
     amount = fields.Monetary()
-    currency_id = fields.Many2one(related='wizard_id.currency_id')
+    currency_id = fields.Many2one(related="wizard_id.currency_id")

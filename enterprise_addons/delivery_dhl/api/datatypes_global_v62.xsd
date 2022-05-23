@@ -583,7 +583,7 @@
 				minOccurs="0" />
 			<xsd:element name="BillToFederalTaxID" type="xsd:string"
 				minOccurs="0" />
-			<xsd:element name="Remarks" type="xsd:string" minOccurs="0" />			
+			<xsd:element name="Remarks" type="xsd:string" minOccurs="0" />
 			<xsd:element name="OtherCharges1" type="xsd:float"
 				minOccurs="0" />
 			<xsd:element name="OtherCharges2" type="xsd:float"
@@ -1475,7 +1475,7 @@
 			<xsd:element name="ChargeValue" type="Money" minOccurs="0" />
 			<xsd:element name="CurrencyCode" type="CurrencyCode"
 				minOccurs="0" />
-			<xsd:element name="IsWaived" type="YesNo" minOccurs="0" />			
+			<xsd:element name="IsWaived" type="YesNo" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:simpleType name="SpecialServiceType">
@@ -1642,7 +1642,7 @@
 						<xsd:maxLength value="10" />
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:element>			
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:simpleType name="SiteID">
@@ -2435,7 +2435,7 @@
 			<xsd:maxLength value="140" />
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:simpleType name="SignatureImage">
 		<xsd:annotation>
 			<xsd:documentation>SignatureImage</xsd:documentation>
@@ -2466,5 +2466,5 @@
 				</xsd:simpleType>
 			</xsd:element>
 		</xsd:sequence>
-	</xsd:complexType>	
+	</xsd:complexType>
 </xsd:schema>

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import account_bank_statement
 from . import account_edi_format
 from . import account_move

@@ -19,7 +19,7 @@
         </xsl:call-template>
 
         <!--
-            Iniciamos el manejo de los elementos hijo en la secuencia 
+            Iniciamos el manejo de los elementos hijo en la secuencia
         -->
         <xsl:apply-templates select="./ecc12:Conceptos"/>
 
@@ -83,7 +83,7 @@
         </xsl:call-template>
 
         <!--
-            Iniciamos el manejo de los elementos hijo en la secuencia 
+            Iniciamos el manejo de los elementos hijo en la secuencia
         -->
         <xsl:apply-templates select="./ecc12:Traslados"/>
     </xsl:template>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from collections import defaultdict
@@ -8,17 +7,21 @@ from odoo.tools import float_is_zero
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _inherit = "account.move"
 
     def _get_invoiced_lot_values(self):
-        """ Display Rental lots on invoice report when functionality is enabled. """
+        """Display Rental lots on invoice report when functionality is enabled."""
         res = super(AccountMove, self)._get_invoiced_lot_values()
 
-        if self.state == 'draft':
+        if self.state == "draft":
             return res
 
-        sale_orders = self.mapped('invoice_line_ids.sale_line_ids.order_id').filtered('is_rental_order')
-        rental_stock_move_lines = sale_orders.order_line.filtered('is_rental').move_ids.move_line_ids
+        sale_orders = self.mapped("invoice_line_ids.sale_line_ids.order_id").filtered(
+            "is_rental_order"
+        )
+        rental_stock_move_lines = sale_orders.order_line.filtered(
+            "is_rental"
+        ).move_ids.move_line_ids
 
         if not rental_stock_move_lines:
             return res
@@ -26,9 +29,11 @@ class AccountMove(models.Model):
         stock_move_lines = rental_stock_move_lines
 
         # Get the other customer invoices and refunds.
-        ordered_invoice_ids = sale_orders.mapped('invoice_ids')\
-            .filtered(lambda i: i.state not in ['draft', 'cancel'])\
+        ordered_invoice_ids = (
+            sale_orders.mapped("invoice_ids")
+            .filtered(lambda i: i.state not in ["draft", "cancel"])
             .sorted(lambda i: (i.invoice_date, i.id))
+        )
 
         # Get the position of self in other customer invoices and refunds.
         self_index = None
@@ -44,13 +49,25 @@ class AccountMove(models.Model):
         last_invoice = previous_invoices[-1] if len(previous_invoices) else None
 
         # Get the incoming and outgoing sml between self.invoice_date and the previous invoice (if any).
-        self_datetime = max(self.invoice_line_ids.mapped('write_date')) if self.invoice_line_ids else None
-        last_invoice_datetime = max(last_invoice.invoice_line_ids.mapped('write_date')) if last_invoice else None
+        self_datetime = (
+            max(self.invoice_line_ids.mapped("write_date"))
+            if self.invoice_line_ids
+            else None
+        )
+        last_invoice_datetime = (
+            max(last_invoice.invoice_line_ids.mapped("write_date"))
+            if last_invoice
+            else None
+        )
 
         def _filter_outgoing_sml(ml):
             # Rental moves send the products (& lots) to an internal location
             # independent of any warehouse (but still in the company to count for the assets).
-            if ml.state == 'done' and ml.lot_id and ml.location_dest_id == ml.company_id.rental_loc_id :
+            if (
+                ml.state == "done"
+                and ml.lot_id
+                and ml.location_dest_id == ml.company_id.rental_loc_id
+            ):
                 if last_invoice_datetime:
                     return last_invoice_datetime <= ml.date <= self_datetime
                 else:
@@ -65,7 +82,9 @@ class AccountMove(models.Model):
         # Prepare and return lot_values
         qties_per_lot = defaultdict(lambda: 0)
         for ml in outgoing_sml:
-            qties_per_lot[ml.lot_id] += ml.product_uom_id._compute_quantity(ml.qty_done, ml.product_id.uom_id)
+            qties_per_lot[ml.lot_id] += ml.product_uom_id._compute_quantity(
+                ml.qty_done, ml.product_id.uom_id
+            )
 
         # VFE NOTE: The quantity may be wrong in some advanced cases:
         # When modifying pickedup or returned lots manually (e.g. not through the rental wizard),
@@ -79,11 +98,13 @@ class AccountMove(models.Model):
         for lot_id, qty in qties_per_lot.items():
             if float_is_zero(qty, precision_rounding=lot_id.product_id.uom_id.rounding):
                 continue
-            lot_values.append({
-                'product_name': lot_id.product_id.display_name,
-                'quantity': qty,
-                'uom_name': lot_id.product_uom_id.name,
-                'lot_name': lot_id.name,
-            })
+            lot_values.append(
+                {
+                    "product_name": lot_id.product_id.display_name,
+                    "quantity": qty,
+                    "uom_name": lot_id.product_uom_id.name,
+                    "lot_name": lot_id.name,
+                }
+            )
 
         return lot_values

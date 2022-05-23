@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import fields, models, tools
 
@@ -8,28 +7,33 @@ class RentalReport(models.Model):
     _description = "Rental Analysis Report"
     _auto = False
 
-    date = fields.Date('Date', readonly=True)
-    order_id = fields.Many2one('sale.order', 'Order #', readonly=True)
-    product_id = fields.Many2one('product.product', 'Product', readonly=True)
-    product_uom = fields.Many2one('uom.uom', 'Unit of Measure', readonly=True)
-    quantity = fields.Float('Daily Ordered Qty', readonly=True)
-    qty_delivered = fields.Float('Daily Picked-Up Qty', readonly=True)
-    qty_returned = fields.Float('Daily Returned Qty', readonly=True)
-    partner_id = fields.Many2one('res.partner', 'Customer', readonly=True)
-    user_id = fields.Many2one('res.users', 'Salesman', readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    product_tmpl_id = fields.Many2one('product.template', 'Product Template', readonly=True)
-    categ_id = fields.Many2one('product.category', 'Product Category', readonly=True)
-    state = fields.Selection([
-        ('draft', 'Draft Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('sale', 'Sales Order'),
-        ('done', 'Sales Done'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True)
-    price = fields.Float('Daily Amount', readonly=True)
-    currency_id = fields.Many2one('res.currency', 'Currency', readonly=True)
-
+    date = fields.Date("Date", readonly=True)
+    order_id = fields.Many2one("sale.order", "Order #", readonly=True)
+    product_id = fields.Many2one("product.product", "Product", readonly=True)
+    product_uom = fields.Many2one("uom.uom", "Unit of Measure", readonly=True)
+    quantity = fields.Float("Daily Ordered Qty", readonly=True)
+    qty_delivered = fields.Float("Daily Picked-Up Qty", readonly=True)
+    qty_returned = fields.Float("Daily Returned Qty", readonly=True)
+    partner_id = fields.Many2one("res.partner", "Customer", readonly=True)
+    user_id = fields.Many2one("res.users", "Salesman", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    product_tmpl_id = fields.Many2one(
+        "product.template", "Product Template", readonly=True
+    )
+    categ_id = fields.Many2one("product.category", "Product Category", readonly=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft Quotation"),
+            ("sent", "Quotation Sent"),
+            ("sale", "Sales Order"),
+            ("done", "Sales Done"),
+            ("cancel", "Cancelled"),
+        ],
+        string="Status",
+        readonly=True,
+    )
+    price = fields.Float("Daily Amount", readonly=True)
+    currency_id = fields.Many2one("res.currency", "Currency", readonly=True)
 
     def _quantity(self):
         return """
@@ -59,7 +63,10 @@ class RentalReport(models.Model):
             sol.company_id,
             sol.state,
             sol.currency_id
-        """% (self._quantity(), self._price())
+        """ % (
+            self._quantity(),
+            self._price(),
+        )
 
     def _from(self):
         return """
@@ -77,10 +84,12 @@ class RentalReport(models.Model):
             WHERE sol.is_rental)
         """ % (
             self._select(),
-            self._from()
+            self._from(),
         )
 
     def init(self):
         # self._table = sale_rental_report
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query())
+        )

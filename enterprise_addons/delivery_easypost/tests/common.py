@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo.tests import TransactionCase
@@ -91,7 +90,9 @@ class EasypostTestCommon(TransactionCase):
         )
         product_type_wizard = self.easypost_fedex_carrier.action_get_carrier_type()
         self.easypost_fedex_carrier.easypost_delivery_type = "FedEx"
-        self.easypost_fedex_carrier.easypost_delivery_type_id = product_type_wizard["context"]["carrier_types"]["FedEx"]
+        self.easypost_fedex_carrier.easypost_delivery_type_id = product_type_wizard[
+            "context"
+        ]["carrier_types"]["FedEx"]
 
         self.fedex_default_package_type = self.env["stock.package.type"].create(
             {
@@ -103,4 +104,6 @@ class EasypostTestCommon(TransactionCase):
                 "width": 10,
             }
         )
-        self.easypost_fedex_carrier.easypost_default_package_type_id = self.fedex_default_package_type
+        self.easypost_fedex_carrier.easypost_default_package_type_id = (
+            self.fedex_default_package_type
+        )

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -8,13 +8,18 @@
             <field name="arch" type="xml">
                 <form>
                     <group>
-                        <field name="l10n_cl_report_tasa_ppm"/>
-                        <field name="l10n_cl_report_fpp_value"/>
+                        <field name="l10n_cl_report_tasa_ppm" />
+                        <field name="l10n_cl_report_fpp_value" />
                     </group>
 
                     <footer>
-                        <button string="Cancel" special="cancel" data-hotkey="z"/>
-                        <button string="Show Report" class="oe_highlight" type="object" name="show_report"/>
+                        <button string="Cancel" special="cancel" data-hotkey="z" />
+                        <button
+              string="Show Report"
+              class="oe_highlight"
+              type="object"
+              name="show_report"
+            />
                     </footer>
                 </form>
             </field>
@@ -27,10 +32,12 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_f29_report"
-            name="Propuesta F29"
-            action="action_f29_report"
-            parent="l10n_cl.account_reports_cl_statements_menu"/>
+        <menuitem
+      id="menu_f29_report"
+      name="Propuesta F29"
+      action="action_f29_report"
+      parent="l10n_cl.account_reports_cl_statements_menu"
+    />
 
 
     </data>

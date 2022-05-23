@@ -1,25 +1,25 @@
-odoo.define('marketing_automation.hierarchy_kanban', function (require) {
-"use strict";
+odoo.define("marketing_automation.hierarchy_kanban", function (require) {
+  "use strict";
 
-var core = require('web.core');
-var Domain = require('web.Domain');
-var DomainSelector = require('web.DomainSelector');
-var Dialog = require('web.Dialog');
-var FieldOne2Many = require('web.relational_fields').FieldOne2Many;
-var KanbanRenderer = require('web.KanbanRenderer');
-var KanbanRecord = require('web.KanbanRecord');
-var registry = require('web.field_registry');
+  var core = require("web.core");
+  var Domain = require("web.Domain");
+  var DomainSelector = require("web.DomainSelector");
+  var Dialog = require("web.Dialog");
+  var FieldOne2Many = require("web.relational_fields").FieldOne2Many;
+  var KanbanRenderer = require("web.KanbanRenderer");
+  var KanbanRecord = require("web.KanbanRecord");
+  var registry = require("web.field_registry");
 
-var _t = core._t;
+  var _t = core._t;
 
-var HierarchyKanban = FieldOne2Many.extend({
+  var HierarchyKanban = FieldOne2Many.extend({
     custom_events: _.extend({}, FieldOne2Many.prototype.custom_events, {
-        'add_child_act': '_onAddChild',
+      add_child_act: "_onAddChild",
     }),
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * @private
@@ -27,29 +27,29 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @returns {Promise}
      */
     _render: function () {
-        var self = this;
-        this._setHierarchyData();
-        var _super = this._super.bind(this);
-        var rendererProm;
-        if (!this.renderer) {
-            this.renderer = new HierarchyKanbanRenderer(this, this.value, {
-                arch: this.view.arch,
-                viewType: 'kanban',
-                record_options: {
-                    editable: false,
-                    deletable: false,
-                    read_only_mode: this.isReadonly,
-                },
-            });
-            rendererProm = this.renderer.appendTo(this.$el);
-        }
-        return Promise.resolve(rendererProm).then(function () {
-            // Move control_panel at bottom
-            if (self.control_panel) {
-                self.control_panel.$el.appendTo(self.$el);
-            }
-            return _super();
+      var self = this;
+      this._setHierarchyData();
+      var _super = this._super.bind(this);
+      var rendererProm;
+      if (!this.renderer) {
+        this.renderer = new HierarchyKanbanRenderer(this, this.value, {
+          arch: this.view.arch,
+          viewType: "kanban",
+          record_options: {
+            editable: false,
+            deletable: false,
+            read_only_mode: this.isReadonly,
+          },
         });
+        rendererProm = this.renderer.appendTo(this.$el);
+      }
+      return Promise.resolve(rendererProm).then(function () {
+        // Move control_panel at bottom
+        if (self.control_panel) {
+          self.control_panel.$el.appendTo(self.$el);
+        }
+        return _super();
+      });
     },
     /**
      * Transforms the widget value into parent and child relationship.
@@ -57,19 +57,19 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @private
      */
     _setHierarchyData: function () {
-        var data = this.value.data;
-        this.allData = data;
-        var parentMap = {};
-        this.value.data = _.filter(data, function (record) {
-            parentMap[record.res_id] = record;
-            record.children = [];
-            return record.data.parent_id === false;
-        });
-        _.each(data, function (record) {
-            if (record.data.parent_id && parentMap[record.data.parent_id.res_id]) {
-                parentMap[record.data.parent_id.res_id].children.push(record);
-            }
-        });
+      var data = this.value.data;
+      this.allData = data;
+      var parentMap = {};
+      this.value.data = _.filter(data, function (record) {
+        parentMap[record.res_id] = record;
+        record.children = [];
+        return record.data.parent_id === false;
+      });
+      _.each(data, function (record) {
+        if (record.data.parent_id && parentMap[record.data.parent_id.res_id]) {
+          parentMap[record.data.parent_id.res_id].children.push(record);
+        }
+      });
     },
     /**
      * The implicit contract on this.value.data has been broken by _setHierarchyData
@@ -81,16 +81,19 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @private
      */
     _setValue: function (value, options) {
-        if (value.operation === 'ADD' && _.some(this.allData, {id: value.id})) {
-            value.operation = 'UPDATE';
-        } else if(value.operation === 'DELETE') {
-            var removedRecords = this.allData.filter(function (record) {return value.ids.includes(record.id);});
+      if (value.operation === "ADD" && _.some(this.allData, {id: value.id})) {
+        value.operation = "UPDATE";
+      } else if (value.operation === "DELETE") {
+        var removedRecords = this.allData.filter(function (record) {
+          return value.ids.includes(record.id);
+        });
 
-            // we want to delete these records and also each children which derive from the records
-            value.ids = this._getAllSubChildren(removedRecords)
-                .map(function (record) {return record.id;});
-        }
-        return this._super(value, options);
+        // We want to delete these records and also each children which derive from the records
+        value.ids = this._getAllSubChildren(removedRecords).map(function (record) {
+          return record.id;
+        });
+      }
+      return this._super(value, options);
     },
 
     /**
@@ -99,16 +102,18 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @private
      */
     _getAllSubChildren: function (parentRecords) {
-        var childrenRecords = [];
-        parentRecords.forEach(function (record) {
-            childrenRecords = childrenRecords.concat(record.children || []);
-        });
-        return childrenRecords.length ? parentRecords.concat(this._getAllSubChildren(childrenRecords)) : parentRecords;
+      var childrenRecords = [];
+      parentRecords.forEach(function (record) {
+        childrenRecords = childrenRecords.concat(record.children || []);
+      });
+      return childrenRecords.length
+        ? parentRecords.concat(this._getAllSubChildren(childrenRecords))
+        : parentRecords;
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * @override
@@ -116,13 +121,15 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @private
      */
     _onAddRecord: function (ev) {
-        var self = this;
-        var fnSuper = this._super;
-        var fnArguments = arguments;
-        ev.data = { 'disable_multiple_selection': true };
-        this.trigger_up('save_form_before_new_activity', {
-            callback: function() { fnSuper.apply(self, fnArguments); }
-        });
+      var self = this;
+      var fnSuper = this._super;
+      var fnArguments = arguments;
+      ev.data = {disable_multiple_selection: true};
+      this.trigger_up("save_form_before_new_activity", {
+        callback: function () {
+          fnSuper.apply(self, fnArguments);
+        },
+      });
     },
 
     /**
@@ -131,25 +138,24 @@ var HierarchyKanban = FieldOne2Many.extend({
      * @private
      */
     _onAddChild: function (params) {
-        var self = this;
-        var context = _.extend(this.record.getContext(this.recordParams), params.data);
-        this.trigger_up('open_one2many_record', {
-            domain: this.record.getDomain(this.recordParams),
-            context: context,
-            field: this.field,
-            fields_view: this.attrs.views && this.attrs.views.form,
-            parentID: this.value.id,
-            viewInfo: this.view,
-            disable_multiple_selection: true,
-            on_saved: function (record) {
-                self._setValue({operation: 'ADD', id: record.id});
-            },
-        });
+      var self = this;
+      var context = _.extend(this.record.getContext(this.recordParams), params.data);
+      this.trigger_up("open_one2many_record", {
+        domain: this.record.getDomain(this.recordParams),
+        context: context,
+        field: this.field,
+        fields_view: this.attrs.views && this.attrs.views.form,
+        parentID: this.value.id,
+        viewInfo: this.view,
+        disable_multiple_selection: true,
+        on_saved: function (record) {
+          self._setValue({operation: "ADD", id: record.id});
+        },
+      });
     },
-});
+  });
 
-var HierarchyKanbanRenderer = KanbanRenderer.extend({
-
+  var HierarchyKanbanRenderer = KanbanRenderer.extend({
     /**
      * Renders kanban records with its children.
      *
@@ -157,35 +163,35 @@ var HierarchyKanbanRenderer = KanbanRenderer.extend({
      * @override
      */
     _renderUngrouped: function (fragment, records) {
-        this.defs.push(this._renderUngroupedAux(fragment, records));
+      this.defs.push(this._renderUngroupedAux(fragment, records));
     },
     _renderUngroupedAux: function (fragment, records) {
-        var self = this;
-        var recordsDefs = [];
-        _.each(records || this.state.data, function (record) {
-            var kanbanRecord = new HierarchyKanbanRecord(self, record, self.recordOptions);
-            self.widgets.push(kanbanRecord);
-            var def = kanbanRecord.appendTo(fragment).then(function() {
-                if (record.children.length) {
-                    var newFragment = kanbanRecord.$('.o_hierarchy_children');
-                    return self._renderUngroupedAux(newFragment, record.children);
-                }
-            });
-            recordsDefs.push(def);
+      var self = this;
+      var recordsDefs = [];
+      _.each(records || this.state.data, function (record) {
+        var kanbanRecord = new HierarchyKanbanRecord(self, record, self.recordOptions);
+        self.widgets.push(kanbanRecord);
+        var def = kanbanRecord.appendTo(fragment).then(function () {
+          if (record.children.length) {
+            var newFragment = kanbanRecord.$(".o_hierarchy_children");
+            return self._renderUngroupedAux(newFragment, record.children);
+          }
         });
-        return Promise.all(recordsDefs);
+        recordsDefs.push(def);
+      });
+      return Promise.all(recordsDefs);
     },
-});
+  });
 
-var HierarchyKanbanRecord = KanbanRecord.extend({
+  var HierarchyKanbanRecord = KanbanRecord.extend({
     events: _.extend({}, KanbanRecord.prototype.events, {
-        'click .o_ma_switch span': '_onClickSwitch',
-        'click .o_add_child_activity': '_onAddChildActivity',
+      "click .o_ma_switch span": "_onClickSwitch",
+      "click .o_add_child_activity": "_onAddChildActivity",
     }),
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Renders DomainSelector.
@@ -194,21 +200,23 @@ var HierarchyKanbanRecord = KanbanRecord.extend({
      * @returns {Promise}
      */
     _renderDomainSelector: function () {
-        if (!this.domainSelector) {
-            var domainModel = this.state.data.model_name;
-            var domain = Domain.prototype.stringToArray(this.state.data.domain);
-            this.domainSelector = new DomainSelector(this, domainModel, domain, {
-                readonly: true,
-                filters: {},
-            });
-            return this.domainSelector.prependTo(this.$('.o_ma_card:first > .o_pane_filter'));
-        }
-        return Promise.resolve();
+      if (!this.domainSelector) {
+        var domainModel = this.state.data.model_name;
+        var domain = Domain.prototype.stringToArray(this.state.data.domain);
+        this.domainSelector = new DomainSelector(this, domainModel, domain, {
+          readonly: true,
+          filters: {},
+        });
+        return this.domainSelector.prependTo(
+          this.$(".o_ma_card:first > .o_pane_filter")
+        );
+      }
+      return Promise.resolve();
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Displays dialog if user try to delete record having children.
@@ -219,28 +227,33 @@ var HierarchyKanbanRecord = KanbanRecord.extend({
      * @param {Event} event
      */
     _onKanbanActionClicked: function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-        var type = $(event.currentTarget).data('type') || 'button';
-        if (type === 'delete' && this.state.children.length) {
-            new Dialog(this, {
-                title: _t('Delete Activity'),
-                buttons: [{
-                    text: _t('Delete All'),
-                    classes: 'btn-primary',
-                    close: true,
-                    click: this._super.bind(this, event)
-                }, {
-                    text: _t('Discard'),
-                    close: true
-                }],
-                $content: $('<div>', {
-                    html: _t("This Activity has a dependant child activity. 'DELETE ALL' will delete all child activities."),
-                }),
-            }).open();
-        } else {
-            this._super.apply(this, arguments);
-        }
+      event.stopPropagation();
+      event.preventDefault();
+      var type = $(event.currentTarget).data("type") || "button";
+      if (type === "delete" && this.state.children.length) {
+        new Dialog(this, {
+          title: _t("Delete Activity"),
+          buttons: [
+            {
+              text: _t("Delete All"),
+              classes: "btn-primary",
+              close: true,
+              click: this._super.bind(this, event),
+            },
+            {
+              text: _t("Discard"),
+              close: true,
+            },
+          ],
+          $content: $("<div>", {
+            html: _t(
+              "This Activity has a dependant child activity. 'DELETE ALL' will delete all child activities."
+            ),
+          }),
+        }).open();
+      } else {
+        this._super.apply(this, arguments);
+      }
     },
 
     /**
@@ -252,41 +265,41 @@ var HierarchyKanbanRecord = KanbanRecord.extend({
      * @param {Event} event
      */
     _onAddChildActivity: function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-        var triggerType = $(event.currentTarget).data('triggerType');
-        var self = this;
-        this.trigger_up('save_form_before_new_activity', {
-            callback: function () {
-                var promise;
-                if (!self.id) {
-                    promise = self._rpc({
-                        model: 'marketing.activity',
-                        method: 'search_read',
-                        domain: [
-                            ['name', '=', self.recordData.name],
-                            ['parent_id', '=', self.recordData.parent_id.res_id],
-                            ['trigger_type', '=', self.recordData.trigger_type],
-                        ],
-                        fields: ['id'],
-                        limit: 1,
-                    });
-                } else {
-                    promise = Promise.resolve();
-                }
-                promise.then(function (result) {
-                    if (result && result.length) {
-                        self.id = result[0].id;
-                    }
-                    if (self.id) {
-                        self.trigger_up('add_child_act', {
-                            'default_parent_id': self.id,
-                            'default_trigger_type': triggerType
-                        });
-                    }
-                });
+      event.stopPropagation();
+      event.preventDefault();
+      var triggerType = $(event.currentTarget).data("triggerType");
+      var self = this;
+      this.trigger_up("save_form_before_new_activity", {
+        callback: function () {
+          var promise;
+          if (!self.id) {
+            promise = self._rpc({
+              model: "marketing.activity",
+              method: "search_read",
+              domain: [
+                ["name", "=", self.recordData.name],
+                ["parent_id", "=", self.recordData.parent_id.res_id],
+                ["trigger_type", "=", self.recordData.trigger_type],
+              ],
+              fields: ["id"],
+              limit: 1,
+            });
+          } else {
+            promise = Promise.resolve();
+          }
+          promise.then(function (result) {
+            if (result && result.length) {
+              self.id = result[0].id;
             }
-        });
+            if (self.id) {
+              self.trigger_up("add_child_act", {
+                default_parent_id: self.id,
+                default_trigger_type: triggerType,
+              });
+            }
+          });
+        },
+      });
     },
 
     /**
@@ -296,24 +309,23 @@ var HierarchyKanbanRecord = KanbanRecord.extend({
      * @param {Event} event
      */
     _onClickSwitch: function (event) {
-        event.stopPropagation();
-        var self = this;
-        $(event.currentTarget).siblings().removeClass('active');
-        $(event.currentTarget).addClass('active');
-        var mode = $(event.currentTarget).data('mode');
-        this._renderDomainSelector().then(function () {
-            self.$('.o_ma_card:first > [class*="o_pane_"]').addClass('d-none');
-            self.$('.o_ma_card:first > .o_pane_' + mode).removeClass('d-none');
-        });
-    }
-});
+      event.stopPropagation();
+      var self = this;
+      $(event.currentTarget).siblings().removeClass("active");
+      $(event.currentTarget).addClass("active");
+      var mode = $(event.currentTarget).data("mode");
+      this._renderDomainSelector().then(function () {
+        self.$('.o_ma_card:first > [class*="o_pane_"]').addClass("d-none");
+        self.$(".o_ma_card:first > .o_pane_" + mode).removeClass("d-none");
+      });
+    },
+  });
 
-registry.add('hierarchy_kanban', HierarchyKanban);
+  registry.add("hierarchy_kanban", HierarchyKanban);
 
-return {
+  return {
     HierarchyKanbanRecord: HierarchyKanbanRecord,
     HierarchyKanbanRenderer: HierarchyKanbanRenderer,
     HierarchyKanban: HierarchyKanban,
-};
-
+  };
 });

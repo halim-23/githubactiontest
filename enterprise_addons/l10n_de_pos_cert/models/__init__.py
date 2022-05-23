@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import pos_config
 from . import l10n_de_pos_dsfinvk_export
 from . import pos_order

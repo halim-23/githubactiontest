@@ -1,60 +1,93 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo.addons.account_reports.tests.account_sales_report_common import AccountSalesReportCommon
-from odoo.tests import tagged
 from freezegun import freeze_time
 
+from odoo.tests import tagged
 
-@tagged('post_install_l10n', 'post_install', '-at_install')
+from odoo.addons.account_reports.tests.account_sales_report_common import (
+    AccountSalesReportCommon,
+)
+
+
+@tagged("post_install_l10n", "post_install", "-at_install")
 class GermanTaxReportTest(AccountSalesReportCommon):
-
     @classmethod
-    def setUpClass(cls, chart_template_ref='l10n_de_skr03.l10n_de_chart_template'):
+    def setUpClass(cls, chart_template_ref="l10n_de_skr03.l10n_de_chart_template"):
         super().setUpClass(chart_template_ref)
 
     @classmethod
     def setup_company_data(cls, company_name, chart_template=None, **kwargs):
-        res = super().setup_company_data(company_name, chart_template=chart_template, **kwargs)
-        res['company'].update({
-            'country_id': cls.env.ref('base.de').id,
-            'vat': 'DE123456788',
-        })
-        res['company'].partner_id.update({
-            'email': 'jsmith@mail.com',
-            'phone': '+32475123456',
-        })
+        res = super().setup_company_data(
+            company_name, chart_template=chart_template, **kwargs
+        )
+        res["company"].update(
+            {
+                "country_id": cls.env.ref("base.de").id,
+                "vat": "DE123456788",
+            }
+        )
+        res["company"].partner_id.update(
+            {
+                "email": "jsmith@mail.com",
+                "phone": "+32475123456",
+            }
+        )
         return res
 
-    @freeze_time('2019-12-31')
+    @freeze_time("2019-12-31")
     def test_generate_xml(self):
-        first_tax = self.env['account.tax'].search([('name', '=', '19% Umsatzsteuer'), ('company_id', '=', self.company_data['company'].id)], limit=1)
-        second_tax = self.env['account.tax'].search([('name', '=', 'Innergem. Erwerb 19%USt/19%VSt'), ('company_id', '=', self.company_data['company'].id)], limit=1)
+        first_tax = self.env["account.tax"].search(
+            [
+                ("name", "=", "19% Umsatzsteuer"),
+                ("company_id", "=", self.company_data["company"].id),
+            ],
+            limit=1,
+        )
+        second_tax = self.env["account.tax"].search(
+            [
+                ("name", "=", "Innergem. Erwerb 19%USt/19%VSt"),
+                ("company_id", "=", self.company_data["company"].id),
+            ],
+            limit=1,
+        )
 
         # Create and post a move with two move lines to get some data in the report
-        move = self.env['account.move'].create({
-            'move_type': 'in_invoice',
-            'journal_id': self.company_data['default_journal_purchase'].id,
-            'partner_id': self.partner_a.id,
-            'invoice_date': '2019-11-12',
-            'date': '2019-11-12',
-            'invoice_line_ids': [(0, 0, {
-                'product_id': self.product_a.id,
-                'quantity': 1.0,
-                'name': 'product test 1',
-                'price_unit': 150,
-                'tax_ids': first_tax.ids,
-            }), (0, 0, {
-                'product_id': self.product_b.id,
-                'quantity': 1.0,
-                'name': 'product test 2',
-                'price_unit': 75,
-                'tax_ids': second_tax.ids,
-            })]
-        })
+        move = self.env["account.move"].create(
+            {
+                "move_type": "in_invoice",
+                "journal_id": self.company_data["default_journal_purchase"].id,
+                "partner_id": self.partner_a.id,
+                "invoice_date": "2019-11-12",
+                "date": "2019-11-12",
+                "invoice_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product_a.id,
+                            "quantity": 1.0,
+                            "name": "product test 1",
+                            "price_unit": 150,
+                            "tax_ids": first_tax.ids,
+                        },
+                    ),
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product_b.id,
+                            "quantity": 1.0,
+                            "name": "product test 2",
+                            "price_unit": 75,
+                            "tax_ids": second_tax.ids,
+                        },
+                    ),
+                ],
+            }
+        )
         move.action_post()
 
-        report = self.env['account.generic.tax.report']
+        report = self.env["account.generic.tax.report"]
         options = report._get_options(None)
 
         expected_xml = """
@@ -85,5 +118,5 @@ class GermanTaxReportTest(AccountSalesReportCommon):
 
         self.assertXmlTreeEqual(
             self.get_xml_tree_from_string(report.get_xml(options)),
-            self.get_xml_tree_from_string(expected_xml)
+            self.get_xml_tree_from_string(expected_xml),
         )

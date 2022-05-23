@@ -1,20 +1,27 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-from odoo.addons.account_taxcloud.tests.common import TestAccountTaxcloudCommon
 from odoo.tests.common import tagged
+
+from odoo.addons.account_taxcloud.tests.common import TestAccountTaxcloudCommon
 
 
 @tagged("external")
 class TestSaleAccountTaxCloud(TestAccountTaxcloudCommon):
     def test_01_taxcloud_full_flow(self):
-        """ Test a full sales flow: SO, validation, downpayment, invoice, payment"""
+        """Test a full sales flow: SO, validation, downpayment, invoice, payment"""
         # Create Sale Order
         sale_order = self.env["sale.order"].create(
             {
                 "partner_id": self.partner.id,
                 "fiscal_position_id": self.fiscal_position.id,
                 "order_line": [
-                    (0, 0, {"product_id": self.product.id, "tax_id": None,})
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product.id,
+                            "tax_id": None,
+                        },
+                    )
                 ],
             }
         )
@@ -37,7 +44,18 @@ class TestSaleAccountTaxCloud(TestAccountTaxcloudCommon):
 
         # add another line
         sale_order.write(
-            {"order_line": [(0, 0, {"product_id": self.product_1.id, "tax_id": None,})]}
+            {
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product_1.id,
+                            "tax_id": None,
+                        },
+                    )
+                ]
+            }
         )
 
         # Test Sale Order Confirmation triggres a Tax Update.
@@ -57,7 +75,12 @@ class TestSaleAccountTaxCloud(TestAccountTaxcloudCommon):
         payment = (
             self.env["sale.advance.payment.inv"]
             .with_context(**payment_ctx)
-            .create({"advance_payment_method": "fixed", "fixed_amount": 100,})
+            .create(
+                {
+                    "advance_payment_method": "fixed",
+                    "fixed_amount": 100,
+                }
+            )
         )
         payment.create_invoices()
         # the deposit product should have the 'Gift Card' category
@@ -78,20 +101,30 @@ class TestSaleAccountTaxCloud(TestAccountTaxcloudCommon):
         payment = (
             self.env["sale.advance.payment.inv"]
             .with_context(**payment_ctx)
-            .create({"advance_payment_method": "delivered",})
+            .create(
+                {
+                    "advance_payment_method": "delivered",
+                }
+            )
         )
         payment.create_invoices()
         invoice = sale_order.invoice_ids - downpayment_invoice
         invoice.action_post()
 
-        payment_method_manual_in = self.bank_journal.inbound_payment_method_line_ids.filtered(
-            lambda l: l.code == "manual"
+        payment_method_manual_in = (
+            self.bank_journal.inbound_payment_method_line_ids.filtered(
+                lambda l: l.code == "manual"
+            )
         )
 
         register_payments = (
             self.env["account.payment.register"]
-            .with_context(active_model='account.move', active_ids=[invoice.id])
-            .create({"payment_method_id": payment_method_manual_in.id,})
+            .with_context(active_model="account.move", active_ids=[invoice.id])
+            .create(
+                {
+                    "payment_method_id": payment_method_manual_in.id,
+                }
+            )
         )
         payment = self.env["account.payment"].browse(
             register_payments.create_payments()["res_id"]

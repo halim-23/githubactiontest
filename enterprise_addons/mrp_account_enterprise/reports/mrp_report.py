@@ -1,62 +1,92 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
 
 
 class MrpReport(models.Model):
-    _name = 'mrp.report'
+    _name = "mrp.report"
     _description = "Manufacturing Report"
-    _rec_name = 'production_id'
+    _rec_name = "production_id"
     _auto = False
-    _order = 'date_finished desc'
+    _order = "date_finished desc"
 
     id = fields.Integer("", readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    production_id = fields.Many2one('mrp.production', "Manufacturing Order", readonly=True)
-    date_finished = fields.Datetime('End Date', readonly=True)
-    product_id = fields.Many2one('product.product', "Product", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    production_id = fields.Many2one(
+        "mrp.production", "Manufacturing Order", readonly=True
+    )
+    date_finished = fields.Datetime("End Date", readonly=True)
+    product_id = fields.Many2one("product.product", "Product", readonly=True)
     total_cost = fields.Float(
-        "Total Cost", readonly=True,
-        help="Total cost of manufacturing order (component + operation costs)")
+        "Total Cost",
+        readonly=True,
+        help="Total cost of manufacturing order (component + operation costs)",
+    )
     component_cost = fields.Float(
-        "Total Component Cost", readonly=True,
-        help="Total cost of components for manufacturing order")
+        "Total Component Cost",
+        readonly=True,
+        help="Total cost of components for manufacturing order",
+    )
     operation_cost = fields.Float(
-        "Total Operation Cost", readonly=True, groups="mrp.group_mrp_routings",
-        help="Total cost of operations for manufacturing order")
+        "Total Operation Cost",
+        readonly=True,
+        groups="mrp.group_mrp_routings",
+        help="Total cost of operations for manufacturing order",
+    )
     duration = fields.Float(
-        "Total Duration of Operations", readonly=True, groups="mrp.group_mrp_routings",
-        help="Total duration (minutes) of operations for manufacturing order")
+        "Total Duration of Operations",
+        readonly=True,
+        groups="mrp.group_mrp_routings",
+        help="Total duration (minutes) of operations for manufacturing order",
+    )
 
     qty_produced = fields.Float(
-        "Quantity Produced", readonly=True,
-        help="Total quantity produced in product's UoM")
+        "Quantity Produced",
+        readonly=True,
+        help="Total quantity produced in product's UoM",
+    )
 
     # note that unit costs take include subtraction of byproduct cost share
     unit_cost = fields.Float(
-        "Cost / Unit", readonly=True, group_operator="avg",
-        help="Cost per unit produced (in product UoM) of manufacturing order")
+        "Cost / Unit",
+        readonly=True,
+        group_operator="avg",
+        help="Cost per unit produced (in product UoM) of manufacturing order",
+    )
     unit_component_cost = fields.Float(
-        "Component Cost / Unit", readonly=True, group_operator="avg",
-        help="Component cost per unit produced (in product UoM) of manufacturing order")
+        "Component Cost / Unit",
+        readonly=True,
+        group_operator="avg",
+        help="Component cost per unit produced (in product UoM) of manufacturing order",
+    )
     unit_operation_cost = fields.Float(
-        "Total Operation Cost / Unit", readonly=True, group_operator="avg",
+        "Total Operation Cost / Unit",
+        readonly=True,
+        group_operator="avg",
         groups="mrp.group_mrp_routings",
-        help="Operation cost per unit produced (in product UoM) of manufacturing order")
+        help="Operation cost per unit produced (in product UoM) of manufacturing order",
+    )
     unit_duration = fields.Float(
-        "Duration of Operations / Unit", readonly=True, group_operator="avg",
+        "Duration of Operations / Unit",
+        readonly=True,
+        group_operator="avg",
         groups="mrp.group_mrp_routings",
-        help="Operation duration (minutes) per unit produced of manufacturing order")
+        help="Operation duration (minutes) per unit produced of manufacturing order",
+    )
 
     byproduct_cost = fields.Float(
-        "By-Products Total Cost", readonly=True,
-        groups="mrp.group_mrp_byproducts")
+        "By-Products Total Cost", readonly=True, groups="mrp.group_mrp_byproducts"
+    )
 
     @property
     def _table_query(self):
-        ''' Report needs to be dynamic to take into account multi-company selected + multi-currency rates '''
-        return '%s %s %s %s' % (self._select(), self._from(), self._where(), self._group_by())
+        """Report needs to be dynamic to take into account multi-company selected + multi-currency rates"""
+        return "%s %s %s %s" % (
+            self._select(),
+            self._from(),
+            self._where(),
+            self._group_by(),
+        )
 
     def _select(self):
         select_str = """
@@ -81,7 +111,7 @@ class MrpReport(models.Model):
         return select_str
 
     def _from(self):
-        """ MO costs are quite complicated so the table is built with the following subqueries (per MO):
+        """MO costs are quite complicated so the table is built with the following subqueries (per MO):
             1. total component cost (note we cover no components use case)
             2. total operations cost (note we cover no operations use case)
             3. total byproducts cost share
@@ -160,7 +190,9 @@ class MrpReport(models.Model):
             ) prod_qty ON prod_qty.mo_id = mo.id
             LEFT JOIN {currency_table} ON currency_table.company_id = mo.company_id
         """.format(
-            currency_table=self.env['res.currency']._get_query_currency_table({'multi_company': True, 'date': {'date_to': fields.Date.today()}}),
+            currency_table=self.env["res.currency"]._get_query_currency_table(
+                {"multi_company": True, "date": {"date_to": fields.Date.today()}}
+            ),
         )
 
         return from_str

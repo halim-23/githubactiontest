@@ -1,36 +1,43 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import tools
-from odoo import api, fields, models
+from odoo import fields, models, tools
 
 
 class HrContractEmployeeReport(models.Model):
     _name = "hr.contract.employee.report"
     _description = "Contract and Employee Analysis Report"
     _auto = False
-    _rec_name = 'date'
+    _rec_name = "date"
 
-    contract_id = fields.Many2one('hr.contract', 'Contract', readonly=True)
-    employee_id = fields.Many2one('hr.employee', 'Employee', readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    department_id = fields.Many2one('hr.department', 'Department', readonly=True)
+    contract_id = fields.Many2one("hr.contract", "Contract", readonly=True)
+    employee_id = fields.Many2one("hr.employee", "Employee", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    department_id = fields.Many2one("hr.department", "Department", readonly=True)
 
-    count_employee_exit = fields.Integer('# Departure Employee', readonly=True)
-    count_new_employee = fields.Integer('# New Employees', readonly=True)
-    age_sum = fields.Float('Duration Contract', group_operator="sum", readonly=True)
+    count_employee_exit = fields.Integer("# Departure Employee", readonly=True)
+    count_new_employee = fields.Integer("# New Employees", readonly=True)
+    age_sum = fields.Float("Duration Contract", group_operator="sum", readonly=True)
 
-    wage = fields.Float('Wage', group_operator="avg", readonly=True)
+    wage = fields.Float("Wage", group_operator="avg", readonly=True)
 
-    date = fields.Date('Date', readonly=True)
-    start_date_months = fields.Integer("Months of first date of this month since 01/01/1970", readonly=True)
-    end_date_months = fields.Integer("Months of last date of this month since 01/01/1970", readonly=True)
-    date_end_contract = fields.Date('Date Last Contract Ended', group_operator="max", readonly=True)
+    date = fields.Date("Date", readonly=True)
+    start_date_months = fields.Integer(
+        "Months of first date of this month since 01/01/1970", readonly=True
+    )
+    end_date_months = fields.Integer(
+        "Months of last date of this month since 01/01/1970", readonly=True
+    )
+    date_end_contract = fields.Date(
+        "Date Last Contract Ended", group_operator="max", readonly=True
+    )
 
-    departure_reason_id = fields.Many2one("hr.departure.reason", string="Departure Reason", readonly=True)
+    departure_reason_id = fields.Many2one(
+        "hr.departure.reason", string="Departure Reason", readonly=True
+    )
 
-    def _query(self, fields='', from_clause='', outer=''):
-        select_ = '''
+    def _query(self, fields="", from_clause="", outer=""):
+        select_ = (
+            """
             c.id as id,
             c.id as contract_id,
             e.id as employee_id,
@@ -61,9 +68,12 @@ class HrContractEmployeeReport(models.Model):
                 END AS end_date_months
 
             %s
-        ''' % fields
+        """
+            % fields
+        )
 
-        from_ = """
+        from_ = (
+            """
                 (SELECT age(COALESCE(date_end, current_date), date_start) as age, * FROM hr_contract WHERE state != 'cancel') c
                 LEFT JOIN hr_employee e ON (e.id = c.employee_id)
                 LEFT JOIN (
@@ -76,10 +86,18 @@ class HrContractEmployeeReport(models.Model):
                     GROUP BY employee_id) start on (start.employee_id = c.employee_id)
                  %s
                 CROSS JOIN generate_series(c.date_start, (CASE WHEN c.date_end IS NULL THEN current_date + interval '1 year' ELSE (CASE WHEN date_part('day', c.date_end) < date_part('day', c.date_start) THEN c.date_end + interval '1 month' ELSE c.date_end END) END), interval '1 month') serie
-        """ % from_clause
+        """
+            % from_clause
+        )
 
-        return '(SELECT * %s FROM (SELECT %s FROM %s) in_query)' % (outer, select_, from_)
+        return "(SELECT * %s FROM (SELECT %s FROM %s) in_query)" % (
+            outer,
+            select_,
+            from_,
+        )
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query())
+        )

@@ -1,28 +1,27 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, models, _
+from odoo import _, api, models
 
 
 class ReportL10nNLIntrastat(models.AbstractModel):
-    _name = 'l10n.nl.report.intrastat'
-    _description = 'Intrastat Report (ICP)'
-    _inherit = 'account.report'
+    _name = "l10n.nl.report.intrastat"
+    _description = "Intrastat Report (ICP)"
+    _inherit = "account.report"
 
-    filter_date = {'mode': 'range', 'filter': 'this_year'}
+    filter_date = {"mode": "range", "filter": "this_year"}
 
     def _get_columns_name(self, options):
         return [
-            {'name': _('Partner')},
-            {'name': _('Country Code')},
-            {'name': _('VAT')},
-            {'name': _('Amount Product'), 'class': 'number'},
-            {'name': _('Amount Service'), 'class': 'number'},
-            {'name': _('Total'), 'class': 'number'},
+            {"name": _("Partner")},
+            {"name": _("Country Code")},
+            {"name": _("VAT")},
+            {"name": _("Amount Product"), "class": "number"},
+            {"name": _("Amount Service"), "class": "number"},
+            {"name": _("Total"), "class": "number"},
         ]
 
     def _get_report_name(self):
-        return _('Intrastat (ICP)')
+        return _("Intrastat (ICP)")
 
     def _get_lines_query_params(self, options):
         # This method was created to be overridden when the intrastat module is installed.
@@ -30,7 +29,10 @@ class ReportL10nNLIntrastat(models.AbstractModel):
         # also in l10n_nl_intrastat/l10n_nl_report_intrastat.py
         company_id = self.env.company
 
-        country_ids = (self.env.ref('base.europe').country_ids - company_id.account_fiscal_country_id).ids
+        country_ids = (
+            self.env.ref("base.europe").country_ids
+            - company_id.account_fiscal_country_id
+        ).ids
 
         query = """
             SELECT l.partner_id, p.name, p.vat, c.code,
@@ -55,74 +57,92 @@ class ReportL10nNLIntrastat(models.AbstractModel):
         """
 
         params = {
-            'product_service_tags': tuple(self.env.ref('l10n_nl.tax_report_rub_3b').tag_ids.ids),
-            'country_ids': tuple(country_ids),
-            'date_from': options['date']['date_from'],
-            'date_to': options['date']['date_to'],
-            'company_ids': tuple(self.env.companies.ids),
+            "product_service_tags": tuple(
+                self.env.ref("l10n_nl.tax_report_rub_3b").tag_ids.ids
+            ),
+            "country_ids": tuple(country_ids),
+            "date_from": options["date"]["date_from"],
+            "date_to": options["date"]["date_to"],
+            "company_ids": tuple(self.env.companies.ids),
         }
 
-        return {'query': query,
-                'params': params,
-                }
+        return {
+            "query": query,
+            "params": params,
+        }
 
     @api.model
     def _get_lines(self, options, line_id=None):
         lines = []
         query_params = self._get_lines_query_params(options)
-        self.env.cr.execute(query_params['query'], query_params['params'])
+        self.env.cr.execute(query_params["query"], query_params["params"])
 
         # Add lines
         total = 0
         for result in self.env.cr.dictfetchall():
-            amount_product = result['amount_product']
-            amount_service = result['amount_service']
+            amount_product = result["amount_product"]
+            amount_service = result["amount_service"]
             line_total = amount_product + amount_service
             total += line_total
 
-            lines.append({
-                'id': result['partner_id'],
-                'caret_options': 'res.partner',
-                'model': 'res.partner',
-                'name': result['name'],
-                'level': 2,
-                'columns': [
-                    {'name': v} for v in [
-                        result['code'],
-                        self._format_vat(result['vat'], result['code']),
-                        # A balance of 0 should display nothing, not even 0
-                        amount_product and self.format_value(amount_product) or None,
-                        amount_service and self.format_value(amount_service) or None,
-                        line_total and self.format_value(line_total) or None,
-                    ]
-                ],
-                'unfoldable': False,
-                'unfolded': False,
-            })
+            lines.append(
+                {
+                    "id": result["partner_id"],
+                    "caret_options": "res.partner",
+                    "model": "res.partner",
+                    "name": result["name"],
+                    "level": 2,
+                    "columns": [
+                        {"name": v}
+                        for v in [
+                            result["code"],
+                            self._format_vat(result["vat"], result["code"]),
+                            # A balance of 0 should display nothing, not even 0
+                            amount_product
+                            and self.format_value(amount_product)
+                            or None,
+                            amount_service
+                            and self.format_value(amount_service)
+                            or None,
+                            line_total and self.format_value(line_total) or None,
+                        ]
+                    ],
+                    "unfoldable": False,
+                    "unfolded": False,
+                }
+            )
 
         if lines:
-            lines.append({
-                'id': 'total_line',
-                'class': 'total',
-                'name': _('Total'),
-                'level': 2,
-                'columns': [
-                    {'name': v}
-                    for v in ['', '', '', '(product + service)', self.format_value(total)]
-                ],
-                'unfoldable': False,
-                'unfolded': False,
-            })
+            lines.append(
+                {
+                    "id": "total_line",
+                    "class": "total",
+                    "name": _("Total"),
+                    "level": 2,
+                    "columns": [
+                        {"name": v}
+                        for v in [
+                            "",
+                            "",
+                            "",
+                            "(product + service)",
+                            self.format_value(total),
+                        ]
+                    ],
+                    "unfoldable": False,
+                    "unfolded": False,
+                }
+            )
 
         return lines
 
     @api.model
     def _format_vat(self, vat, country_code):
-        """ VAT numbers must be reported without country code, and grouped by 4
+        """VAT numbers must be reported without country code, and grouped by 4
         characters, with a space between each pair of groups.
         """
         if vat:
             if vat[:2].lower() == country_code.lower():
                 vat = vat[2:]
-            return ' '.join(vat[i:i+4] for i in range(0, len(vat), 4))
+            return " ".join(vat[i : i + 4] for i in range(0, len(vat), 4))
         return None

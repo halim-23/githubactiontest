@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="l10n_be_hr_payroll_employee_lang_view_form" model="ir.ui.view">
         <field name="name">l10n_be.hr.payroll.employee.lang.view.form</field>
@@ -8,27 +8,39 @@
                 <sheet>
                     <div role="alert" class="alert alert-warning text-center">
                         The following employees have an invalid language for the selected salary structure.
-                        <br/>
+                        <br />
                         Please assign them a language below before continuing.
                     </div>
-                    <br/>
-                    <field name="slip_ids" invisible="1" force_save="1"/>
+                    <br />
+                    <field name="slip_ids" invisible="1" force_save="1" />
                     <field name="line_ids">
                         <tree create="false" delete="false" editable="bottom">
-                            <field name="employee_id" widget="many2one_avatar" options="{'no_open': True}"/>
-                            <field name="lang"/>
+                            <field
+                name="employee_id"
+                widget="many2one_avatar"
+                options="{'no_open': True}"
+              />
+                            <field name="lang" />
                         </tree>
                     </field>
                 </sheet>
                 <footer>
-                    <button string="Confirm" name="action_validate" type="object" class="btn-primary"/>
-                    <button string="Cancel" special="cancel"/>
+                    <button
+            string="Confirm"
+            name="action_validate"
+            type="object"
+            class="btn-primary"
+          />
+                    <button string="Cancel" special="cancel" />
                 </footer>
             </form>
         </field>
     </record>
 
-    <record id="l10n_be_hr_payroll_employee_lang_wizard_action" model="ir.actions.act_window">
+    <record
+    id="l10n_be_hr_payroll_employee_lang_wizard_action"
+    model="ir.actions.act_window"
+  >
         <field name="name">Change Employee Language</field>
         <field name="res_model">l10n_be.hr.payroll.employee.lang.wizard</field>
         <field name="view_mode">form</field>

@@ -7,20 +7,20 @@
             <field name="model">hr.leave</field>
             <field name="arch" type="xml">
                 <gantt
-                       js_class="hr_gantt"
-                       date_start="date_from"
-                       date_stop="date_to"
-                       string="Days"
-                       color="holiday_status_id"
-                       default_group_by='employee_id'
-                       decoration-warning="state == 'refuse'"
-                       decoration-info="state in ['confirm', 'validate1']"
-                       precision="{'week': 'day:half', 'month': 'day:full'}"
-                       plan="0"
-                       total_row="True"
-                       display_unavailability="1"
-                >
-                    <field name="state" invisible="1"/>
+          js_class="hr_gantt"
+          date_start="date_from"
+          date_stop="date_to"
+          string="Days"
+          color="holiday_status_id"
+          default_group_by='employee_id'
+          decoration-warning="state == 'refuse'"
+          decoration-info="state in ['confirm', 'validate1']"
+          precision="{'week': 'day:half', 'month': 'day:full'}"
+          plan="0"
+          total_row="True"
+          display_unavailability="1"
+        >
+                    <field name="state" invisible="1" />
                 </gantt>
             </field>
         </record>
@@ -30,16 +30,16 @@
             <field name="model">hr.leave.allocation</field>
             <field name="arch" type="xml">
                 <gantt
-                    js_class="hr_gantt"
-                    date_start="date_from"
-                    date_stop="date_to"
-                    string="Days"
-                    default_group_by="employee_id"
-                    decoration-warning="state == 'refuse'"
-                    decoration-info="state in ['confirm', 'validate1']"
-                    plan="0"
-                >
-                    <field name="state" invisible="1"/>
+          js_class="hr_gantt"
+          date_start="date_from"
+          date_stop="date_to"
+          string="Days"
+          default_group_by="employee_id"
+          decoration-warning="state == 'refuse'"
+          decoration-info="state in ['confirm', 'validate1']"
+          plan="0"
+        >
+                    <field name="state" invisible="1" />
                 </gantt>
             </field>
         </record>
@@ -49,21 +49,25 @@
             <field name="model">hr.leave.report.calendar</field>
             <field name="arch" type="xml">
                 <gantt
-                    js_class="hr_gantt"
-                    string="Time Off"
-                    date_start="start_datetime"
-                    date_stop="stop_datetime"
-                    default_group_by="employee_id"
-                    decoration-info="state in ['confirm', 'validate1']"
-                    color="employee_id"
-                    total_row="True"
-                    display_unavailability="True"
-                    sample="1">
-                    <field name="name"/>
-                    <field name="state" invisible="1"/>
+          js_class="hr_gantt"
+          string="Time Off"
+          date_start="start_datetime"
+          date_stop="stop_datetime"
+          default_group_by="employee_id"
+          decoration-info="state in ['confirm', 'validate1']"
+          color="employee_id"
+          total_row="True"
+          display_unavailability="True"
+          sample="1"
+        >
+                    <field name="name" />
+                    <field name="state" invisible="1" />
                 <templates>
                     <div t-name="gantt-popover">
-                        <div><t t-esc="userTimezoneStartDate.format('l LT ')"/><i class="fa fa-long-arrow-right" title="Arrow"/><t t-esc="userTimezoneStopDate.format(' l LT')"/></div>
+                        <div><t t-esc="userTimezoneStartDate.format('l LT ')" /><i
+                  class="fa fa-long-arrow-right"
+                  title="Arrow"
+                /><t t-esc="userTimezoneStopDate.format(' l LT')" /></div>
                     </div>
                 </templates>
                 </gantt>
@@ -71,11 +75,17 @@
         </record>
 
         <!-- Add gantt view mode to the hr.holidays dashboard -->
-        <record id="hr_holidays.action_hr_holidays_dashboard" model="ir.actions.act_window">
+        <record
+      id="hr_holidays.action_hr_holidays_dashboard"
+      model="ir.actions.act_window"
+    >
             <field name="view_mode">gantt,calendar</field>
         </record>
 
-        <record id="hr_holidays.hr_leave_action_action_approve_department" model="ir.actions.act_window">
+        <record
+      id="hr_holidays.hr_leave_action_action_approve_department"
+      model="ir.actions.act_window"
+    >
             <field name="view_mode">tree,kanban,gantt,form,calendar,activity</field>
         </record>
     </data>

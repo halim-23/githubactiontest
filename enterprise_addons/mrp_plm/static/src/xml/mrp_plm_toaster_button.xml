@@ -3,7 +3,7 @@
 
     <t t-name="mrp_plm.ToasterButton">
         <button type="button" class="btn oe_inline btn-link">
-            <i class="fa fa-fw o_button_icon fa-info-circle"></i>
+            <i class="fa fa-fw o_button_icon fa-info-circle" />
         </button>
     </t>
 

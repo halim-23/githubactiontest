@@ -338,7 +338,7 @@
     </xsl:for-each>
 
   </xsl:template>
-  
+
   <!--  Iniciamos el manejo de los elementos hijo en la secuencia OtroPago-->
   <xsl:template match="nomina12:OtroPago">
     <!--Manejador de nodos tipo nomina12:OtroPago-->

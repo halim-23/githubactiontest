@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 <data noupdate="1">
 
@@ -80,15 +80,15 @@
       <field name="name">UPS US</field>
       <field name="default_code">Delivery_011</field>
       <field name="type">service</field>
-      <field name="categ_id" ref="delivery.product_category_deliveries"/>
-      <field name="sale_ok" eval="False"/>
-      <field name="purchase_ok" eval="False"/>
+      <field name="categ_id" ref="delivery.product_category_deliveries" />
+      <field name="sale_ok" eval="False" />
+      <field name="purchase_ok" eval="False" />
       <field name="list_price">0.0</field>
       <field name="invoice_policy">order</field>
     </record>
     <record id="delivery_carrier_ups_us" model="delivery.carrier">
         <field name="name">UPS US</field>
-        <field name="product_id" ref="delivery_ups.product_product_delivery_ups_us"/>
+        <field name="product_id" ref="delivery_ups.product_product_delivery_ups_us" />
         <field name="delivery_type">ups</field>
         <field name="ups_package_weight_unit">LBS</field>
         <field name="ups_package_dimension_unit">IN</field>
@@ -96,27 +96,27 @@
         <field name="ups_passwd">Zh7~Q-bk/R7CeCxQS}Iw</field>
         <field name="ups_shipper_number">R5R012</field>
         <field name="ups_access_number">ED7F8A752151DEF5</field>
-        <field name="ups_default_package_type_id" ref="ups_packaging_02"/>
+        <field name="ups_default_package_type_id" ref="ups_packaging_02" />
     </record>
 
     <record id="product_product_delivery_ups_be" model="product.product">
       <field name="name">UPS BE</field>
       <field name="default_code">Delivery_010</field>
       <field name="type">service</field>
-      <field name="categ_id" ref="delivery.product_category_deliveries"/>
-      <field name="sale_ok" eval="False"/>
-      <field name="purchase_ok" eval="False"/>
+      <field name="categ_id" ref="delivery.product_category_deliveries" />
+      <field name="sale_ok" eval="False" />
+      <field name="purchase_ok" eval="False" />
       <field name="list_price">0.0</field>
       <field name="invoice_policy">order</field>
     </record>
     <record id="delivery_carrier_ups_be" model="delivery.carrier">
         <field name="name">UPS BE</field>
-        <field name="product_id" ref="delivery_ups.product_product_delivery_ups_be"/>
+        <field name="product_id" ref="delivery_ups.product_product_delivery_ups_be" />
         <field name="delivery_type">ups</field>
         <field name="ups_package_weight_unit">KGS</field>
         <field name="ups_package_dimension_unit">CM</field>
         <field name="ups_default_service_type">11</field>
-        <field name="ups_default_package_type_id" ref="ups_packaging_02"/>
+        <field name="ups_default_package_type_id" ref="ups_packaging_02" />
     </record>
 
 </data>

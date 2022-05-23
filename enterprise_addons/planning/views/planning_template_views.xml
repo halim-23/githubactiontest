@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
 
@@ -8,15 +8,24 @@
             <field name="arch" type="xml">
                 <form string="Shift Template Form">
                     <sheet>
-                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                        <widget
+              name="web_ribbon"
+              title="Archived"
+              bg_color="bg-danger"
+              attrs="{'invisible': [('active', '=', True)]}"
+            />
                         <group>
                             <group>
                                 <field name="active" invisible="1" />
-                                <field name="role_id"/>
+                                <field name="role_id" />
                             </group>
                             <group>
-                                <field name="start_time" widget="float_time"/>
-                                <field name="duration" widget="float_time" decoration-danger="not duration"/>
+                                <field name="start_time" widget="float_time" />
+                                <field
+                  name="duration"
+                  widget="float_time"
+                  decoration-danger="not duration"
+                />
                             </group>
                         </group>
                     </sheet>
@@ -29,9 +38,9 @@
             <field name="model">planning.slot.template</field>
             <field name="arch" type="xml">
                 <tree string="Shift Template List" sample="1">
-                    <field name="sequence" widget="handle"/>
+                    <field name="sequence" widget="handle" />
                     <field name="name" />
-                    <field name="role_id" optional="show"/>
+                    <field name="role_id" optional="show" />
                 </tree>
             </field>
         </record>
@@ -50,7 +59,12 @@
                                     <div class="o_kanban_record_headings">
                                         <div class="row">
                                             <strong class="col-12">
-                                                <i class="fa fa-clock-o" role="img" aria-label="Hours" title="Hours"/>
+                                                <i
+                          class="fa fa-clock-o"
+                          role="img"
+                          aria-label="Hours"
+                          title="Hours"
+                        />
                                                 <field name="name" />
                                             </strong>
                                             <strong class="col-12">
@@ -71,12 +85,24 @@
             <field name="model">planning.slot.template</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="role_id"/>
-                    <separator/>
-                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                    <field name="role_id" />
+                    <separator />
+                    <filter
+            name="archived"
+            string="Archived"
+            domain="[('active', '=', False)]"
+          />
                     <group expand="1" string="Group By">
-                        <filter string="Start Time" name="group_by_start_time" context="{'group_by':'start_time'}"/>
-                        <filter string="Role" name="group_by_role" context="{'group_by':'role_id'}"/>
+                        <filter
+              string="Start Time"
+              name="group_by_start_time"
+              context="{'group_by':'start_time'}"
+            />
+                        <filter
+              string="Role"
+              name="group_by_role"
+              context="{'group_by':'role_id'}"
+            />
                     </group>
                 </search>
             </field>

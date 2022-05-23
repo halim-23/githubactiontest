@@ -1,11 +1,11 @@
 odoo.define("documents_spreadsheet.PivotDialogTable", function (require) {
-    "use strict";
+  "use strict";
 
-    class PivotDialogTable extends owl.Component {
-        _onCellClicked(formula) {
-            this.trigger('cell-selected', { formula });
-        }
+  class PivotDialogTable extends owl.Component {
+    _onCellClicked(formula) {
+      this.trigger("cell-selected", {formula});
     }
-    PivotDialogTable.template = "documents_spreadsheet.PivotDialogTable";
-    return PivotDialogTable;
+  }
+  PivotDialogTable.template = "documents_spreadsheet.PivotDialogTable";
+  return PivotDialogTable;
 });

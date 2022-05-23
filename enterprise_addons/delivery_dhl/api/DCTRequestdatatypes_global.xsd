@@ -36,7 +36,7 @@
 						<xsd:maxLength value="45" />
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:element>			
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="BkgDetailsType">
@@ -178,7 +178,7 @@
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							Y - Dutiable/Non-Doc, 
+							Y - Dutiable/Non-Doc,
 							N - Non-dutiable/Doc
 						</xsd:documentation>
 					</xsd:annotation>
@@ -199,7 +199,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
-			<xsd:element name="QtdShp" minOccurs="0" maxOccurs="unbounded" type="QtdShpType" />			
+			<xsd:element name="QtdShp" minOccurs="0" maxOccurs="unbounded" type="QtdShpType" />
 			<xsd:element name="InsuredValue" minOccurs="0">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:decimal">
@@ -264,7 +264,7 @@
 						<xsd:maxLength value="45" />
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:element>			
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="DCTDutiable">
@@ -434,7 +434,7 @@
 						<xsd:enumeration value="N" />
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:element>	
+			</xsd:element>
 			<xsd:element name="VLDTRT_DD" minOccurs="0">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -443,7 +443,7 @@
 						<xsd:enumeration value="N" />
 					</xsd:restriction>
 				</xsd:simpleType>
-			</xsd:element>		
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 </xsd:schema>

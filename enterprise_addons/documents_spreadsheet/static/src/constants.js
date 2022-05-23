@@ -1,4 +1,4 @@
 /** @odoo-module **/
-import { _lt } from "@web/core/l10n/translation";
+import {_lt} from "@web/core/l10n/translation";
 
-export const UNTITLED_SPREADSHEET_NAME = _lt("Untitled spreadsheet")
+export const UNTITLED_SPREADSHEET_NAME = _lt("Untitled spreadsheet");

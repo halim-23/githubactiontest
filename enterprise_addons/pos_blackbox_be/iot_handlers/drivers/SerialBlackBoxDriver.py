@@ -1,17 +1,20 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import logging
+
 import serial
-import os
 
 from odoo.addons.hw_drivers.event_manager import event_manager
-from odoo.addons.hw_drivers.iot_handlers.drivers.SerialBaseDriver import SerialDriver, SerialProtocol, serial_connection
+from odoo.addons.hw_drivers.iot_handlers.drivers.SerialBaseDriver import (
+    SerialDriver,
+    SerialProtocol,
+    serial_connection,
+)
 
 _logger = logging.getLogger(__name__)
 
 BlackboxProtocol = SerialProtocol(
-    name='Retail Innovation Cleancash',
+    name="Retail Innovation Cleancash",
     baudrate=19200,
     bytesize=serial.EIGHTBITS,
     stopbits=serial.STOPBITS_ONE,
@@ -20,18 +23,18 @@ BlackboxProtocol = SerialProtocol(
     writeTimeout=0.2,
     measureRegexp=None,
     statusRegexp=None,
-    commandTerminator=b'',
+    commandTerminator=b"",
     commandDelay=0.2,
     measureDelay=0.2,
     newMeasureDelay=0.2,
-    measureCommand=b'',
+    measureCommand=b"",
     emptyAnswerValid=False,
 )
 
-STX = b'\x02'
-ETX = b'\x03'
-ACK = b'\x06'
-NACK = b'\x15'
+STX = b"\x02"
+ETX = b"\x03"
+ACK = b"\x06"
+NACK = b"\x15"
 
 
 class BlackBoxDriver(SerialDriver):
@@ -41,27 +44,31 @@ class BlackBoxDriver(SerialDriver):
 
     def __init__(self, identifier, device):
         super(BlackBoxDriver, self).__init__(identifier, device)
-        self.device_type = 'fiscal_data_module'
+        self.device_type = "fiscal_data_module"
         self._set_actions()
 
     def _set_actions(self):
         """Initializes `self._actions`, a map of action keys sent by the frontend to backend action methods."""
 
-        self._actions.update({
-            'request': self._request_action,
-            'request_serial': self._request_serial_action,
-        })
+        self._actions.update(
+            {
+                "request": self._request_action,
+                "request_serial": self._request_serial_action,
+            }
+        )
 
     def _request_action(self, data):
         self._connection.reset_output_buffer()
         self._connection.reset_input_buffer()
-        packet = self._wrap_low_level_message_around(data['high_level_message'])
-        self.data['value'] = self._send_to_blackbox(packet, data['response_size'], self._connection)
+        packet = self._wrap_low_level_message_around(data["high_level_message"])
+        self.data["value"] = self._send_to_blackbox(
+            packet, data["response_size"], self._connection
+        )
         event_manager.device_changed(self)
 
     def _request_serial_action(self, data):
-        with open('/sys/class/net/eth0/address', 'rb') as f:
-            self.data['value'] = f.read().rstrip().replace(b':', b'')[-7:]
+        with open("/sys/class/net/eth0/address", "rb") as f:
+            self.data["value"] = f.read().rstrip().replace(b":", b"")[-7:]
             event_manager.device_changed(self)
 
     @classmethod
@@ -76,16 +83,18 @@ class BlackBoxDriver(SerialDriver):
         try:
             protocol = cls._protocol
             probe_message = cls._wrap_low_level_message_around("S000")
-            with serial_connection(device['identifier'], protocol) as connection:
+            with serial_connection(device["identifier"], protocol) as connection:
                 return cls._send_and_wait_for_ack(probe_message, connection)
         except serial.serialutil.SerialTimeoutException:
             pass
         except Exception:
-            _logger.exception('Error while probing %s with protocol %s' % (device, protocol.name))
+            _logger.exception(
+                "Error while probing %s with protocol %s" % (device, protocol.name)
+            )
 
     @staticmethod
     def _lrc(msg):
-        """"Compute a message's longitudinal redundancy check value.
+        """ "Compute a message's longitudinal redundancy check value.
         :param msg: the message the LRC is computed for
         :type msg: byte
         :return: the message LRC
@@ -172,7 +181,9 @@ class BlackBoxDriver(SerialDriver):
                 got_response = True
                 connection.write(ACK)
             else:
-                _logger.warning("received ACK but not a valid response, sending NACK...")
+                _logger.warning(
+                    "received ACK but not a valid response, sending NACK..."
+                )
                 connection.write(NACK)
 
         if not got_response:

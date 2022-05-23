@@ -1,12 +1,12 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
     "name": "Argentinean Electronic Invoicing",
-    'icon': '/l10n_ar/static/description/icon.png',
-    'version': '1.0',
-    'category': 'Accounting/Localizations/EDI',
-    'sequence': 14,
-    'author': 'ADHOC SA',
-    'description': """
+    "icon": "/l10n_ar/static/description/icon.png",
+    "version": "1.0",
+    "category": "Accounting/Localizations/EDI",
+    "sequence": 14,
+    "author": "ADHOC SA",
+    "description": """
 Functional
 ----------
 
@@ -75,31 +75,29 @@ The web services that are implemented are the ones that are the most common:
 For Development information go to http://www.afip.gob.ar/fe/documentos/WSBFEv1%20-%20Manual%20para%20el%20desarrollador.pdf
 
 """,
-    'depends': [
-        'l10n_ar',
+    "depends": [
+        "l10n_ar",
     ],
-    'external_dependencies': {
-        'python': ['pyOpenSSL', 'zeep']
-    },
-    'data': [
-        'wizards/l10n_ar_afip_ws_consult_view.xml',
-        'views/l10n_ar_afipws_connection_view.xml',
-        'views/res_config_settings_view.xml',
-        'views/account_move_view.xml',
-        'views/account_journal_view.xml',
-        'views/uom_uom_view.xml',
-        'views/res_currency_view.xml',
-        'views/product_template_view.xml',
-        'views/report_invoice.xml',
-        'security/ir.model.access.csv',
-        'data/ir_actions_act_url_data.xml',
+    "external_dependencies": {"python": ["pyOpenSSL", "zeep"]},
+    "data": [
+        "wizards/l10n_ar_afip_ws_consult_view.xml",
+        "views/l10n_ar_afipws_connection_view.xml",
+        "views/res_config_settings_view.xml",
+        "views/account_move_view.xml",
+        "views/account_journal_view.xml",
+        "views/uom_uom_view.xml",
+        "views/res_currency_view.xml",
+        "views/product_template_view.xml",
+        "views/report_invoice.xml",
+        "security/ir.model.access.csv",
+        "data/ir_actions_act_url_data.xml",
     ],
-    'demo': [
-        'demo/res_company_demo.xml',
-        'demo/res_config_settings_demo_view.xml',
+    "demo": [
+        "demo/res_company_demo.xml",
+        "demo/res_config_settings_demo_view.xml",
     ],
-    'installable': True,
-    'auto_install': False,
-    'application': False,
-    'license': 'OEEL-1',
+    "installable": True,
+    "auto_install": False,
+    "application": False,
+    "license": "OEEL-1",
 }

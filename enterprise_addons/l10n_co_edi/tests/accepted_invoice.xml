@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-            <FACTURA>
+<?xml version="1.0" encoding="utf-8" ?>
+<FACTURA>
 
             <ENC>
                 <ENC_1>INVOIC</ENC_1>
@@ -25,15 +25,15 @@
                 <EMI_4>48</EMI_4>
                 <EMI_6>company_1_data</EMI_6>
                 <EMI_7>company_1_data</EMI_7>
-                <EMI_8></EMI_8>
-                <EMI_9></EMI_9>
+                <EMI_8 />
+                <EMI_9 />
                 <EMI_10>Route de Ramilies </EMI_10>
                 <EMI_11>05</EMI_11>
-                <EMI_12></EMI_12>
+                <EMI_12 />
 
                 <EMI_14>1234</EMI_14>
                 <EMI_15>CO</EMI_15>
-                <EMI_18></EMI_18>
+                <EMI_18 />
                 <EMI_19>Antioquia</EMI_19>
                 <EMI_21>Colombia</EMI_21>
                 <EMI_22>1</EMI_22>
@@ -45,7 +45,7 @@
                 </TAC>
 
                 <ICC>
-                    <ICC_1></ICC_1>
+                    <ICC_1 />
                     <ICC_9>INV/2020/</ICC_9>
                 </ICC>
 
@@ -57,7 +57,7 @@
                     <DFE_5>Colombia</DFE_5>
                     <DFE_6>Antioquia</DFE_6>
 
-                    <DFE_8></DFE_8>
+                    <DFE_8 />
                 </DFE>
 
                 <GTE>
@@ -83,11 +83,11 @@
                 <ADQ_9>company_2_data</ADQ_9>
                 <ADQ_10>Route de Eghezée </ADQ_10>
                 <ADQ_11>08</ADQ_11>
-                <ADQ_12></ADQ_12>
+                <ADQ_12 />
                 <ADQ_13>Medellín</ADQ_13>
                 <ADQ_14>4567</ADQ_14>
                 <ADQ_15>CO</ADQ_15>
-                <ADQ_18></ADQ_18>
+                <ADQ_18 />
                 <ADQ_19>Atlántico</ADQ_19>
                 <ADQ_21>Colombia</ADQ_21>
                 <ADQ_22>1</ADQ_22>
@@ -107,7 +107,7 @@
                    <ILA_4>1</ILA_4>
                 </ILA>
 
-                <ICR></ICR>
+                <ICR />
 
                 <DFA>
                     <DFA_1>CO</DFA_1>
@@ -117,7 +117,7 @@
                     <DFA_5>Colombia</DFA_5>
                     <DFA_6>Atlántico</DFA_6>
                     <DFA_7>Medellín</DFA_7>
-                    <DFA_8></DFA_8>
+                    <DFA_8 />
                 </DFA>
 
                 <CDA>
@@ -156,10 +156,10 @@
                     <IMP_4>5062.50</IMP_4>
                     <IMP_5>COP</IMP_5>
                     <IMP_6>15.00</IMP_6>
-                    <IMP_7></IMP_7>
-                    <IMP_8></IMP_8>
-                    <IMP_9></IMP_9>
-                    <IMP_10></IMP_10>
+                    <IMP_7 />
+                    <IMP_8 />
+                    <IMP_9 />
+                    <IMP_10 />
                 </IMP>
             </TIM><TIM>
                 <TIM_1>false</TIM_1>
@@ -174,10 +174,10 @@
                     <IMP_4>5062.50</IMP_4>
                     <IMP_5>COP</IMP_5>
                     <IMP_6>15.00</IMP_6>
-                    <IMP_7></IMP_7>
-                    <IMP_8></IMP_8>
-                    <IMP_9></IMP_9>
-                    <IMP_10></IMP_10>
+                    <IMP_7 />
+                    <IMP_8 />
+                    <IMP_9 />
+                    <IMP_10 />
                 </IMP>
             </TIM>
 
@@ -203,13 +203,15 @@
             </ITD>
 
             <NOT>
-                <NOT_1>1.-GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17</NOT_1>
+                <NOT_1
+    >1.-GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17|GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17</NOT_1>
             </NOT><NOT>
                 <NOT_1>2.-GRANDES CONTRIBUYENTES SHD Res. DDI-042065 13-10-17</NOT_1>
             </NOT><NOT>
                 <NOT_1>3.- N/A</NOT_1>
             </NOT><NOT>
-                <NOT_1>6.- Payment terms: End of Following Month|Forty-Three Thousand, Eight Hundred And Seventy-Five Peso</NOT_1>
+                <NOT_1
+    >6.- Payment terms: End of Following Month|Forty-Three Thousand, Eight Hundred And Seventy-Five Peso</NOT_1>
             </NOT><NOT>
                 <NOT_1>7.- http://www.example.com</NOT_1>
             </NOT><NOT>
@@ -231,7 +233,7 @@
             <IEN>
                 <IEN_1>Route de Eghezée</IEN_1>
                 <IEN_2>08</IEN_2>
-                <IEN_3></IEN_3>
+                <IEN_3 />
                 <IEN_4>Medellín</IEN_4>
                 <IEN_5>4567</IEN_5>
                 <IEN_6>CO</IEN_6>
@@ -298,7 +300,7 @@
 
             <ITE>
                     <ITE_1>1</ITE_1>
-                    <ITE_2></ITE_2>
+                    <ITE_2 />
                     <ITE_3>150.0</ITE_3>
                     <ITE_4>94</ITE_4>
                     <ITE_5>33750.00</ITE_5>
@@ -349,10 +351,10 @@
                             <IIM_5>COP</IIM_5>
 
                                 <IIM_6>15.0</IIM_6>
-                                <IIM_7></IIM_7>
-                                <IIM_8></IIM_8>
-                                <IIM_9></IIM_9>
-                                <IIM_10></IIM_10>
+                                <IIM_7 />
+                                <IIM_8 />
+                                <IIM_9 />
+                                <IIM_10 />
 
                         </IIM>
                     </TII><TII>
@@ -368,10 +370,10 @@
                             <IIM_4>33750.00</IIM_4>
                             <IIM_5>COP</IIM_5>
                             <IIM_6>15.0</IIM_6>
-                            <IIM_7></IIM_7>
-                            <IIM_8></IIM_8>
-                            <IIM_9></IIM_9>
-                            <IIM_10></IIM_10>
+                            <IIM_7 />
+                            <IIM_8 />
+                            <IIM_9 />
+                            <IIM_10 />
                         </IIM>
                     </TII>
                     <IAE>

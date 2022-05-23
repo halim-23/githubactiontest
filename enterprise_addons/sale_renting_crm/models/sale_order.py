@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
@@ -12,6 +11,8 @@ class SaleOrder(models.Model):
     # for a single button.
     # YTI TODO: sale_crm shoudn't depend on sale_management
     opportunity_id = fields.Many2one(
-        "crm.lead", string="Opportunity", check_company=True,
+        "crm.lead",
+        string="Opportunity",
+        check_company=True,
         domain="[('type', '=', 'opportunity'), '|', ('company_id', '=', False), ('company_id', '=', company_id)]",
     )

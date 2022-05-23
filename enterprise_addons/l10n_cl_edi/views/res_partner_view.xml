@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
         <record id="view_partner_l10n_cl_edi_form" model="ir.ui.view">
@@ -9,8 +9,11 @@
                 <xpath expr="//notebook" position="inside">
                     <page name="dte" string="Electronic Invoicing">
                         <group colspan="2">
-                            <field name="l10n_cl_dte_email" widget="email"/>
-                            <field name="l10n_cl_activity_description" placeholder="Activity Description"/>
+                            <field name="l10n_cl_dte_email" widget="email" />
+                            <field
+                name="l10n_cl_activity_description"
+                placeholder="Activity Description"
+              />
                         </group>
                     </page>
                 </xpath>
@@ -18,4 +21,3 @@
         </record>
     </data>
 </odoo>
-

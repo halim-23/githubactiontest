@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
-    'name' : 'Fleet Dashboard',
-    'version' : '0.1',
-    'sequence': 200,
-    'category': 'Human Resources/Fleet',
-    'website' : 'https://www.odoo.com/app/fleet',
-    'summary' : 'Dashboard for fleet',
-    'description' : """
+    "name": "Fleet Dashboard",
+    "version": "0.1",
+    "sequence": 200,
+    "category": "Human Resources/Fleet",
+    "website": "https://www.odoo.com/app/fleet",
+    "summary": "Dashboard for fleet",
+    "description": """
 Vehicle, leasing, insurances, cost
 ==================================
 With this module, Odoo helps you managing all your vehicles, the
@@ -24,16 +23,13 @@ Main Features
 * Show all costs associated to a vehicle or to a type of service
 * Analysis graph for costs
 """,
-    'depends': [
-        'fleet', 'web_dashboard'
+    "depends": ["fleet", "web_dashboard"],
+    "data": [
+        "views/fleet_board_view.xml",
     ],
-    'data': [
-        'views/fleet_board_view.xml',
-    ],
-
-    'installable': True,
-    'application': False,
-    'auto_install': True,
-    'uninstall_hook': 'uninstall_hook',
-    'license': 'OEEL-1',
+    "installable": True,
+    "application": False,
+    "auto_install": True,
+    "uninstall_hook": "uninstall_hook",
+    "license": "OEEL-1",
 }

@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, api, _
+from odoo import fields, models
 
 
 class ResCompany(models.Model):
@@ -9,10 +8,15 @@ class ResCompany(models.Model):
 
     def _domain_company(self):
         company = self.env.company
-        return ['|', ('company_id', '=', False), ('company_id', '=', company.id)]
+        return ["|", ("company_id", "=", False), ("company_id", "=", company.id)]
 
     documents_product_settings = fields.Boolean()
-    product_folder = fields.Many2one('documents.folder', string="Product Workspace", domain=_domain_company,
-                                     default=lambda self: self.env.ref('documents_product_folder',
-                                                                       raise_if_not_found=False))
-    product_tags = fields.Many2many('documents.tag', 'product_tags_table')
+    product_folder = fields.Many2one(
+        "documents.folder",
+        string="Product Workspace",
+        domain=_domain_company,
+        default=lambda self: self.env.ref(
+            "documents_product_folder", raise_if_not_found=False
+        ),
+    )
+    product_tags = fields.Many2many("documents.tag", "product_tags_table")

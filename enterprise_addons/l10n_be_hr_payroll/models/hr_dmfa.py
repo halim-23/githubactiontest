@@ -1,19 +1,17 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
-import re
-
 from collections import defaultdict
 from datetime import date, datetime
+
 from dateutil.relativedelta import relativedelta
-from dateutil.rrule import rrule, WEEKLY, MO
+from dateutil.rrule import MO, WEEKLY, rrule
 from lxml import etree
 
-from odoo import api, fields, models, _
-from odoo.tools import date_utils
-from odoo.exceptions import ValidationError, UserError
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 from odoo.modules.module import get_resource_path
+from odoo.tools import date_utils
 
 
 def format_amount(amount, width=11, hundredth=True):
@@ -23,6 +21,7 @@ def format_amount(amount, width=11, hundredth=True):
     if hundredth:
         amount *= 100
     return str(int(amount)).zfill(width)
+
 
 # TODO:
 # - Anticipated Double Holiday Pay
@@ -161,8 +160,8 @@ STUDENT_CODE = 841
 # | WF   | Yes  | Personnel des secteurs de santé fédéraux et qui n'est pas du personnel soignant                  | 2022/1                       | 9999/4                    |,
 # +------+------+--------------------------------------------------------------------------------------------------+------------------------------+---------------------------+,
 
-class DMFANode:
 
+class DMFANode:
     def __init__(self, env, sequence=1):
         self.env = env
         self.sequence = sequence
@@ -186,7 +185,10 @@ class DMFANaturalPerson(DMFANode):
     """
     Represents an employee or a student
     """
-    def __init__(self, employee, payslips, quarter_start, quarter_end, worker_count, sequence=1):
+
+    def __init__(
+        self, employee, payslips, quarter_start, quarter_end, worker_count, sequence=1
+    ):
         super().__init__(employee.env, sequence=sequence)
         self.employee = employee
         self.payslips = payslips
@@ -194,13 +196,16 @@ class DMFANaturalPerson(DMFANode):
         self.quarter_start = quarter_start
         self.quarter_end = quarter_end
         self.worker_count = worker_count
-        self.worker_records = DMFAWorker.init_multi([(payslips, quarter_start, quarter_end, worker_count)])
+        self.worker_records = DMFAWorker.init_multi(
+            [(payslips, quarter_start, quarter_end, worker_count)]
+        )
 
 
 class DMFAWorker(DMFANode):
     """
     Represents the employee contracts
     """
+
     def __init__(self, payslips, quarter_start, quarter_end, worker_count, sequence=1):
         super().__init__(payslips.env, sequence=sequence)
         self.payslips = payslips
@@ -211,8 +216,12 @@ class DMFAWorker(DMFANode):
         self.frontier_worker = 0
         self.activity_with_risk = -1
 
-        student_struct = self.env.ref('l10n_be_hr_payroll.hr_payroll_structure_student_regular_pay')
-        self.student_payslips = payslips.filtered(lambda p: p.struct_id == student_struct)
+        student_struct = self.env.ref(
+            "l10n_be_hr_payroll.hr_payroll_structure_student_regular_pay"
+        )
+        self.student_payslips = payslips.filtered(
+            lambda p: p.struct_id == student_struct
+        )
         payslips = payslips - self.student_payslips
 
         if self.student_payslips:
@@ -220,13 +229,17 @@ class DMFAWorker(DMFANode):
         else:
             self.worker_code = WORKER_CODE
 
-        self.local_unit_id = -1 # Deprecated since 2014
+        self.local_unit_id = -1  # Deprecated since 2014
 
         if self.student_payslips:
             self.occupations = []
             skip_remun = False
         else:
-            self.occupations = self._prepare_occupations(self.payslips.mapped('contract_id'), self.quarter_start, self.quarter_end)
+            self.occupations = self._prepare_occupations(
+                self.payslips.mapped("contract_id"),
+                self.quarter_start,
+                self.quarter_end,
+            )
             skip_remun = all(o.skip_remun for o in self.occupations)
 
         self.student_contributions = []
@@ -241,53 +254,80 @@ class DMFAWorker(DMFANode):
 
     def _prepare_student_contributions(self):
         payslips = self.student_payslips
-        basis = round(payslips._get_line_values(['BASIC'], compute_sum=True)['BASIC']['sum']['total'], 2)
-        contributions = [
-            DMFAStudentContribution(self.student_payslips, basis)
-        ]
+        basis = round(
+            payslips._get_line_values(["BASIC"], compute_sum=True)["BASIC"]["sum"][
+                "total"
+            ],
+            2,
+        )
+        contributions = [DMFAStudentContribution(self.student_payslips, basis)]
         return contributions
 
     def _prepare_contributions(self):
         basis_lines = {
-            'CP200MONTHLY': 'SALARY',
-            'CP200TERM': 'BASIC',
-            'CP200THIRTEEN': 'SALARY',
-            'CP200HOLN': 'PAY_SIMPLE',
-            'CP200HOLN1': 'PAY_SIMPLE',
+            "CP200MONTHLY": "SALARY",
+            "CP200TERM": "BASIC",
+            "CP200THIRTEEN": "SALARY",
+            "CP200HOLN": "PAY_SIMPLE",
+            "CP200HOLN1": "PAY_SIMPLE",
         }
         # https://www.socialsecurity.be/portail/glossaires/dmfa.nsf/2d585b02976cddabc125686a00590d12/e8361adfc1f6e88cc1256df6002b9948/$FILE/AN2004-1-Fr2.pdf
-        contribution_payslips = self.env['hr.payslip']
+        contribution_payslips = self.env["hr.payslip"]
         for occupation in self.occupations:
             if not occupation.skip_remun:
                 contribution_payslips |= occupation.payslips
 
         # Exclude payslips without remuneration to avoid having a sum of 27€ (ATNs)
         # On a full sick quarter that actually has no presence
-        regular_payslips = contribution_payslips.filtered(lambda p: p.struct_id.code == 'CP200MONTHLY')
-        regular_payslips_no_remun = regular_payslips.filtered(lambda p: not p.basic_wage)
+        regular_payslips = contribution_payslips.filtered(
+            lambda p: p.struct_id.code == "CP200MONTHLY"
+        )
+        regular_payslips_no_remun = regular_payslips.filtered(
+            lambda p: not p.basic_wage
+        )
         no_remun = regular_payslips == regular_payslips_no_remun
         if no_remun:
             contribution_payslips -= regular_payslips
 
-        contribution_payslips = contribution_payslips.filtered(lambda p: p.struct_id.code in basis_lines)
-        line_values = contribution_payslips._get_line_values(['SALARY', 'BASIC', 'PAY_SIMPLE'])
-        basis = round(sum(line_values[basis_lines[p.struct_id.code]][p.id]['total'] for p in contribution_payslips), 2)
+        contribution_payslips = contribution_payslips.filtered(
+            lambda p: p.struct_id.code in basis_lines
+        )
+        line_values = contribution_payslips._get_line_values(
+            ["SALARY", "BASIC", "PAY_SIMPLE"]
+        )
+        basis = round(
+            sum(
+                line_values[basis_lines[p.struct_id.code]][p.id]["total"]
+                for p in contribution_payslips
+            ),
+            2,
+        )
 
-        contributions = [
-            DMFAWorkerContribution(contribution_payslips, basis)
-        ] + [
-            DMFAWorkerContributionFFE(contribution_payslips, basis, self.worker_count)
-        ] + [
-            DMFAWorkerContributionSpecialFFE(contribution_payslips, basis)
-        ] + [
-            DMFAWorkerContributionCPAE(contribution_payslips, basis)
-        ] + ([
-            DMFAWorkerContributionWageRestraint(contribution_payslips, basis)
-        ] if self.worker_count >= 10 else []) + [
-            DMFAWorkerContributionSpecialSocialCotisation(contribution_payslips, basis)
-        ] + [
-            DMFAWorkerContributionTemporaryUnemployment(contribution_payslips, basis)
-        ]
+        contributions = (
+            [DMFAWorkerContribution(contribution_payslips, basis)]
+            + [
+                DMFAWorkerContributionFFE(
+                    contribution_payslips, basis, self.worker_count
+                )
+            ]
+            + [DMFAWorkerContributionSpecialFFE(contribution_payslips, basis)]
+            + [DMFAWorkerContributionCPAE(contribution_payslips, basis)]
+            + (
+                [DMFAWorkerContributionWageRestraint(contribution_payslips, basis)]
+                if self.worker_count >= 10
+                else []
+            )
+            + [
+                DMFAWorkerContributionSpecialSocialCotisation(
+                    contribution_payslips, basis
+                )
+            ]
+            + [
+                DMFAWorkerContributionTemporaryUnemployment(
+                    contribution_payslips, basis
+                )
+            ]
+        )
 
         # Check if special cotisations on termination fees are needed
         # https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/special_contributions/other_specialcontributions/terminationfeecontribution.html
@@ -357,8 +397,12 @@ class DMFAWorker(DMFANode):
         occupation_data = contracts._get_occupation_dates()
         for data in occupation_data:
             occupation_contracts, date_from, date_to = data
-            payslips = self.payslips.filtered(lambda p: p.contract_id in occupation_contracts)
-            termination_payslips = payslips.filtered(lambda p: p.struct_id.code == 'CP200TERM')
+            payslips = self.payslips.filtered(
+                lambda p: p.contract_id in occupation_contracts
+            )
+            termination_payslips = payslips.filtered(
+                lambda p: p.struct_id.code == "CP200TERM"
+            )
             termination_occupations = []
             if termination_payslips:
                 # YTI TODO master: Store the supposed notice period even for termination fees
@@ -395,13 +439,19 @@ class DMFAWorker(DMFANode):
                 # mensuellement (entreprises en difficulté), les indemnités doivent toujours être
                 # reprises intégralement sur la déclaration du trimestre au cours duquel le contrat
                 # de travail a été rompu.
-                next_monday = rrule(freq=WEEKLY, dtstart=date_to, byweekday=MO, count=1)[0].date()
-                termination_wizard = self.env['hr.payslip.employee.depature.notice'].new({
-                    'employee_id': termination_payslips.employee_id.id,
-                    'leaving_type_id': self.env.ref('hr.departure_fired').id,
-                    'start_notice_period': next_monday,
-                    'notice_respect': 'with'
-                })
+                next_monday = rrule(
+                    freq=WEEKLY, dtstart=date_to, byweekday=MO, count=1
+                )[0].date()
+                termination_wizard = self.env[
+                    "hr.payslip.employee.depature.notice"
+                ].new(
+                    {
+                        "employee_id": termination_payslips.employee_id.id,
+                        "leaving_type_id": self.env.ref("hr.departure_fired").id,
+                        "start_notice_period": next_monday,
+                        "notice_respect": "with",
+                    }
+                )
                 termination_wizard._compute_oldest_contract_id()
                 termination_wizard._onchange_notice_duration()
                 termination_from = date_to + relativedelta(days=1)
@@ -423,57 +473,88 @@ class DMFAWorker(DMFANode):
                 #   <RemunCode>003</RemunCode>
                 #   <RemunAmount>00000400546</RemunAmount>
                 # </Remun>
-                termination_periods = _split_termination_period(termination_from, termination_to)
-                termination_remuneration = termination_payslips._get_line_values(['BASIC'])['BASIC'][termination_payslips.id]['total']
+                termination_periods = _split_termination_period(
+                    termination_from, termination_to
+                )
+                termination_remuneration = termination_payslips._get_line_values(
+                    ["BASIC"]
+                )["BASIC"][termination_payslips.id]["total"]
 
-                period_remuneration = termination_remuneration / len(termination_periods)
+                period_remuneration = termination_remuneration / len(
+                    termination_periods
+                )
                 # values.append((occupation_contracts, termination_payslips, termination_from, termination_to))
-                termination_values = [(
-                    occupation_contracts,
-                    termination_payslips,
-                    termination_period[0],
-                    termination_period[1],
-                ) for termination_period in termination_periods]
+                termination_values = [
+                    (
+                        occupation_contracts,
+                        termination_payslips,
+                        termination_period[0],
+                        termination_period[1],
+                    )
+                    for termination_period in termination_periods
+                ]
                 termination_sequence = 90
                 termination_occupations = DMFAOccupation.init_multi(termination_values)
                 for termination_occupation in termination_occupations:
                     termination_occupation.skip_remun = False
                     termination_occupation.sequence = termination_sequence
                     termination_sequence += 1
-                    termination_occupation.services = [DMFANode(termination_payslips.env)]
+                    termination_occupation.services = [
+                        DMFANode(termination_payslips.env)
+                    ]
                     service = termination_occupation.services[0]
-                    service.contract = occupation_contracts.sorted(key='date_start', reverse=True)[0]
-                    service.code = '001'
+                    service.contract = occupation_contracts.sorted(
+                        key="date_start", reverse=True
+                    )[0]
+                    service.code = "001"
                     service.sequence = 99
                     calendar = service.contract.resource_calendar_id
-                    dt_from = datetime.combine(termination_occupation.date_start, datetime.min.time())
-                    dt_to = datetime.combine(termination_occupation.date_stop, datetime.max.time())
+                    dt_from = datetime.combine(
+                        termination_occupation.date_start, datetime.min.time()
+                    )
+                    dt_to = datetime.combine(
+                        termination_occupation.date_stop, datetime.max.time()
+                    )
                     occupation_work_data = calendar.get_work_duration_data(
-                        dt_from, dt_to, compute_leaves=False)
-                    total_days = occupation_work_data['days']
+                        dt_from, dt_to, compute_leaves=False
+                    )
+                    total_days = occupation_work_data["days"]
                     total_days = round(total_days * 2) / 2  # Round to half days
                     service.nbr_days = format_amount(total_days, width=5)
-                    total_hours = occupation_work_data['hours']
+                    total_hours = occupation_work_data["hours"]
                     service.nbr_hours = format_amount(total_hours, width=5)
                     service.flight_nbr_minutes = -1
-                    termination_occupation.remunerations = [DMFANode(termination_payslips.env)]
+                    termination_occupation.remunerations = [
+                        DMFANode(termination_payslips.env)
+                    ]
                     remun = termination_occupation.remunerations[0]
-                    remun.code = '003'
+                    remun.code = "003"
                     remun.sequence = 99
                     remun.frequency = -1
                     remun.amount = format_amount(period_remuneration)
                     remun.percentage_paid = -1
             if not termination_payslips and date_to and date_to > quarter_end:
                 date_to = False
-            values.append((occupation_contracts, payslips - termination_payslips, date_from, date_to))
+            values.append(
+                (
+                    occupation_contracts,
+                    payslips - termination_payslips,
+                    date_from,
+                    date_to,
+                )
+            )
         return DMFAOccupation.init_multi(values) + termination_occupations
 
     def _prepare_deductions(self):
-        """ Only employement bonus deduction is currently supported """
-        employement_bonus_rule = self.env.ref('l10n_be_hr_payroll.cp200_employees_salary_employment_bonus_employees')
-        employement_deduction_lines = self.payslips.mapped('line_ids').filtered(lambda l: l.salary_rule_id == employement_bonus_rule)
+        """Only employement bonus deduction is currently supported"""
+        employement_bonus_rule = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_salary_employment_bonus_employees"
+        )
+        employement_deduction_lines = self.payslips.mapped("line_ids").filtered(
+            lambda l: l.salary_rule_id == employement_bonus_rule
+        )
         if employement_deduction_lines:
-            return [DMFAWorkerDeduction(employement_deduction_lines, code='0001')]
+            return [DMFAWorkerDeduction(employement_deduction_lines, code="0001")]
         return []
 
 
@@ -481,16 +562,25 @@ class DMFAStudentContribution(DMFANode):
     """
     Represents the paid amounts on the student payslips
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
-        work_address = payslips.mapped('contract_id.employee_id.address_id')[0]
-        location_unit = self.env['l10n_be.dmfa.location.unit'].search([
-            ('partner_id', '=', work_address.id)])
-        self.local_unit_id = format_amount(location_unit._get_code(), width=10, hundredth=False)
+        work_address = payslips.mapped("contract_id.employee_id.address_id")[0]
+        location_unit = self.env["l10n_be.dmfa.location.unit"].search(
+            [("partner_id", "=", work_address.id)]
+        )
+        self.local_unit_id = format_amount(
+            location_unit._get_code(), width=10, hundredth=False
+        )
         self.student_remun_amount = format_amount(basis, width=9)
-        self.student_contribution_amount = format_amount(round(basis * 0.0813, 2), width=9)
+        self.student_contribution_amount = format_amount(
+            round(basis * 0.0813, 2), width=9
+        )
         self.student_nbr_days = -1
-        self.student_hours_nbr = round(payslips._get_worked_days_line_number_of_hours('WORK100'))
+        self.student_hours_nbr = round(
+            payslips._get_worked_days_line_number_of_hours("WORK100")
+        )
+
 
 class DMFAWorkerContribution(DMFANode):
     """
@@ -507,10 +597,12 @@ class DMFAWorkerContribution(DMFANode):
         self.amount = format_amount(round(basis * 0.3809, 2))
         self.first_hiring_date = -1
 
+
 class DMFAWorkerContributionFFE(DMFANode):
     """
     Represents the paid amounts on the employee payslips - FFE Fond fermeture Entreprise
     """
+
     def __init__(self, payslips, basis, worker_count, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         self.worker_code = 809
@@ -527,6 +619,7 @@ class DMFAWorkerContributionSpecialFFE(DMFANode):
     """
     Represents the paid amounts on the employee payslips - Special FFE Fond fermeture Entreprise
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         self.worker_code = 810
@@ -545,6 +638,7 @@ class DMFAWorkerContributionCPAE(DMFANode):
     """
     Represents the paid amounts on the employee payslips - CPAE
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         self.worker_code = 831
@@ -564,6 +658,7 @@ class DMFAWorkerContributionWageRestraint(DMFANode):
     """
     Represents the paid amounts on the employee payslips - Wage Restreint (modération salariale)
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         self.worker_code = 855
@@ -576,22 +671,33 @@ class DMFAWorkerContributionWageRestraint(DMFANode):
         self.amount = format_amount(round(basis * 0.0169, 2))
         self.first_hiring_date = -1
 
+
 class DMFAWorkerContributionSpecialSocialCotisation(DMFANode):
     """
     Represents the paid amounts on the employee payslips - Special Social Cotisation
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         self.worker_code = 856
         self.contribution_type = 0
         self.calculation_basis = -1
-        self.amount = format_amount(round(-payslips._get_line_values(['M.ONSS'], compute_sum=True)['M.ONSS']['sum']['total'], 2))
+        self.amount = format_amount(
+            round(
+                -payslips._get_line_values(["M.ONSS"], compute_sum=True)["M.ONSS"][
+                    "sum"
+                ]["total"],
+                2,
+            )
+        )
         self.first_hiring_date = -1
+
 
 class DMFAWorkerContributionTemporaryUnemployment(DMFANode):
     """
     Represents the paid amounts on the employee payslips - Temporary Unemployment
     """
+
     def __init__(self, payslips, basis, sequence=None):
         super().__init__(payslips.env, sequence=sequence)
         # Source: https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/special_contributions/other_specialcontributions/temporary_oldunemployed.html
@@ -606,33 +712,40 @@ class DMFAOccupation(DMFANode):
     """
     Represents the contract
     """
+
     def __init__(self, contracts, payslips, date_from, date_to, sequence=1):
         super().__init__(contracts.env, sequence=sequence)
 
-        contract = contracts.sorted(key='date_start', reverse=True)[0]
+        contract = contracts.sorted(key="date_start", reverse=True)[0]
         calendar = contract.resource_calendar_id
         self.contract = contract
         self.payslips = payslips
 
         self.date_start = date_from
         self.date_stop = date_to
-        if contract.date_end and contract.contract_type_id == self.env.ref('l10n_be_hr_payroll.l10n_be_contract_type_cdd'):
+        if contract.date_end and contract.contract_type_id == self.env.ref(
+            "l10n_be_hr_payroll.l10n_be_contract_type_cdd"
+        ):
             self.date_stop = contract.date_end
 
         # See: https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/fill_in_dmfa/dmfa_fillinrules/workerrecord_occupationrecords/occupationrecord.html
         if contract.time_credit or contract.resource_calendar_id.work_time_rate < 100:
-            if contract.time_credit and contract.time_credit_type_id.code == 'LEAVE300':
+            if contract.time_credit and contract.time_credit_type_id.code == "LEAVE300":
                 hours_per_week = contract.standard_calendar_id.hours_per_week
-            elif contract.time_credit and contract.time_credit_type_id.code == 'LEAVE301':
+            elif (
+                contract.time_credit and contract.time_credit_type_id.code == "LEAVE301"
+            ):
                 hours_per_week = contract.standard_calendar_id.hours_per_week
             else:
                 hours_per_week = contract.company_id.resource_calendar_id.hours_per_week
         else:
             hours_per_week = contract.company_id.resource_calendar_id.hours_per_week
-        self.ref_mean_working_hours = ('%.2f' % hours_per_week).replace('.', '').zfill(4)
+        self.ref_mean_working_hours = (
+            ("%.2f" % hours_per_week).replace(".", "").zfill(4)
+        )
 
         # Voir Annexe 44: Réorganisation du temps de travail
-        if contract.time_credit and contract.time_credit_type_id.code == 'LEAVE300':
+        if contract.time_credit and contract.time_credit_type_id.code == "LEAVE300":
             if not contract.resource_calendar_id.hours_per_week:
                 self.reorganisation_measure = 3
             else:
@@ -642,16 +755,18 @@ class DMFAOccupation(DMFANode):
 
         self.employment_promotion = -1
         self.worker_status = -1
-        self.retired = '0'
+        self.retired = "0"
         self.apprenticeship = -1
         self.remun_method = -1
         self.position_code = -1
         self.flying_staff_class = -1
         self.TenthOrTwelfth = -1
         self.ActivityCode = -1  # Facultative
-        self.days_justification = -1 # YTI: Will be useful for payroll based on attendances
+        self.days_justification = (
+            -1
+        )  # YTI: Will be useful for payroll based on attendances
 
-        if contract.time_credit and contract.time_credit_type_id.code == 'LEAVE301':
+        if contract.time_credit and contract.time_credit_type_id.code == "LEAVE301":
             # YTI: Could be cleaned by setting calendar correctly at the beginning
             days_per_week = 5.0
             mean_working_hours = 38.0
@@ -660,9 +775,13 @@ class DMFAOccupation(DMFANode):
             mean_working_hours = contract.resource_calendar_id.hours_per_week
 
         self.days_per_week = format_amount(days_per_week, width=3)
-        self.mean_working_hours = ('%.2f' % mean_working_hours).replace('.', '').zfill(4)
+        self.mean_working_hours = (
+            ("%.2f" % mean_working_hours).replace(".", "").zfill(4)
+        )
 
-        self.is_parttime = 1 if (not calendar.is_fulltime and not contract.time_credit) else 0
+        self.is_parttime = (
+            1 if (not calendar.is_fulltime and not contract.time_credit) else 0
+        )
 
         self.commission = 200  # only CP200 currently supported
         self.services, self.skip_remun = self._prepare_services()
@@ -672,17 +791,30 @@ class DMFAOccupation(DMFANode):
             self.remunerations = []
         self.occupation_informations = self._prepare_occupation_informations()
         work_address = contract.employee_id.address_id
-        location_unit = self.env['l10n_be.dmfa.location.unit'].search([('partner_id', '=', work_address.id)])
-        self.work_place = format_amount(location_unit._get_code(), width=10, hundredth=False)
+        location_unit = self.env["l10n_be.dmfa.location.unit"].search(
+            [("partner_id", "=", work_address.id)]
+        )
+        self.work_place = format_amount(
+            location_unit._get_code(), width=10, hundredth=False
+        )
 
     def _prepare_services(self):
-        services_by_dmfa_code = defaultdict(lambda: self.env['hr.payslip.worked_days'])
-        for wd in self.payslips.mapped('worked_days_line_ids'):
+        services_by_dmfa_code = defaultdict(lambda: self.env["hr.payslip.worked_days"])
+        for wd in self.payslips.mapped("worked_days_line_ids"):
             # Don't declare out of contract + credit time
-            if wd.work_entry_type_id.dmfa_code != '-1' and wd.work_entry_type_id.code not in ['OUT', 'LEAVE300', 'LEAVE510']:
+            if (
+                wd.work_entry_type_id.dmfa_code != "-1"
+                and wd.work_entry_type_id.code not in ["OUT", "LEAVE300", "LEAVE510"]
+            ):
                 services_by_dmfa_code[wd.work_entry_type_id.dmfa_code] |= wd
-        skip_remun = all(dmfa_code in ['30', '50', '52'] for dmfa_code in services_by_dmfa_code.keys())
-        return (DMFAService.init_multi([(wds,) for wds in services_by_dmfa_code.values()]), skip_remun)
+        skip_remun = all(
+            dmfa_code in ["30", "50", "52"]
+            for dmfa_code in services_by_dmfa_code.keys()
+        )
+        return (
+            DMFAService.init_multi([(wds,) for wds in services_by_dmfa_code.values()]),
+            skip_remun,
+        )
 
     def _prepare_remunerations(self):
         # ANNEXE 7: Codification des rémunérations
@@ -714,19 +846,41 @@ class DMFAOccupation(DMFANode):
         # |   51 | Indemnité payée à un membre du personnel nommé à titre définitif qui est totalement absent dans le cadre d'une mesure de réorganisation du temps de travail                                                                                                                               |
         # +------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         # YTI TODO: Add a field dmfa_remuneration_code on hr.salary.rule
-        regular_gross = self.env.ref('l10n_be_hr_payroll.cp200_employees_salary_gross_salary')
-        student_struct = self.env.ref('l10n_be_hr_payroll.hr_payroll_structure_student_regular_pay')
-        regular_gross_student = self.env['hr.salary.rule'].search([
-            ('struct_id', '=', student_struct.id),
-            ('code', '=', 'BASIC'),
-        ])
-        regular_car = self.env.ref('l10n_be_hr_payroll.cp200_employees_salary_company_car')
-        rule_13th_month_gross = self.env.ref('l10n_be_hr_payroll.cp200_employees_thirteen_month_gross_salary')
-        termination_n = self.env.ref('l10n_be_hr_payroll.cp200_employees_termination_n_pay_simple')
-        termination_n1 = self.env.ref('l10n_be_hr_payroll.cp200_employees_termination_n1_pay_simple')
-        termination_fees = self.env.ref('l10n_be_hr_payroll.cp200_employees_termination_fees_basic')
-        holiday_pay_recovery_n = self.env.ref('l10n_be_hr_payroll_holiday_pay_recovery.cp200_employees_salary_holiday_pay_recovery_n', raise_if_not_found=False)
-        holiday_pay_recovery_n1 = self.env.ref('l10n_be_hr_payroll_holiday_pay_recovery.cp200_employees_salary_holiday_pay_recovery_n1', raise_if_not_found=False)
+        regular_gross = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_salary_gross_salary"
+        )
+        student_struct = self.env.ref(
+            "l10n_be_hr_payroll.hr_payroll_structure_student_regular_pay"
+        )
+        regular_gross_student = self.env["hr.salary.rule"].search(
+            [
+                ("struct_id", "=", student_struct.id),
+                ("code", "=", "BASIC"),
+            ]
+        )
+        regular_car = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_salary_company_car"
+        )
+        rule_13th_month_gross = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_thirteen_month_gross_salary"
+        )
+        termination_n = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_termination_n_pay_simple"
+        )
+        termination_n1 = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_termination_n1_pay_simple"
+        )
+        termination_fees = self.env.ref(
+            "l10n_be_hr_payroll.cp200_employees_termination_fees_basic"
+        )
+        holiday_pay_recovery_n = self.env.ref(
+            "l10n_be_hr_payroll_holiday_pay_recovery.cp200_employees_salary_holiday_pay_recovery_n",
+            raise_if_not_found=False,
+        )
+        holiday_pay_recovery_n1 = self.env.ref(
+            "l10n_be_hr_payroll_holiday_pay_recovery.cp200_employees_salary_holiday_pay_recovery_n1",
+            raise_if_not_found=False,
+        )
         codes = {
             regular_gross: 1,
             regular_gross_student: 1,
@@ -739,17 +893,19 @@ class DMFAOccupation(DMFANode):
         if holiday_pay_recovery_n:
             codes[holiday_pay_recovery_n] = 12
             codes[holiday_pay_recovery_n1] = 12
-        frequencies = {
-            rule_13th_month_gross: 12
-        }
-        lines_by_code = defaultdict(lambda: self.env['hr.payslip.line'])
+        frequencies = {rule_13th_month_gross: 12}
+        lines_by_code = defaultdict(lambda: self.env["hr.payslip.line"])
         # Exclude payslips without remuneration to avoid having a sum of 27€ (ATNs)
         # On a full sick quarter that actually has no presence
-        lines = self.payslips.mapped('line_ids')
-        regular_gross_lines = lines.filtered(lambda l: l.salary_rule_id == regular_gross)
-        regular_gross_lines_no_remun = regular_gross_lines.filtered(lambda l: not l.slip_id.basic_wage)
+        lines = self.payslips.mapped("line_ids")
+        regular_gross_lines = lines.filtered(
+            lambda l: l.salary_rule_id == regular_gross
+        )
+        regular_gross_lines_no_remun = regular_gross_lines.filtered(
+            lambda l: not l.slip_id.basic_wage
+        )
         no_remun = regular_gross_lines == regular_gross_lines_no_remun
-        for line in self.payslips.mapped('line_ids'):
+        for line in self.payslips.mapped("line_ids"):
             if line.salary_rule_id == regular_gross and no_remun:
                 continue
             code = codes.get(line.salary_rule_id)
@@ -758,9 +914,13 @@ class DMFAOccupation(DMFANode):
                 lines_by_code[code, frequency] |= line
         # La valeur zéro pour la remuneration est autorisée uniquement pour le solde du budget
         # mobilité (code rémunération 029).
-        return DMFARemuneration.init_multi([(
-            lines, code, frequency
-        ) for (code, frequency), lines in lines_by_code.items() if sum(lines.mapped('total'))])
+        return DMFARemuneration.init_multi(
+            [
+                (lines, code, frequency)
+                for (code, frequency), lines in lines_by_code.items()
+                if sum(lines.mapped("total"))
+            ]
+        )
 
     def _prepare_occupation_informations(self):
         return DMFAOccupationInformation.init_multi([])
@@ -770,6 +930,7 @@ class DMFARemuneration(DMFANode):
     """
     Represents the paid amounts on payslips
     """
+
     def __init__(self, payslip_lines, code, frequency=None, sequence=1):
         super().__init__(payslip_lines.env, sequence=sequence)
         self.code = str(code).zfill(3)
@@ -779,15 +940,20 @@ class DMFARemuneration(DMFANode):
         else:
             self.frequency = -1
 
-        amount = sum(l.total if l.code not in ['HolPayRecN', 'HolPayRecN1'] else -l.total for l in payslip_lines)
+        amount = sum(
+            l.total if l.code not in ["HolPayRecN", "HolPayRecN1"] else -l.total
+            for l in payslip_lines
+        )
         self.amount = format_amount(amount)
 
         self.percentage_paid = -1
+
 
 class DMFAOccupationInformation(DMFANode):
     """
     Represents the paid amounts on payslips
     """
+
     def __init__(self, sequence=1):
         super().__init__(self.payslips.env, sequence=sequence)
 
@@ -824,33 +990,37 @@ class DMFAService(DMFANode):
     """
     Represents the worked hours/days
     """
+
     def __init__(self, worked_days, sequence=1):
         super().__init__(worked_days.env, sequence=sequence)
-        if len(list(set(worked_days.mapped('work_entry_type_id.dmfa_code')))) > 1:
+        if len(list(set(worked_days.mapped("work_entry_type_id.dmfa_code")))) > 1:
             raise ValueError("Cannot mix work of different types.")
 
-        self.contract = worked_days.mapped('contract_id').sorted(key='date_start', reverse=True)[0]
+        self.contract = worked_days.mapped("contract_id").sorted(
+            key="date_start", reverse=True
+        )[0]
 
         work_entry_type = worked_days[0].work_entry_type_id
         self.code = work_entry_type.dmfa_code.zfill(3)
 
-        total_hours = sum(worked_days.mapped('number_of_hours'))
+        total_hours = sum(worked_days.mapped("number_of_hours"))
         total_days = total_hours / 7.6
         total_days = round(total_days * 2) / 2  # Round to half days
         self.nbr_days = format_amount(total_days, width=5)
 
-        self.nbr_hours = format_amount(sum(worked_days.mapped('number_of_hours')), width=5)
+        self.nbr_hours = format_amount(
+            sum(worked_days.mapped("number_of_hours")), width=5
+        )
 
         self.flight_nbr_minutes = -1
 
 
 class DMFAWorkerDeduction(DMFANode):
-
     def __init__(self, payslip_lines, code, sequence=1):
         super().__init__(payslip_lines.env, sequence=sequence)
         self.code = code
         self.deduction_calculation_basis = -1
-        self.amount = format_amount(sum(payslip_lines.mapped('total')))
+        self.amount = format_amount(sum(payslip_lines.mapped("total")))
         # Could be required for other deductions: See ANNEXE 4
         self.deduction_right_starting_date = -1
         self.manager_cost_nbr_months = -1
@@ -860,101 +1030,139 @@ class DMFAWorkerDeduction(DMFANode):
 
 
 class HrDMFAReport(models.Model):
-    _name = 'l10n_be.dmfa'
-    _description = 'DMFA xml report'
+    _name = "l10n_be.dmfa"
+    _description = "DMFA xml report"
     _order = "year desc, quarter desc"
 
-    name = fields.Char(compute='_compute_name', store=True)
+    name = fields.Char(compute="_compute_name", store=True)
     reference = fields.Char(required=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    company_id = fields.Many2one(
+        "res.company", required=True, default=lambda self: self.env.company
+    )
     year = fields.Char(required=True, default=lambda self: fields.Date.today().year)
-    quarter = fields.Selection([
-        ('1', '1st'),
-        ('2', '2nd'),
-        ('3', '3rd'),
-        ('4', '4th'),
-    ], required=True, default=lambda self: str(date_utils.get_quarter_number(fields.Date.today())))
-    file_type = fields.Selection([
-        ('R', 'Real File (R)'),
-        ('S', 'Declaration Test (S)'),
-        ('T', 'Circuit Test (T)'),
-    ], default='R', required=True)
+    quarter = fields.Selection(
+        [
+            ("1", "1st"),
+            ("2", "2nd"),
+            ("3", "3rd"),
+            ("4", "4th"),
+        ],
+        required=True,
+        default=lambda self: str(date_utils.get_quarter_number(fields.Date.today())),
+    )
+    file_type = fields.Selection(
+        [
+            ("R", "Real File (R)"),
+            ("S", "Declaration Test (S)"),
+            ("T", "Circuit Test (T)"),
+        ],
+        default="R",
+        required=True,
+    )
     dmfa_xml = fields.Binary(string="XML file")
-    dmfa_xml_filename = fields.Char(compute='_compute_filename', store=True)
-    quarter_start = fields.Date(compute='_compute_dates')
-    quarter_end = fields.Date(compute='_compute_dates')
-    validation_state = fields.Selection([
-        ('normal', "N/A"),
-        ('done', "Valid"),
-        ('invalid', "Invalid"),
-    ], default='normal', compute='_compute_validation_state', store=True)
-    error_message = fields.Char(store=True, compute='_compute_validation_state', help="Technical error message")
+    dmfa_xml_filename = fields.Char(compute="_compute_filename", store=True)
+    quarter_start = fields.Date(compute="_compute_dates")
+    quarter_end = fields.Date(compute="_compute_dates")
+    validation_state = fields.Selection(
+        [
+            ("normal", "N/A"),
+            ("done", "Valid"),
+            ("invalid", "Invalid"),
+        ],
+        default="normal",
+        compute="_compute_validation_state",
+        store=True,
+    )
+    error_message = fields.Char(
+        store=True, compute="_compute_validation_state", help="Technical error message"
+    )
 
     _sql_constraints = [
-        ('_unique', 'unique (company_id, year, quarter)', "Only one DMFA per year and per quarter is allowed. Another one already exists."),
+        (
+            "_unique",
+            "unique (company_id, year, quarter)",
+            "Only one DMFA per year and per quarter is allowed. Another one already exists.",
+        ),
     ]
 
-    @api.depends('reference', 'quarter', 'year')
+    @api.depends("reference", "quarter", "year")
     def _compute_name(self):
         for dmfa in self:
-            dmfa.name = _('%s %s quarter %s') % (dmfa.reference, dmfa.quarter, dmfa.year)
+            dmfa.name = _("%s %s quarter %s") % (
+                dmfa.reference,
+                dmfa.quarter,
+                dmfa.year,
+            )
 
-    @api.constrains('year')
+    @api.constrains("year")
     def _check_year(self):
         for dmfa in self:
             try:
                 int(dmfa.year)
             except ValueError:
-                raise ValidationError(_("Field Year does not seem to be a year. It must be an integer."))
+                raise ValidationError(
+                    _("Field Year does not seem to be a year. It must be an integer.")
+                )
 
-    @api.depends('dmfa_xml')
+    @api.depends("dmfa_xml")
     def _compute_validation_state(self):
         dmfa_schema_file_path = get_resource_path(
-            'l10n_be_hr_payroll',
-            'data',
-            'DmfAOriginal_20214.xsd',
+            "l10n_be_hr_payroll",
+            "data",
+            "DmfAOriginal_20214.xsd",
         )
         xsd_root = etree.parse(dmfa_schema_file_path)
         schema = etree.XMLSchema(xsd_root)
         for dmfa in self:
             if not dmfa.dmfa_xml:
-                dmfa.validation_state = 'normal'
+                dmfa.validation_state = "normal"
                 dmfa.error_message = False
             else:
                 xml_root = etree.fromstring(base64.b64decode(dmfa.dmfa_xml))
                 try:
                     schema.assertValid(xml_root)
-                    dmfa.validation_state = 'done'
+                    dmfa.validation_state = "done"
                 except etree.DocumentInvalid as err:
-                    dmfa.validation_state = 'invalid'
+                    dmfa.validation_state = "invalid"
                     dmfa.error_message = str(err)
 
-    @api.depends('dmfa_xml')
+    @api.depends("dmfa_xml")
     def _compute_filename(self):
         # https://www.socialsecurity.be/site_fr/general/helpcentre/batch/files/directives.htm
-        num_expedition = self.env["ir.config_parameter"].sudo().get_param("l10n_be.dmfa_expeditor_nbr", False)
+        num_expedition = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("l10n_be.dmfa_expeditor_nbr", False)
+        )
         now = fields.Date.today()
         if not num_expedition:
-            raise UserError(_('There is no defined expeditor number for the company.'))
+            raise UserError(_("There is no defined expeditor number for the company."))
 
         for dmfa in self:
             if not dmfa._origin.dmfa_xml_filename:
                 num_suite = 0
             else:
-                num_suite = dmfa.dmfa_xml_filename.split('.')[4]
+                num_suite = dmfa.dmfa_xml_filename.split(".")[4]
                 num_suite = str(int(num_suite) + 1)
             num_suite = str(num_suite).zfill(5)
             file_type = dmfa.file_type
 
-            filename = 'FI.DMFA.%s.%s.%s.%s.1.1' % (num_expedition, now.strftime('%Y%m%d'), num_suite, file_type)
+            filename = "FI.DMFA.%s.%s.%s.%s.1.1" % (
+                num_expedition,
+                now.strftime("%Y%m%d"),
+                num_suite,
+                file_type,
+            )
             dmfa.dmfa_xml_filename = filename
 
-    @api.depends('year', 'quarter')
+    @api.depends("year", "quarter")
     def _compute_dates(self):
         for dmfa in self:
             year = int(dmfa.year)
             month = int(dmfa.quarter) * 3
-            self.quarter_start, self.quarter_end = date_utils.get_quarter(date(year, month, 1))
+            self.quarter_start, self.quarter_end = date_utils.get_quarter(
+                date(year, month, 1)
+            )
 
     def generate_dmfa_report(self):
         # Sources:
@@ -967,81 +1175,141 @@ class HrDMFAReport(models.Model):
         # PDF History: https://www.socialsecurity.be/lambda/portail/glossaires/dmfa.nsf/consult/fr/ImprPDF
         # Most related documentation: https://www.socialsecurity.be/lambda/portail/glossaires/dmfa.nsf/web/glossary_home_fr
 
-        xml_str = self.env.ref('l10n_be_hr_payroll.dmfa_xml_report')._render(self._get_rendering_data())
+        xml_str = self.env.ref("l10n_be_hr_payroll.dmfa_xml_report")._render(
+            self._get_rendering_data()
+        )
 
         # Prettify xml string
         root = etree.fromstring(xml_str, parser=etree.XMLParser(remove_blank_text=True))
-        xml_formatted_str = etree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True)
+        xml_formatted_str = etree.tostring(
+            root, pretty_print=True, encoding="UTF-8", xml_declaration=True
+        )
 
         self.dmfa_xml = base64.encodebytes(xml_formatted_str)
 
     def _get_rendering_data(self):
-        payslips = self.env['hr.payslip'].search([
-            # ('employee_id', 'in', employees.ids),
-            ('date_to', '>=', self.quarter_start),
-            ('date_to', '<=', self.quarter_end),
-            ('state', 'in', ['done', 'paid']),
-            ('company_id', '=', self.company_id.id),
-            ('struct_id', '!=', self.env.ref('l10n_be_hr_payroll.hr_payroll_structure_cp200_structure_warrant').id),
-        ])
+        payslips = self.env["hr.payslip"].search(
+            [
+                # ('employee_id', 'in', employees.ids),
+                ("date_to", ">=", self.quarter_start),
+                ("date_to", "<=", self.quarter_end),
+                ("state", "in", ["done", "paid"]),
+                ("company_id", "=", self.company_id.id),
+                (
+                    "struct_id",
+                    "!=",
+                    self.env.ref(
+                        "l10n_be_hr_payroll.hr_payroll_structure_cp200_structure_warrant"
+                    ).id,
+                ),
+            ]
+        )
         # Exclude CIP contracts from DmfA, as they only have a DIMONA
-        contract_type_cip = self.env.ref('l10n_be_hr_payroll.l10n_be_contract_type_cip')
-        payslips = payslips.filtered(lambda p: p.contract_id.contract_type_id != contract_type_cip)
-        employees = payslips.mapped('employee_id')
+        contract_type_cip = self.env.ref("l10n_be_hr_payroll.l10n_be_contract_type_cip")
+        payslips = payslips.filtered(
+            lambda p: p.contract_id.contract_type_id != contract_type_cip
+        )
+        employees = payslips.mapped("employee_id")
         worker_count = len(employees)
 
         #### Preliminary Checks ####
         # Check Valid ONSS denominations
         if not self.company_id.dmfa_employer_class:
-            raise ValidationError(_("Please provide an employer class for company %s. The employer class is given by the ONSS and should be encoded in the Payroll setting.", self.company_id.name))
-        if not self.company_id.onss_registration_number and not self.company_id.onss_company_id:
-            raise ValidationError(_("No ONSS registration number nor company ID was found for company %s. Please provide at least one.", self.company_id.name))
+            raise ValidationError(
+                _(
+                    "Please provide an employer class for company %s. The employer class is given by the ONSS and should be encoded in the Payroll setting.",
+                    self.company_id.name,
+                )
+            )
+        if (
+            not self.company_id.onss_registration_number
+            and not self.company_id.onss_company_id
+        ):
+            raise ValidationError(
+                _(
+                    "No ONSS registration number nor company ID was found for company %s. Please provide at least one.",
+                    self.company_id.name,
+                )
+            )
         # Check valid NISS
         invalid_employees = employees.filtered(lambda e: not e._is_niss_valid())
         if invalid_employees:
-            raise UserError(_('Invalid NISS number for those employees:\n %s', '\n'.join(invalid_employees.mapped('name'))))
+            raise UserError(
+                _(
+                    "Invalid NISS number for those employees:\n %s",
+                    "\n".join(invalid_employees.mapped("name")),
+                )
+            )
         # Check valid work addresses
-        work_addresses = employees.mapped('address_id')
-        location_units = self.env['l10n_be.dmfa.location.unit'].search([('partner_id', 'in', work_addresses.ids)])
-        invalid_addresses = work_addresses - location_units.mapped('partner_id')
+        work_addresses = employees.mapped("address_id")
+        location_units = self.env["l10n_be.dmfa.location.unit"].search(
+            [("partner_id", "in", work_addresses.ids)]
+        )
+        invalid_addresses = work_addresses - location_units.mapped("partner_id")
         if invalid_addresses:
-            raise UserError(_('The following work addesses do not have any ONSS identification code:\n %s', '\n'.join(invalid_addresses.mapped('name'))))
+            raise UserError(
+                _(
+                    "The following work addesses do not have any ONSS identification code:\n %s",
+                    "\n".join(invalid_addresses.mapped("name")),
+                )
+            )
         # Check valid work entry types
-        work_entry_types = payslips.mapped('worked_days_line_ids.work_entry_type_id')
+        work_entry_types = payslips.mapped("worked_days_line_ids.work_entry_type_id")
         invalid_types = work_entry_types.filtered(lambda t: not t.dmfa_code)
         if invalid_types:
-            raise UserError(_('The following work entry types do not have any DMFA code set:\n %s', '\n'.join(invalid_types.mapped('name'))))
+            raise UserError(
+                _(
+                    "The following work entry types do not have any DMFA code set:\n %s",
+                    "\n".join(invalid_types.mapped("name")),
+                )
+            )
 
-        employee_payslips = defaultdict(lambda: self.env['hr.payslip'])
+        employee_payslips = defaultdict(lambda: self.env["hr.payslip"])
         for payslip in payslips:
             employee_payslips[payslip.employee_id] |= payslip
 
-        double_basis, double_onss = self._get_double_holiday_pay_contribution(payslips)  # rounded
+        double_basis, double_onss = self._get_double_holiday_pay_contribution(
+            payslips
+        )  # rounded
 
         result = {
-            'employer_class': self.company_id.dmfa_employer_class,
-            'onss_company_id': format_amount(self.company_id.onss_company_id or 0, width=10, hundredth=False),
-            'onss_registration_number': format_amount(self.company_id.onss_registration_number or 0, width=9, hundredth=False),
-            'quarter_repr': '%s%s' % (self.year, self.quarter),
-            'quarter_start': self.quarter_start,
-            'quarter_end': self.quarter_end,
-            'data': self,
-            'system5': 0,
-            'holiday_starting_date': -1,
-            'natural_persons': DMFANaturalPerson.init_multi([(
-                employee,
-                employee_payslips[employee],
-                self.quarter_start,
-                self.quarter_end,
-                worker_count) for employee in employees]),
-            'double_holiday_pay_contribution': format_amount(double_onss),
-            'unrelated_calculation_basis': format_amount(double_basis),
+            "employer_class": self.company_id.dmfa_employer_class,
+            "onss_company_id": format_amount(
+                self.company_id.onss_company_id or 0, width=10, hundredth=False
+            ),
+            "onss_registration_number": format_amount(
+                self.company_id.onss_registration_number or 0, width=9, hundredth=False
+            ),
+            "quarter_repr": "%s%s" % (self.year, self.quarter),
+            "quarter_start": self.quarter_start,
+            "quarter_end": self.quarter_end,
+            "data": self,
+            "system5": 0,
+            "holiday_starting_date": -1,
+            "natural_persons": DMFANaturalPerson.init_multi(
+                [
+                    (
+                        employee,
+                        employee_payslips[employee],
+                        self.quarter_start,
+                        self.quarter_end,
+                        worker_count,
+                    )
+                    for employee in employees
+                ]
+            ),
+            "double_holiday_pay_contribution": format_amount(double_onss),
+            "unrelated_calculation_basis": format_amount(double_basis),
         }
-        result['global_contribution'] = format_amount(self._get_global_contribution(result['natural_persons'], format_amount(double_onss)))
+        result["global_contribution"] = format_amount(
+            self._get_global_contribution(
+                result["natural_persons"], format_amount(double_onss)
+            )
+        )
         return result
 
     def _get_global_contribution(self, employees_infos, double_onss):
-        """ Sum of all the owed contributions to ONSS"""
+        """Sum of all the owed contributions to ONSS"""
         total = int(double_onss) / 100.0
         # Sum all employer contributions
         for natural_person in employees_infos:
@@ -1063,37 +1331,45 @@ class HrDMFAReport(models.Model):
         return round(total, 2)
 
     def _get_double_holiday_pay_contribution(self, payslips):
-        """ Some contribution are not specified at the worker level but globally for the whole company """
+        """Some contribution are not specified at the worker level but globally for the whole company"""
         # Montant de la cotisation exeptionnelle (code 870)
         payslips = payslips.filtered(lambda p: not p.contract_id.no_onss)
 
         basis_lines = {
-            'CP200MONTHLY': 'DOUBLE.DECEMBER.SALARY',
-            'CP200DOUBLE': 'SALARY',
-            'CP200HOLN': 'PAY DOUBLE',
-            'CP200HOLN1': 'PAY DOUBLE',
+            "CP200MONTHLY": "DOUBLE.DECEMBER.SALARY",
+            "CP200DOUBLE": "SALARY",
+            "CP200HOLN": "PAY DOUBLE",
+            "CP200HOLN1": "PAY DOUBLE",
         }
         payslips = payslips.filtered(lambda p: p.struct_id.code in basis_lines)
         line_values = payslips._get_line_values(list(basis_lines.values()))
-        basis_raw = sum(line_values[basis_lines[p.struct_id.code]][p.id]['total'] for p in payslips)
+        basis_raw = sum(
+            line_values[basis_lines[p.struct_id.code]][p.id]["total"] for p in payslips
+        )
         basis = round(basis_raw, 2)
         onss_amount = round(basis_raw * 0.1307, 2)
         return (basis, onss_amount)
 
 
 class HrDMFALocationUnit(models.Model):
-    _name = 'l10n_be.dmfa.location.unit'
-    _description = 'Work Place defined by ONSS'
-    _rec_name = 'code'
+    _name = "l10n_be.dmfa.location.unit"
+    _description = "Work Place defined by ONSS"
+    _rec_name = "code"
 
     code = fields.Char(required=True)
-    company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
-    partner_id = fields.Many2one('res.partner', string="Working Address", required=True)
+    company_id = fields.Many2one(
+        "res.company", required=True, default=lambda self: self.env.company
+    )
+    partner_id = fields.Many2one("res.partner", string="Working Address", required=True)
 
     def _get_code(self):
         self.ensure_one()
         return self.code
 
     _sql_constraints = [
-        ('_unique', 'unique (company_id, partner_id)', "A DMFA location cannot be set more than once for the same company and partner."),
+        (
+            "_unique",
+            "unique (company_id, partner_id)",
+            "A DMFA location cannot be set more than once for the same company and partner.",
+        ),
     ]

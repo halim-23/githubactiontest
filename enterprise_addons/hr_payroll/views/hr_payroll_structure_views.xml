@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- Salary structure -->
     <record id="view_hr_payroll_structure_list_view" model="ir.ui.view">
@@ -6,10 +6,10 @@
         <field name="model">hr.payroll.structure</field>
         <field name="arch" type="xml">
             <tree string="Employee Function">
-                <field name="name"/>
-                <field name="type_id" invisible="1"/>
-                <field name="rule_ids"/>
-                <field name="country_id" options="{'no_create': True}"/>
+                <field name="name" />
+                <field name="type_id" invisible="1" />
+                <field name="rule_ids" />
+                <field name="country_id" options="{'no_create': True}" />
             </tree>
         </field>
     </record>
@@ -24,7 +24,7 @@
                         <div t-attf-class="oe_kanban_content oe_kanban_global_click">
                             <div class="row">
                                 <div class="col-12">
-                                    <strong><field name="name"/></strong>
+                                    <strong><field name="name" /></strong>
                                 </div>
                             </div>
                         </div>
@@ -39,11 +39,19 @@
         <field name="model">hr.payroll.structure</field>
         <field name="arch" type="xml">
             <search string="Payroll Structures">
-                <field name="name" string="Structure Name"/>
-                <field name="type_id" string="Structure Type"/>
-                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <field name="name" string="Structure Name" />
+                <field name="type_id" string="Structure Type" />
+                <filter
+          name="archived"
+          string="Archived"
+          domain="[('active', '=', False)]"
+        />
                 <group col="8" colspan="4" expand="0" string="Group By">
-                    <filter string="Structure Type" name="group_by_type_id" context="{'group_by': 'type_id'}"/>
+                    <filter
+            string="Structure Type"
+            name="group_by_type_id"
+            context="{'group_by': 'type_id'}"
+          />
                 </group>
             </search>
         </field>
@@ -55,44 +63,58 @@
         <field name="arch" type="xml">
             <form string="Employee Function">
             <sheet>
-                <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                <widget
+            name="web_ribbon"
+            title="Archived"
+            bg_color="bg-danger"
+            attrs="{'invisible': [('active', '=', True)]}"
+          />
                 <div class="oe_title">
-                    <label for="name" string="Structure Name"/>
-                    <h1><field name="name" placeholder="e.g. Regular Pay"/></h1>
+                    <label for="name" string="Structure Name" />
+                    <h1><field name="name" placeholder="e.g. Regular Pay" /></h1>
                 </div>
                 <group>
                     <group name="salary_details">
-                        <field name="active" invisible="1"/>
-                        <field name="id" invisible="1"/>
-                        <field name="type_id"/>
-                        <field name="use_worked_day_lines"/>
-                        <field name="country_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="active" invisible="1" />
+                        <field name="id" invisible="1" />
+                        <field name="type_id" />
+                        <field name="use_worked_day_lines" />
+                        <field
+                name="country_id"
+                options="{'no_create': True, 'no_open': True}"
+              />
                     </group>
                     <group>
-                        <field name="report_id"/>
-                        <field name="schedule_pay"/>
+                        <field name="report_id" />
+                        <field name="schedule_pay" />
                     </group>
                 </group>
                 <notebook colspan="4">
                      <page name="salary_rules" string="Salary Rules">
-                       <field name="rule_ids" attrs="{'readonly': [('id', '=', False)]}">
+                       <field
+                name="rule_ids"
+                attrs="{'readonly': [('id', '=', False)]}"
+              >
                          <tree>
-                            <field name="name"/>
-                            <field name="code"/>
-                            <field name="category_id"/>
-                            <field name="sequence" invisible="1"/>
-                            <field name="partner_id"/>
+                            <field name="name" />
+                            <field name="code" />
+                            <field name="category_id" />
+                            <field name="sequence" invisible="1" />
+                            <field name="partner_id" />
                          </tree>
                       </field>
                      </page>
-                     <page string="Unpaid Work Entry Types" name="unpaid_work_entry_types">
-                       <field name="unpaid_work_entry_type_ids"/>
+                     <page
+              string="Unpaid Work Entry Types"
+              name="unpaid_work_entry_types"
+            >
+                       <field name="unpaid_work_entry_type_ids" />
                      </page>
                      <page name="other_input" string="Other Input">
                        <field name="input_line_type_ids">
                          <tree>
-                            <field name="name"/>
-                            <field name="code"/>
+                            <field name="name" />
+                            <field name="code" />
                          </tree>
                       </field>
                      </page>
@@ -102,14 +124,20 @@
         </field>
     </record>
 
-    <record id="action_view_hr_payroll_structure_list_form" model="ir.actions.act_window">
+    <record
+    id="action_view_hr_payroll_structure_list_form"
+    model="ir.actions.act_window"
+  >
         <field name="name">Salary Structures</field>
         <field name="res_model">hr.payroll.structure</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="context">{'search_default_group_by_type_id': 1}</field>
     </record>
 
-    <record id="action_view_hr_payroll_structure_from_type" model="ir.actions.act_window">
+    <record
+    id="action_view_hr_payroll_structure_from_type"
+    model="ir.actions.act_window"
+  >
         <field name="name">Salary Structures</field>
         <field name="res_model">hr.payroll.structure</field>
         <field name="view_mode">tree,kanban,form</field>

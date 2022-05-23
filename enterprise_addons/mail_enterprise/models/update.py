@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import api
 from odoo.models import AbstractModel
 from odoo.tools import cloc
+
 
 class PublisherWarrantyContract(AbstractModel):
     _inherit = "publisher_warranty.contract"
@@ -12,10 +12,10 @@ class PublisherWarrantyContract(AbstractModel):
         msg = super()._get_message()
 
         ICP = self.env["ir.config_parameter"]
-        if ICP.get_param('publisher_warranty.maintenance_disable') is not False:
+        if ICP.get_param("publisher_warranty.maintenance_disable") is not False:
             return msg
 
-        msg['maintenance'] = {
+        msg["maintenance"] = {
             "version": cloc.VERSION,
         }
         try:
@@ -26,5 +26,5 @@ class PublisherWarrantyContract(AbstractModel):
             if c.errors:
                 msg["maintenance"]["errors"] = list(c.errors.keys())
         except Exception:
-            msg["maintenance"]["errors"] = ['cloc/error']
+            msg["maintenance"]["errors"] = ["cloc/error"]
         return msg

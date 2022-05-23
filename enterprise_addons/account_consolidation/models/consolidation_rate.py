@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
-
-from odoo import models, fields
+from odoo import fields, models
 
 
 class ConsolidationRate(models.Model):
     _name = "consolidation.rate"
     _description = "Consolidation Rate"
 
-    chart_id = fields.Many2one('consolidation.chart', required=True, string="Consolidation")
-    company_id = fields.Many2one('res.company', required=True, string="Company")
+    chart_id = fields.Many2one(
+        "consolidation.chart", required=True, string="Consolidation"
+    )
+    company_id = fields.Many2one("res.company", required=True, string="Company")
     rate = fields.Float(required=True, default=1.0)
     date_start = fields.Date(string="Start Date", required=True)
     date_end = fields.Date(string="End Date", required=True)
@@ -25,12 +25,12 @@ class ConsolidationRate(models.Model):
         :rtype: float|bool
         """
         domain = [
-            ('date_start', '<=', date),
-            ('date_end', '>=', date),
+            ("date_start", "<=", date),
+            ("date_end", ">=", date),
         ]
         if company_id:
-            domain.append(('company_id', '=', company_id))
+            domain.append(("company_id", "=", company_id))
         if chart_id:
-            domain.append(('chart_id', '=', chart_id))
-        res = self.search_read(domain, ['rate'], limit=1, order='date_end desc')
-        return res[0]['rate'] if len(res) > 0 else False
+            domain.append(("chart_id", "=", chart_id))
+        res = self.search_read(domain, ["rate"], limit=1, order="date_end desc")
+        return res[0]["rate"] if len(res) > 0 else False

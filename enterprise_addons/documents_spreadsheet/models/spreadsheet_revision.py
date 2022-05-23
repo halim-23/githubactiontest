@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models
@@ -14,5 +13,9 @@ class SpreadsheetRevision(models.Model):
     revision_id = fields.Char(required=True)
     parent_revision_id = fields.Char(required=True)
     _sql_constraints = [
-        ('parent_revision_unique', 'unique(parent_revision_id, document_id)', 'o-spreadsheet revision refused due to concurrency')
+        (
+            "parent_revision_unique",
+            "unique(parent_revision_id, document_id)",
+            "o-spreadsheet revision refused due to concurrency",
+        )
     ]

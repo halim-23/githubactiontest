@@ -1,12 +1,12 @@
-odoo.define('social.social_stream_post_kanban_model', function (require) {
-"use strict";
+odoo.define("social.social_stream_post_kanban_model", function (require) {
+  "use strict";
 
-var KanbanModel = require('web.KanbanModel');
+  var KanbanModel = require("web.KanbanModel");
 
-var StreamPostKanbanModel = KanbanModel.extend({
-    //--------------------------------------------------------------------------
+  var StreamPostKanbanModel = KanbanModel.extend({
+    // --------------------------------------------------------------------------
     // Private
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * Method responsible for refreshing the configured streams.
@@ -15,12 +15,15 @@ var StreamPostKanbanModel = KanbanModel.extend({
      * @private
      */
     _refreshStreams: function () {
-        return this._rpc({
-            model: 'social.stream',
-            method: 'refresh_all'
-        }, {
-            shadow: true
-        });
+      return this._rpc(
+        {
+          model: "social.stream",
+          method: "refresh_all",
+        },
+        {
+          shadow: true,
+        }
+      );
     },
 
     /**
@@ -32,19 +35,25 @@ var StreamPostKanbanModel = KanbanModel.extend({
      * @private
      */
     _refreshAccountsStats: function () {
-        this._rpc({
-            model: 'social.live.post',
-            method: 'refresh_statistics'
-        }, {
-            shadow: true
-        });
+      this._rpc(
+        {
+          model: "social.live.post",
+          method: "refresh_statistics",
+        },
+        {
+          shadow: true,
+        }
+      );
 
-        return this._rpc({
-            model: 'social.account',
-            method: 'refresh_statistics'
-        }, {
-            shadow: true
-        });
+      return this._rpc(
+        {
+          model: "social.account",
+          method: "refresh_statistics",
+        },
+        {
+          shadow: true,
+        }
+      );
     },
 
     /**
@@ -54,30 +63,29 @@ var StreamPostKanbanModel = KanbanModel.extend({
      * @private
      */
     _loadAccountsStats: function () {
-        return this._rpc({
-            model: 'social.account',
-            method: 'search_read',
-            domain: [['has_account_stats', '=', true]],
-            fields: [
-                'id',
-                'name',
-                'is_media_disconnected',
-                'audience',
-                'audience_trend',
-                'engagement',
-                'engagement_trend',
-                'stories',
-                'stories_trend',
-                'has_trends',
-                'media_id',
-                'media_type',
-                'stats_link',
-                'image',
-            ],
-        });
+      return this._rpc({
+        model: "social.account",
+        method: "search_read",
+        domain: [["has_account_stats", "=", true]],
+        fields: [
+          "id",
+          "name",
+          "is_media_disconnected",
+          "audience",
+          "audience_trend",
+          "engagement",
+          "engagement_trend",
+          "stories",
+          "stories_trend",
+          "has_trends",
+          "media_id",
+          "media_type",
+          "stats_link",
+          "image",
+        ],
+      });
     },
-});
+  });
 
-return StreamPostKanbanModel;
-
+  return StreamPostKanbanModel;
 });

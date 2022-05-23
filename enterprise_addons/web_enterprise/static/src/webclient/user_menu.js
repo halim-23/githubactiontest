@@ -1,7 +1,7 @@
 /** @odoo-module */
 
-import { patch } from "@web/core/utils/patch";
-import { systrayItem } from "@web/webclient/user_menu/user_menu";
+import {patch} from "@web/core/utils/patch";
+import {systrayItem} from "@web/webclient/user_menu/user_menu";
 
 /**
  * The user menu in enterprise should be removed if the screen is small
@@ -9,5 +9,5 @@ import { systrayItem } from "@web/webclient/user_menu/user_menu";
  */
 
 patch(systrayItem, "web_enterprise.UserMenuItem", {
-    isDisplayed: (env) => !env.isSmall,
+  isDisplayed: (env) => !env.isSmall,
 });

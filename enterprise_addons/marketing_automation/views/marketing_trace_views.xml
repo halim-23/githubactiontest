@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- Trace -->
     <record id="marketing_trace_view_form" model="ir.ui.view">
@@ -9,18 +9,18 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="activity_id"/>
-                            <field name="schedule_date"/>
+                            <field name="activity_id" />
+                            <field name="schedule_date" />
                         </group>
                         <group>
-                            <field name="participant_id"/>
-                            <field name="state"/>
+                            <field name="participant_id" />
+                            <field name="state" />
                         </group>
                     </group>
                     <h3>Mass Mailing Statistics</h3>
-                    <field name="mailing_trace_ids" nolabel="1"/>
+                    <field name="mailing_trace_ids" nolabel="1" />
                     <group>
-                        <field name="state_msg"/>
+                        <field name="state_msg" />
                     </group>
                 </sheet>
             </form>
@@ -32,11 +32,11 @@
         <field name="model">marketing.trace</field>
         <field name="arch" type="xml">
             <tree string="Traces">
-                <field name="schedule_date"/>
-                <field name="activity_id"/>
-                <field name="participant_id"/>
-                <field name="state"/>
-                <field name="is_test" invisible="1"/>
+                <field name="schedule_date" />
+                <field name="activity_id" />
+                <field name="participant_id" />
+                <field name="state" />
+                <field name="is_test" invisible="1" />
             </tree>
         </field>
     </record>
@@ -46,8 +46,8 @@
         <field name="model">marketing.trace</field>
         <field name="arch" type="xml">
             <graph sample="1">
-                <field name="activity_id"/>
-                <field name="state"/>
+                <field name="activity_id" />
+                <field name="state" />
             </graph>
         </field>
     </record>
@@ -57,8 +57,8 @@
         <field name="model">marketing.trace</field>
         <field name="arch" type="xml">
             <pivot sample="1">
-                <field name="state" type="row"/>
-                <field name="activity_id" type="col"/>
+                <field name="state" type="row" />
+                <field name="activity_id" type="col" />
             </pivot>
         </field>
     </record>
@@ -68,14 +68,26 @@
         <field name="model">marketing.trace</field>
         <field name="arch" type="xml">
             <search string="Search Traces">
-                <field name="activity_id"/>
-                <field name="participant_id"/>
-                <filter string="Running" name="running" domain="[('state', '=', 'running')]" />
-                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]" />
-                <separator/>
-                <filter name="filter_schedule_date" date="schedule_date"/>
-                <separator/>
-                <filter string="Exclude Test" name="exclude_test" domain="[('is_test', '=', False)]" />
+                <field name="activity_id" />
+                <field name="participant_id" />
+                <filter
+          string="Running"
+          name="running"
+          domain="[('state', '=', 'running')]"
+        />
+                <filter
+          string="Completed"
+          name="completed"
+          domain="[('state', '=', 'completed')]"
+        />
+                <separator />
+                <filter name="filter_schedule_date" date="schedule_date" />
+                <separator />
+                <filter
+          string="Exclude Test"
+          name="exclude_test"
+          domain="[('is_test', '=', False)]"
+        />
             </search>
         </field>
     </record>
@@ -93,9 +105,11 @@
         </field>
     </record>
 
-    <menuitem id="marketing_trace_menu"
-        parent="marketing_automation_reporting_menu"
-        action="marketing_trace_action"
-        groups="marketing_automation.group_marketing_automation_user"
-        sequence="16"/>
+    <menuitem
+    id="marketing_trace_menu"
+    parent="marketing_automation_reporting_menu"
+    action="marketing_trace_action"
+    groups="marketing_automation.group_marketing_automation_user"
+    sequence="16"
+  />
 </odoo>

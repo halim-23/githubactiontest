@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
-    'name': "Account Taxcloud - Sale (coupon)",
-    'summary': """Manage discounts in taxclouds computations.""",
-    'description': """
+    "name": "Account Taxcloud - Sale (coupon)",
+    "summary": """Manage discounts in taxclouds computations.""",
+    "description": """
     Manage discounts in taxclouds computations.
     See https://taxcloud.com/support/discounts or
     https://service.taxcloud.net/hc/en-us/articles/360015649791-How-can-discounts-be-applied-
@@ -21,8 +20,8 @@
     Note that discount lines (with a negative price) will have no taxes applied to them,
     but rather the amount of these lines will be deduced from the lines they apply to during tax computation.
     """,
-    'category': 'Accounting',
-    'depends': ['sale_account_taxcloud', 'sale_coupon'],
-    'auto_install': True,
-    'license': 'OEEL-1',
+    "category": "Accounting",
+    "depends": ["sale_account_taxcloud", "sale_coupon"],
+    "auto_install": True,
+    "license": "OEEL-1",
 }

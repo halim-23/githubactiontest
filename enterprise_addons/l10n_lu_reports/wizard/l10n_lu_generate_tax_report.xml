@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
         <record id="view_l10n_lu_generate_tax_report" model="ir.ui.view">
@@ -7,11 +7,17 @@
             <field name="arch" type="xml">
                 <form>
                     <group>
-                        <field name="period" invisible="1"/>
-                        <field name="simplified_declaration" invisible="1"/>
+                        <field name="period" invisible="1" />
+                        <field name="simplified_declaration" invisible="1" />
                     </group>
                     <footer>
-                        <button name="get_xml" string="EXPORT XML" type="object" class="oe_highlight" attrs="{'invisible': ['&amp;', ('simplified_declaration', '=', False), ('period', '=', 'A')]}"/>
+                        <button
+              name="get_xml"
+              string="EXPORT XML"
+              type="object"
+              class="oe_highlight"
+              attrs="{'invisible': ['&amp;', ('simplified_declaration', '=', False), ('period', '=', 'A')]}"
+            />
                     </footer>
                </form>
             </field>

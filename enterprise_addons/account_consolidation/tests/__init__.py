@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import test_consolidation_coa
 from . import test_consolidation_journal
 from . import test_consolidation_period

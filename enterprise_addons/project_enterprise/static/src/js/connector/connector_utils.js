@@ -1,6 +1,5 @@
 /** @odoo-module **/
 
-
 // -----------------------------------------------------------------------------
 // Private
 // -----------------------------------------------------------------------------
@@ -13,11 +12,11 @@
  * @private
  */
 function _clone(value) {
-    if (_isPlainObject(value) || Array.isArray(value)) {
-        return deepMerge(_getEmptyTarget(value), value);
-    } else {
-        return value;
-    }
+  if (_isPlainObject(value) || Array.isArray(value)) {
+    return deepMerge(_getEmptyTarget(value), value);
+  } else {
+    return value;
+  }
 }
 
 /**
@@ -28,7 +27,7 @@ function _clone(value) {
  * @private
  */
 function _getEmptyTarget(value) {
-    return Array.isArray(value) ? [] : { };
+  return Array.isArray(value) ? [] : {};
 }
 
 /**
@@ -38,11 +37,11 @@ function _getEmptyTarget(value) {
  * @returns {boolean} true if the provided argument is a plain object, false if not.
  */
 function _isPlainObject(value) {
-    if (typeof value == 'object' && value !== null) {
-        const proto = Object.getPrototypeOf(value);
-        return proto === Object.prototype || proto === null;
-    }
-    return false;
+  if (typeof value == "object" && value !== null) {
+    const proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+  }
+  return false;
 }
 
 /**
@@ -54,8 +53,7 @@ function _isPlainObject(value) {
  * @private
  */
 function _deepMergeArray(target, source) {
-    return target.concat(source)
-                 .map((entry) => _clone(entry));
+  return target.concat(source).map((entry) => _clone(entry));
 }
 
 /**
@@ -66,20 +64,20 @@ function _deepMergeArray(target, source) {
  * @return {Object} the result of the merge.
  */
 function _mergeObject(target, source) {
-    const destination = { };
-    if (_isPlainObject(target)) {
-        Object.keys(target).forEach((key) => {
-            destination[key] = _clone(target[key]);
-        });
-    }
-    Object.keys(source).forEach((key) => {
-        if ((_isPlainObject(target) && key in target) && _isPlainObject(source[key])) {
-            destination[key] = deepMerge(target[key], source[key]);
-        } else {
-            destination[key] = _clone(source[key]);
-        }
+  const destination = {};
+  if (_isPlainObject(target)) {
+    Object.keys(target).forEach((key) => {
+      destination[key] = _clone(target[key]);
     });
-    return destination;
+  }
+  Object.keys(source).forEach((key) => {
+    if (_isPlainObject(target) && key in target && _isPlainObject(source[key])) {
+      destination[key] = deepMerge(target[key], source[key]);
+    } else {
+      destination[key] = _clone(source[key]);
+    }
+  });
+  return destination;
 }
 
 // -----------------------------------------------------------------------------
@@ -97,20 +95,20 @@ function _mergeObject(target, source) {
  * @returns {Object | Array} the result of the merge.
  */
 export function deepMerge(target, source) {
-    if (typeof source === 'undefined') {
-        source = _getEmptyTarget(source);
-    }
+  if (typeof source === "undefined") {
+    source = _getEmptyTarget(source);
+  }
 
-    const isSourceAnArray = Array.isArray(source);
-    const isTargetAnArray = Array.isArray(target);
+  const isSourceAnArray = Array.isArray(source);
+  const isTargetAnArray = Array.isArray(target);
 
-    if (isSourceAnArray !== isTargetAnArray) {
-        return _clone(source);
-    } else if (isSourceAnArray) {
-        return _deepMergeArray(target, source);
-    } else {
-        return _mergeObject(target, source);
-    }
+  if (isSourceAnArray !== isTargetAnArray) {
+    return _clone(source);
+  } else if (isSourceAnArray) {
+    return _deepMergeArray(target, source);
+  } else {
+    return _mergeObject(target, source);
+  }
 }
 
 /**
@@ -120,8 +118,8 @@ export function deepMerge(target, source) {
  * @return {Object | Array} the result of the merge.
  */
 export function deepMergeAll(array) {
-    if (!Array.isArray(array)) {
-        throw new Error('deepmergeAll argument must be an Array.');
-    }
-    return array.reduce((accumulator, current) => deepMerge(accumulator, current), { });
+  if (!Array.isArray(array)) {
+    throw new Error("deepmergeAll argument must be an Array.");
+  }
+  return array.reduce((accumulator, current) => deepMerge(accumulator, current), {});
 }

@@ -1,99 +1,98 @@
-odoo.define('web_mobile.mixins', function (require) {
-"use strict";
+odoo.define("web_mobile.mixins", function (require) {
+  "use strict";
 
-const session = require('web.session');
-const mobile = require('web_mobile.core');
+  const session = require("web.session");
+  const mobile = require("web_mobile.core");
 
-/**
- * Mixin to setup lifecycle methods and allow to use 'backbutton' events sent
- * from the native application.
- *
- * @mixin
- * @name BackButtonEventMixin
- *
- */
-var BackButtonEventMixin = {
+  /**
+   * Mixin to setup lifecycle methods and allow to use 'backbutton' events sent
+   * from the native application.
+   *
+   * @mixin
+   * @name BackButtonEventMixin
+   *
+   */
+  var BackButtonEventMixin = {
     /**
      * Register event listener for 'backbutton' event when attached to the DOM
      */
     on_attach_callback: function () {
-        mobile.backButtonManager.addListener(this, this._onBackButton);
+      mobile.backButtonManager.addListener(this, this._onBackButton);
     },
     /**
      * Unregister event listener for 'backbutton' event when detached from the DOM
      */
     on_detach_callback: function () {
-        mobile.backButtonManager.removeListener(this, this._onBackButton);
+      mobile.backButtonManager.removeListener(this, this._onBackButton);
     },
 
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Handlers
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     /**
      * @private
      * @param {Event} ev 'backbutton' type event
      */
     _onBackButton: function () {},
-};
+  };
 
-/**
- * Mixin to hook into the controller record's saving method and
- * trigger the update of the user's account details on the mobile app.
- *
- * @mixin
- * @name UpdateDeviceAccountControllerMixin
- *
- */
-const UpdateDeviceAccountControllerMixin = {
+  /**
+   * Mixin to hook into the controller record's saving method and
+   * trigger the update of the user's account details on the mobile app.
+   *
+   * @mixin
+   * @name UpdateDeviceAccountControllerMixin
+   *
+   */
+  const UpdateDeviceAccountControllerMixin = {
     /**
      * @override
      */
     async saveRecord() {
-        const changedFields = await this._super(...arguments);
-        this.savingDef = this.savingDef.then(() => session.updateAccountOnMobileDevice());
-        return changedFields;
+      const changedFields = await this._super(...arguments);
+      this.savingDef = this.savingDef.then(() => session.updateAccountOnMobileDevice());
+      return changedFields;
     },
-};
+  };
 
-/**
- * Trigger the update of the user's account details on the mobile app as soon as
- * the session is correctly initialized.
- */
-session.is_bound.then(() => session.updateAccountOnMobileDevice());
+  /**
+   * Trigger the update of the user's account details on the mobile app as soon as
+   * the session is correctly initialized.
+   */
+  session.is_bound.then(() => session.updateAccountOnMobileDevice());
 
-return {
+  return {
     BackButtonEventMixin: BackButtonEventMixin,
     UpdateDeviceAccountControllerMixin,
-};
-
+  };
 });
 
-odoo.define('web_mobile.hooks', function (require) {
-"use strict";
+odoo.define("web_mobile.hooks", function (require) {
+  "use strict";
 
-const { backButtonManager } = require('web_mobile.core');
+  const {backButtonManager} = require("web_mobile.core");
 
-const { Component, hooks } = owl;
-const { onWillUnmount, onMounted, onPatched } = hooks;
+  const {Component, hooks} = owl;
+  const {onWillUnmount, onMounted, onPatched} = hooks;
 
-/**
- * This hook provides support for executing code when the back button is pressed
- * on the mobile application of Odoo. This actually replaces the default back
- * button behavior so this feature should only be enabled when it is actually
- * useful.
- *
- * The feature is either enabled on mount or, using the `shouldEnable` function
- * argument as condition, when the component is patched. In both cases,
- * the feature is automatically disabled on unmount.
- *
- * @param {function} func the function to execute when the back button is
- *  pressed. The function is called with the custom event as param.
- * @param {function} [shouldEnable] the function to execute when the DOM is 
- *  patched to check if the backbutton should be enabled or disabled ; 
- *  if undefined will be enabled on mount and disabled on unmount.
- */
-function useBackButton(func, shouldEnable) {
+  /**
+   * This hook provides support for executing code when the back button is pressed
+   * on the mobile application of Odoo. This actually replaces the default back
+   * button behavior so this feature should only be enabled when it is actually
+   * useful.
+   *
+   * The feature is either enabled on mount or, using the `shouldEnable` function
+   * argument as condition, when the component is patched. In both cases,
+   * the feature is automatically disabled on unmount.
+   *
+   * @param {function} func the function to execute when the back button is
+   *  pressed. The function is called with the custom event as param.
+   * @param {function} [shouldEnable] the function to execute when the DOM is
+   *  patched to check if the backbutton should be enabled or disabled ;
+   *  if undefined will be enabled on mount and disabled on unmount.
+   */
+  function useBackButton(func, shouldEnable) {
     const component = Component.current;
     let isEnabled = false;
 
@@ -101,8 +100,8 @@ function useBackButton(func, shouldEnable) {
      * Enables the func listener, overriding default back button behavior.
      */
     function enable() {
-        backButtonManager.addListener(component, func);
-        isEnabled = true;
+      backButtonManager.addListener(component, func);
+      isEnabled = true;
     }
 
     /**
@@ -110,37 +109,37 @@ function useBackButton(func, shouldEnable) {
      * no other listeners are present.
      */
     function disable() {
-        backButtonManager.removeListener(component);
-        isEnabled = false;
+      backButtonManager.removeListener(component);
+      isEnabled = false;
     }
 
     onMounted(() => {
-        if (shouldEnable && !shouldEnable()) {
-            return;
-        }
-        enable();
+      if (shouldEnable && !shouldEnable()) {
+        return;
+      }
+      enable();
     });
 
     onPatched(() => {
-        if (!shouldEnable) {
-            return;
-        }
-        const shouldBeEnabled = shouldEnable();
-        if (shouldBeEnabled && !isEnabled) {
-            enable();
-        } else if (!shouldBeEnabled && isEnabled) {
-            disable();
-        }
+      if (!shouldEnable) {
+        return;
+      }
+      const shouldBeEnabled = shouldEnable();
+      if (shouldBeEnabled && !isEnabled) {
+        enable();
+      } else if (!shouldBeEnabled && isEnabled) {
+        disable();
+      }
     });
 
     onWillUnmount(() => {
-        if (isEnabled) {
-            disable();
-        }
+      if (isEnabled) {
+        disable();
+      }
     });
-}
+  }
 
-return {
+  return {
     useBackButton,
-};
+  };
 });

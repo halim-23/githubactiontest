@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
     <record model="ir.ui.view" id="hmrc_vat_obligation_tree">
@@ -6,11 +6,11 @@
         <field name="model">l10n_uk.vat.obligation</field>
         <field name="arch" type="xml">
             <tree string="Obligations" create="false">
-                <field name="date_start"/>
-                <field name="date_end"/>
-                <field name="date_due"/>
-                <field name="status"/>
-                <field name="date_received"/>
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="date_due" />
+                <field name="status" />
+                <field name="date_received" />
             </tree>
         </field>
     </record>
@@ -22,18 +22,18 @@
             <form string="Obligations" create="false" edit="false">
                 <sheet>
                     <group>
-                        <field name="date_start"/>
-                        <field name="date_end"/>
-                        <field name="date_due"/>
-                        <field name="status"/>
-                        <field name="date_received"/>
-                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="date_start" />
+                        <field name="date_end" />
+                        <field name="date_due" />
+                        <field name="status" />
+                        <field name="date_received" />
+                        <field name="company_id" groups="base.group_multi_company" />
                     </group>
                 </sheet>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
                 </div>
             </form>
         </field>
@@ -51,6 +51,11 @@
         </field>
     </record>
 
-    <menuitem id="menu_hmrc_vat_obligation" parent="l10n_uk.account_reports_uk_statements_menu" name="VAT Obligations"
-      action="action_hmrc_vat_obligation_view_menu" groups="base.group_no_one"/>
+    <menuitem
+    id="menu_hmrc_vat_obligation"
+    parent="l10n_uk.account_reports_uk_statements_menu"
+    name="VAT Obligations"
+    action="action_hmrc_vat_obligation_view_menu"
+    groups="base.group_no_one"
+  />
 </odoo>

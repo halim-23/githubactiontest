@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo.tests.common import TransactionCase, new_test_user
-from uuid import uuid4
 import base64
+from uuid import uuid4
 
+from odoo.tests.common import TransactionCase, new_test_user
 
 TEXT = base64.b64encode(bytes("TEST", "utf-8"))
 GIF = b"R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs="
@@ -42,9 +41,9 @@ class SpreadsheetTestCommon(TransactionCase):
         return (
             # should be sorted by `create_date` but tests are so fast,
             # there are often no difference between consecutive revision creation.
-            spreadsheet.with_context(active_test=False).spreadsheet_revision_ids.sorted("id", reverse=True)[
-                :1
-            ].revision_id
+            spreadsheet.with_context(active_test=False)
+            .spreadsheet_revision_ids.sorted("id", reverse=True)[:1]
+            .revision_id
             or "START_REVISION"
         )
 
@@ -62,9 +61,11 @@ class SpreadsheetTestCommon(TransactionCase):
         )
 
     def snapshot(self, spreadsheet, server_revision_id, snapshot_revision_id, data):
-        return spreadsheet.dispatch_spreadsheet_message({
-            "type": "SNAPSHOT",
-            "nextRevisionId": snapshot_revision_id,
-            "serverRevisionId": server_revision_id,
-            "data": data,
-        })
+        return spreadsheet.dispatch_spreadsheet_message(
+            {
+                "type": "SNAPSHOT",
+                "nextRevisionId": snapshot_revision_id,
+                "serverRevisionId": server_revision_id,
+                "data": data,
+            }
+        )

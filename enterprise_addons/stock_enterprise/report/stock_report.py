@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import tools
-from odoo import api, fields, models
+from odoo import api, fields, models, tools
 
 
 class StockReport(models.Model):
-    _name = 'stock.report'
+    _name = "stock.report"
     _description = "Stock Report"
-    _rec_name = 'id'
+    _rec_name = "id"
     _auto = False
 
     id = fields.Integer("", readonly=True)
@@ -17,34 +15,41 @@ class StockReport(models.Model):
     scheduled_date = fields.Datetime("Expected Date", readonly=True)
     delay = fields.Float("Delay (Days)", readonly=True, group_operator="avg")
     cycle_time = fields.Float("Cycle Time (Days)", readonly=True, group_operator="avg")
-    picking_type_code = fields.Selection([
-        ('incoming', 'Vendors'),
-        ('outgoing', 'Customers'),
-        ('internal', 'Internal')], string="Type", readonly=True)
+    picking_type_code = fields.Selection(
+        [("incoming", "Vendors"), ("outgoing", "Customers"), ("internal", "Internal")],
+        string="Type",
+        readonly=True,
+    )
     operation_type = fields.Char("Operation Type", readonly=True)
-    product_id = fields.Many2one('product.product', "Product", readonly=True)
+    product_id = fields.Many2one("product.product", "Product", readonly=True)
     picking_name = fields.Char("Picking Name", readonly=True)
     reference = fields.Char("Reference", readonly=True)
-    picking_id = fields.Many2one('stock.picking', 'Transfer Reference', readonly=True)
-    state = fields.Selection([
-        ('draft', 'New'), ('cancel', 'Cancelled'),
-        ('waiting', 'Waiting Another Move'),
-        ('confirmed', 'Waiting Availability'),
-        ('partially_available', 'Partially Available'),
-        ('assigned', 'Available'),
-        ('done', 'Done')], string='Status', readonly=True)
-    partner_id = fields.Many2one('res.partner', 'Partner', readonly=True)
+    picking_id = fields.Many2one("stock.picking", "Transfer Reference", readonly=True)
+    state = fields.Selection(
+        [
+            ("draft", "New"),
+            ("cancel", "Cancelled"),
+            ("waiting", "Waiting Another Move"),
+            ("confirmed", "Waiting Availability"),
+            ("partially_available", "Partially Available"),
+            ("assigned", "Available"),
+            ("done", "Done"),
+        ],
+        string="Status",
+        readonly=True,
+    )
+    partner_id = fields.Many2one("res.partner", "Partner", readonly=True)
     is_backorder = fields.Boolean("Is a Backorder", readonly=True)
     product_qty = fields.Float("Product Quantity", readonly=True)
     is_late = fields.Boolean("Is Late", readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    categ_id = fields.Many2one('product.category', 'Product Category', readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    categ_id = fields.Many2one("product.category", "Product Category", readonly=True)
 
-    @api.depends('reference', 'product_id.name')
+    @api.depends("reference", "product_id.name")
     def name_get(self):
         res = []
         for report in self:
-            name = '%s - %s' % (report.reference, report.product_id.display_name)
+            name = "%s - %s" % (report.reference, report.product_id.display_name)
             res.append((report.id, name))
         return res
 
@@ -134,11 +139,19 @@ class StockReport(models.Model):
 
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
                             SELECT
                                 %s
                             FROM
                                 %s
                             GROUP BY
                                 %s
-            )""" % (self._table, self._select(), self._from(), self._group_by(),))
+            )"""
+            % (
+                self._table,
+                self._select(),
+                self._from(),
+                self._group_by(),
+            )
+        )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import os
 
@@ -12,16 +11,18 @@ _logger = logging.getLogger(__name__)
 _dashboard_validator = None
 
 
-@view_validation.validate('dashboard')
+@view_validation.validate("dashboard")
 def schema_dashboard(arch, **kwargs):
-    """ Check the dashboard view against its schema
+    """Check the dashboard view against its schema
 
     :type arch: etree._Element
     """
     global _dashboard_validator
 
     if _dashboard_validator is None:
-        with misc.file_open(os.path.join('web_dashboard', 'views', 'dashboard.rng')) as f:
+        with misc.file_open(
+            os.path.join("web_dashboard", "views", "dashboard.rng")
+        ) as f:
             _dashboard_validator = etree.RelaxNG(etree.parse(f))
 
     if _dashboard_validator.validate(arch):

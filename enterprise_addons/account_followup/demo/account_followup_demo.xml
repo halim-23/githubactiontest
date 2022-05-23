@@ -1,10 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
   <data noupdate="1">
-        <record id="demo_followup_line2" model="account_followup.followup.line" forcecreate="False">
+        <record
+      id="demo_followup_line2"
+      model="account_followup.followup.line"
+      forcecreate="False"
+    >
             <field name="name">Second reminder letter and email</field>
             <field name="delay">30</field>
-            <field name="company_id" ref="base.main_company"/>
+            <field name="company_id" ref="base.main_company" />
             <field name="send_email">True</field>
             <field name="print_letter">True</field>
             <field name="description">
@@ -22,13 +26,17 @@ Details of due payments is printed below.
 Best Regards,
             </field>
         </record>
-        <record id="demo_followup_line3" model="account_followup.followup.line" forcecreate="False">
+        <record
+      id="demo_followup_line3"
+      model="account_followup.followup.line"
+      forcecreate="False"
+    >
             <field name="name">Third reminder: phone the customer</field>
             <field name="delay">40</field>
-            <field name="company_id" ref="base.main_company"/>
-            <field eval="False" name="send_email"/>
+            <field name="company_id" ref="base.main_company" />
+            <field eval="False" name="send_email" />
             <field name="manual_action">True</field>
-            <field name="manual_action_type_id" ref="mail.mail_activity_data_call"/>
+            <field name="manual_action_type_id" ref="mail.mail_activity_data_call" />
             <field name="manual_action_note">Call the customer on the phone! </field>
             <field name="description">
 Dear %(partner_name)s,
@@ -47,7 +55,7 @@ Best Regards,
         <record id="demo_followup_line4" model="account_followup.followup.line">
             <field name="name">Urging reminder email</field>
             <field name="delay">50</field>
-            <field name="company_id" ref="base.main_company"/>
+            <field name="company_id" ref="base.main_company" />
             <field name="send_email">True</field>
             <field name="description">
 Dear %(partner_name)s,
@@ -66,8 +74,8 @@ Best Regards,
         <record id="demo_followup_line5" model="account_followup.followup.line">
             <field name="name">Urging reminder letter</field>
             <field name="delay">60</field>
-            <field name="company_id" ref="base.main_company"/>
-            <field eval="False" name="send_email"/>
+            <field name="company_id" ref="base.main_company" />
+            <field eval="False" name="send_email" />
             <field name="print_letter">True</field>
             <field name="description">
 Dear %(partner_name)s,

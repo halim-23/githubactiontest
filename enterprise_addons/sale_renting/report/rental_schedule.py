@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import api, fields, models, tools
 
@@ -7,8 +6,8 @@ class RentalSchedule(models.Model):
     _name = "sale.rental.schedule"
     _description = "Rental Schedule"
     _auto = False
-    _order = 'order_date desc'
-    _rec_name = 'card_name'
+    _order = "order_date desc"
+    _rec_name = "card_name"
 
     @api.model
     def _read_group_report_line_status(self, report_line_status, domain, order):
@@ -16,58 +15,82 @@ class RentalSchedule(models.Model):
 
     @api.model
     def _read_group_product_ids(self, products, domain, order):
-        if self._context.get('restrict_renting_products'):
+        if self._context.get("restrict_renting_products"):
             return products
-        all_rental_products = products.search([('rent_ok', '=', True)], order=order)
+        all_rental_products = products.search([("rent_ok", "=", True)], order=order)
         if len(all_rental_products) > 80:
             return products
         return all_rental_products
 
-    name = fields.Char('Order Reference', readonly=True)
-    product_name = fields.Char('Product Reference', readonly=True)
-    description = fields.Char('Description', readonly=True)
-    order_date = fields.Datetime('Order Date', readonly=True)
-    pickup_date = fields.Datetime('Pickup Date', readonly=True)
-    return_date = fields.Datetime('Return Date', readonly=True)
-    product_id = fields.Many2one('product.product', 'Product', readonly=True, group_expand="_read_group_product_ids")
-    product_uom = fields.Many2one('uom.uom', 'Unit of Measure', readonly=True)
-    product_uom_qty = fields.Float('Qty Ordered', readonly=True)
-    qty_delivered = fields.Float('Qty Picked-Up', readonly=True)
-    qty_returned = fields.Float('Qty Returned', readonly=True)
-    partner_id = fields.Many2one('res.partner', 'Customer', readonly=True)
+    name = fields.Char("Order Reference", readonly=True)
+    product_name = fields.Char("Product Reference", readonly=True)
+    description = fields.Char("Description", readonly=True)
+    order_date = fields.Datetime("Order Date", readonly=True)
+    pickup_date = fields.Datetime("Pickup Date", readonly=True)
+    return_date = fields.Datetime("Return Date", readonly=True)
+    product_id = fields.Many2one(
+        "product.product",
+        "Product",
+        readonly=True,
+        group_expand="_read_group_product_ids",
+    )
+    product_uom = fields.Many2one("uom.uom", "Unit of Measure", readonly=True)
+    product_uom_qty = fields.Float("Qty Ordered", readonly=True)
+    qty_delivered = fields.Float("Qty Picked-Up", readonly=True)
+    qty_returned = fields.Float("Qty Returned", readonly=True)
+    partner_id = fields.Many2one("res.partner", "Customer", readonly=True)
     card_name = fields.Char(string="Customer Name", readonly=True)
-    company_id = fields.Many2one('res.company', 'Company', readonly=True)
-    user_id = fields.Many2one('res.users', 'Salesperson', readonly=True)
-    product_tmpl_id = fields.Many2one('product.template', 'Product Template', readonly=True)
-    categ_id = fields.Many2one('product.category', 'Product Category', readonly=True)
-    analytic_account_id = fields.Many2one('account.analytic.account', 'Analytic Account', readonly=True)
-    team_id = fields.Many2one('crm.team', 'Sales Team', readonly=True)
-    country_id = fields.Many2one('res.country', 'Customer Country', readonly=True)
-    commercial_partner_id = fields.Many2one('res.partner', 'Customer Entity', readonly=True)
-    rental_status = fields.Selection([
-        ('draft', 'Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('pickup', 'Reserved'),
-        ('return', 'Pickedup'),
-        ('returned', 'Returned'),
-        ('cancel', 'Cancelled'),
-    ], string="Rental Status", readonly=True)
-    state = fields.Selection([
-        ('draft', 'Draft Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('sale', 'Sales Order'),
-        ('done', 'Sales Done'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    user_id = fields.Many2one("res.users", "Salesperson", readonly=True)
+    product_tmpl_id = fields.Many2one(
+        "product.template", "Product Template", readonly=True
+    )
+    categ_id = fields.Many2one("product.category", "Product Category", readonly=True)
+    analytic_account_id = fields.Many2one(
+        "account.analytic.account", "Analytic Account", readonly=True
+    )
+    team_id = fields.Many2one("crm.team", "Sales Team", readonly=True)
+    country_id = fields.Many2one("res.country", "Customer Country", readonly=True)
+    commercial_partner_id = fields.Many2one(
+        "res.partner", "Customer Entity", readonly=True
+    )
+    rental_status = fields.Selection(
+        [
+            ("draft", "Quotation"),
+            ("sent", "Quotation Sent"),
+            ("pickup", "Reserved"),
+            ("return", "Pickedup"),
+            ("returned", "Returned"),
+            ("cancel", "Cancelled"),
+        ],
+        string="Rental Status",
+        readonly=True,
+    )
+    state = fields.Selection(
+        [
+            ("draft", "Draft Quotation"),
+            ("sent", "Quotation Sent"),
+            ("sale", "Sales Order"),
+            ("done", "Sales Done"),
+            ("cancel", "Cancelled"),
+        ],
+        string="Status",
+        readonly=True,
+    )
 
-    order_id = fields.Many2one('sale.order', 'Order #', readonly=True)
-    order_line_id = fields.Many2one('sale.order.line', 'Order line #', readonly=True)
+    order_id = fields.Many2one("sale.order", "Order #", readonly=True)
+    order_line_id = fields.Many2one("sale.order.line", "Order line #", readonly=True)
 
-    report_line_status = fields.Selection([
-        ('reserved', 'Reserved'),
-        ('pickedup', 'Pickedup'),
-        ('returned', 'Returned'),
-    ], string="Rental Status (advanced)", readonly=True, group_expand="_read_group_report_line_status")
+    report_line_status = fields.Selection(
+        [
+            ("reserved", "Reserved"),
+            ("pickedup", "Pickedup"),
+            ("returned", "Returned"),
+        ],
+        string="Rental Status (advanced)",
+        readonly=True,
+        group_expand="_read_group_report_line_status",
+    )
     color = fields.Integer(readonly=True)
     late = fields.Boolean("Is Late", readonly=True)
 
@@ -146,7 +169,14 @@ class RentalSchedule(models.Model):
             %s,
             %s,
             %s
-        """ % (self._id(), self._get_product_name(), self._quantity(), self._report_line_status(), self._late(), self._color())
+        """ % (
+            self._id(),
+            self._get_product_name(),
+            self._quantity(),
+            self._report_line_status(),
+            self._late(),
+            self._color(),
+        )
 
     def _from(self):
         return """
@@ -196,10 +226,12 @@ class RentalSchedule(models.Model):
             self._with(),
             self._select(),
             self._from(),
-            self._groupby()
+            self._groupby(),
         )
 
     def init(self):
         # self._table = sale_rental_report
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query()))
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (%s)""" % (self._table, self._query())
+        )

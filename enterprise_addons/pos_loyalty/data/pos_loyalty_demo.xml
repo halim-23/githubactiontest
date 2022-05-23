@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="simple_pen" model="product.product">
         <field name="available_in_pos">True</field>
@@ -8,7 +8,11 @@
         <field name="default_code">CONS_0002</field>
         <field name="uom_id" ref="uom.product_uom_unit" />
         <field name="uom_po_id" ref="uom.product_uom_unit" />
-        <field name="image_1920" type="base64" file="pos_loyalty/static/img/simple_pen.png"/>
+        <field
+      name="image_1920"
+      type="base64"
+      file="pos_loyalty/static/img/simple_pen.png"
+    />
     </record>
 
     <record id="reward_01" model="loyalty.reward">

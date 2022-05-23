@@ -1,18 +1,24 @@
 /** @odoo-module **/
 
-import { MessagingMenu } from '@mail/components/messaging_menu/messaging_menu';
+import {MessagingMenu} from "@mail/components/messaging_menu/messaging_menu";
 
-import { useBackButton } from 'web_mobile.hooks';
-import { patch } from 'web.utils';
+import {useBackButton} from "web_mobile.hooks";
+import {patch} from "web.utils";
 
-patch(MessagingMenu.prototype, 'mail_enterprise/static/src/components/chat_window/chat_window.js', {
+patch(
+  MessagingMenu.prototype,
+  "mail_enterprise/static/src/components/chat_window/chat_window.js",
+  {
     /**
      * @override
      */
     _constructor() {
-        this._super(...arguments);
-        this._onBackButtonGlobal = this._onBackButtonGlobal.bind(this);
-        useBackButton(this._onBackButtonGlobal, () => this.messagingMenu && this.messagingMenu.isOpen);
+      this._super(...arguments);
+      this._onBackButtonGlobal = this._onBackButtonGlobal.bind(this);
+      useBackButton(
+        this._onBackButtonGlobal,
+        () => this.messagingMenu && this.messagingMenu.isOpen
+      );
     },
 
     //--------------------------------------------------------------------------
@@ -27,9 +33,10 @@ patch(MessagingMenu.prototype, 'mail_enterprise/static/src/components/chat_windo
      * @param {CustomEvent} ev
      */
     _onBackButtonGlobal(ev) {
-        if (!this.messagingMenu) {
-            return;
-        }
-        this.messagingMenu.close();
+      if (!this.messagingMenu) {
+        return;
+      }
+      this.messagingMenu.close();
     },
-});
+  }
+);
