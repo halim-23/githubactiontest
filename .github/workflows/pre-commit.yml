@@ -6,8 +6,7 @@ on:
       - "main*"
   push:
     branches:
-      - "main"
-      - "main-cust-*"
+      - "*"
 
 jobs:
   pre-commit:
