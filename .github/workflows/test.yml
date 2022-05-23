@@ -8,6 +8,9 @@ on:
     branches:
       - "*"
 
+env:
+  ADDONS_DIR: ./custom_addons,./enterprise_addons
+
 jobs:
   unreleased-deps:
     runs-on: ubuntu-latest
