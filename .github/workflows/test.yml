@@ -10,7 +10,7 @@ on:
 
 env:
   ADDONS_DIR: custom_addons
-  INCLUDE: enterprise_addons
+#  INCLUDE: enterprise_addons
 
 jobs:
   unreleased-deps:
