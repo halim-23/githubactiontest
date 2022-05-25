@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - "*"
+env:
+  global:
+    --addons_dir="enterprise_addons,custom_addons"
 
 jobs:
   unreleased-deps:
@@ -39,8 +42,6 @@ jobs:
             name: test with Odoo
 #          - container: ghcr.io/oca/oca-ci/py3.8-ocb14.0:latest
 #            name: test with OCB
-        env:
-          - --addons_dir="enterprise_addons,custom_addons"
     services:
       postgres:
         image: postgres:12.0
