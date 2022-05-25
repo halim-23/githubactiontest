@@ -8,14 +8,12 @@ on:
     branches:
       - "*"
 
-env:
-  INCLUDE: enterprise_addons
-  ADDONS_DIR: custom_addons
-
 jobs:
   unreleased-deps:
     runs-on: ubuntu-latest
     name: Detect unreleased dependencies
+    env:
+      ADDONS_DIR: enterprise_addons, custom_addons
     steps:
       - uses: actions/checkout@v2
       - run: |
