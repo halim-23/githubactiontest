@@ -39,8 +39,9 @@ jobs:
             name: test with Odoo
 #          - container: ghcr.io/oca/oca-ci/py3.8-ocb14.0:latest
 #            name: test with OCB
-          env:
-            ADDONS_DIR="enterprise_addons,custom_addons"
+    env:
+      global:
+        ADDONS_DIR="enterprise_addons,custom_addons"
     services:
       postgres:
         image: postgres:12.0
